@@ -21,10 +21,8 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.roundToInt
 
 @Suppress("Unused")
-fun initKoin() {
-    startKoin {
-        modules(commonModule())
-    }
+fun initKoin() = startKoin {
+    modules(commonModule())
 }
 
 @Suppress("Unused")
