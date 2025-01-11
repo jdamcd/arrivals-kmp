@@ -13,7 +13,7 @@ mockk = "1.13.14"
 kotest = "5.9.1"
 logging = "2.0.16"
 clikt = "5.0.2"
-compose-multiplatform = "1.7.3"
+composeMP = "1.7.3"
 
 [libraries]
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
@@ -43,5 +43,5 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
 wire = { id = "com.squareup.wire", version.ref = "wire" }
-compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMP" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

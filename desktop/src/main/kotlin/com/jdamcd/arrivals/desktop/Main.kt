@@ -14,16 +14,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.platform.Font
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.jdamcd.arrivals.Arrival
@@ -33,7 +32,9 @@ import com.jdamcd.arrivals.initKoin
 private val koin = initKoin().koin
 
 fun main() = application {
-    val windowState = rememberWindowState()
+    val windowState = rememberWindowState(
+        position = WindowPosition(Alignment.Center), size = DpSize(1280.dp, 400.dp)
+    )
 
     var arrivalsState by remember { mutableStateOf(emptyList<Arrival>()) }
 
@@ -94,12 +95,3 @@ fun ArrivalRow(arrival: Arrival) {
     }
 }
 
-val lurFontFamily = FontFamily(
-    fonts = listOf(
-        Font(
-            resource = "font/LUR.ttf",
-            weight = FontWeight.W400,
-            style = FontStyle.Normal
-        )
-    )
-)

@@ -11,8 +11,6 @@ plugins {
 
 kotlin {
     jvm()
-    linuxArm64()
-    linuxX64()
     listOf(
         macosArm64(),
         macosX64()
