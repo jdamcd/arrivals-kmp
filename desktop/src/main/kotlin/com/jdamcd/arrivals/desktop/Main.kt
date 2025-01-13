@@ -1,31 +1,14 @@
 package com.jdamcd.arrivals.desktop
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.jdamcd.arrivals.Arrival
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.initKoin
 
@@ -33,65 +16,18 @@ private val koin = initKoin().koin
 
 fun main() = application {
     val windowState = rememberWindowState(
-        position = WindowPosition(Alignment.Center), size = DpSize(1280.dp, 400.dp)
+        position = WindowPosition(Alignment.Center),
+        size = DpSize(1280.dp, 400.dp)
     )
 
-    var arrivalsState by remember { mutableStateOf(emptyList<Arrival>()) }
-
-    val arrivalsApi = koin.get<Arrivals>()
-
-    LaunchedEffect(true) {
-        arrivalsState = arrivalsApi.latest().arrivals
-    }
+    val viewModel = ArrivalsViewModel(koin.get<Arrivals>())
+    val state: ArrivalsState by viewModel.uiState.collectAsState(ArrivalsState.Loading)
 
     Window(
         onCloseRequest = ::exitApplication,
         state = windowState,
         title = "Arrivals"
     ) {
-        ArrivalsList(arrivalsState)
+        ArrivalsList(state)
     }
 }
-
-@Composable
-fun ArrivalsList(
-    arrivals: List<Arrival>
-) {
-    Column(
-        modifier = Modifier
-            .background(color = Color.Black)
-            .padding(30.dp)
-            .fillMaxSize()
-    ) {
-        arrivals.forEach {
-            ArrivalRow(it)
-        }
-    }
-}
-
-@Composable
-fun ArrivalRow(arrival: Arrival) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
-            .padding(bottom = 30.dp)
-    ) {
-        Text(
-            text = arrival.destination,
-            color = Color.Yellow,
-            style = TextStyle(
-                fontFamily = lurFontFamily,
-                fontSize = 50.sp
-            )
-        )
-        Text(
-            arrival.time,
-            color = Color.Yellow,
-            style = TextStyle(
-                fontFamily = lurFontFamily,
-                fontSize = 50.sp
-            )
-        )
-    }
-}
-

@@ -2,15 +2,18 @@ plugins {
     kotlin("jvm")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
-    application
 }
 
 dependencies {
     implementation(project(":shared"))
     implementation(compose.desktop.currentOs)
+    implementation(libs.compose.viewmodel)
+    implementation(libs.coroutines.swing)
     implementation(libs.koin)
 }
 
-application {
-    mainClass.set("com.jdamcd.arrivals.desktop.MainKt")
+compose.desktop {
+    application {
+        mainClass = "com.jdamcd.arrivals.desktop.MainKt"
+    }
 }
