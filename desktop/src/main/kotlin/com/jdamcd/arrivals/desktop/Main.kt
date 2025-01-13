@@ -28,6 +28,6 @@ fun main() = application {
         state = windowState,
         title = "Arrivals"
     ) {
-        ArrivalsList(state)
+        ArrivalsView(state)
     }
 }
