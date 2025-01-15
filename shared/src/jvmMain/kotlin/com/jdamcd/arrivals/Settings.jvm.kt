@@ -1,7 +1,7 @@
 package com.jdamcd.arrivals
 
 actual class Settings actual constructor() {
-    actual var mode = SettingsConfig.MODE_TFL
+    actual var mode = SettingsConfig.MODE_GTFS
     actual var tflStopId = SettingsConfig.TFL_STOP_ID_DEFAULT
     actual var tflPlatform = SettingsConfig.TFL_PLATFORM_DEFAULT
     actual var tflDirection = SettingsConfig.TFL_DIRECTION_DEFAULT

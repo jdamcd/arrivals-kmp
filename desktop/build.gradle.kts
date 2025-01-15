@@ -1,3 +1,5 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 plugins {
     kotlin("jvm")
     alias(libs.plugins.compose.compiler)
@@ -15,5 +17,12 @@ dependencies {
 compose.desktop {
     application {
         mainClass = "com.jdamcd.arrivals.desktop.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            includeAllModules = true
+            packageName = "ArrivalsDesktop"
+            packageVersion = "1.0.0"
+        }
     }
 }
