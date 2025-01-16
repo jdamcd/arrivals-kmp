@@ -20,10 +20,19 @@ compose.desktop {
         mainClass = "com.jdamcd.arrivals.desktop.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             includeAllModules = true
             packageName = "ArrivalsDesktop"
             packageVersion = "1.0.0"
+            targetFormats(TargetFormat.Dmg, TargetFormat.Deb, TargetFormat.Msi)
+            macOS {
+                iconFile.set(project.file("icon.icns"))
+            }
+            linux {
+                iconFile.set(project.file("icon.png"))
+            }
+            windows {
+                iconFile.set(project.file("icon.ico"))
+            }
         }
     }
 }
