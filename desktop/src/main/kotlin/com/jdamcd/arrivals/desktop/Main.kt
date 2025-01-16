@@ -28,6 +28,6 @@ fun main() = application {
         state = windowState,
         title = "Arrivals"
     ) {
-        ArrivalsView(state)
+        ArrivalsView(state, viewModel::refresh)
     }
 }

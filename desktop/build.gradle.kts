@@ -9,6 +9,7 @@ plugins {
 dependencies {
     implementation(project(":shared"))
     implementation(compose.desktop.currentOs)
+    implementation(compose.material3)
     implementation(libs.compose.viewmodel)
     implementation(libs.coroutines.swing)
     implementation(libs.koin)

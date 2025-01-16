@@ -4,29 +4,48 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ArrivalsViewModel(arrivals: Arrivals) : ViewModel() {
+class ArrivalsViewModel(private val arrivals: Arrivals) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ArrivalsState>(ArrivalsState.Loading)
     val uiState: StateFlow<ArrivalsState> = _uiState.asStateFlow()
 
+    private var job: Job? = null
+
     init {
-        viewModelScope.launch {
+        startUpdates()
+    }
+
+    fun refresh() {
+        startUpdates()
+    }
+
+    private fun startUpdates() {
+        job?.cancel()
+        job = viewModelScope.launch {
             while (true) {
-                try {
-                    val result = arrivals.latest()
-                    _uiState.value = ArrivalsState.Data(result)
-                } catch (e: Exception) {
-                    if (_uiState.value !is ArrivalsState.Data) {
-                        _uiState.value = ArrivalsState.Error(e.message ?: "Unknown error")
-                    }
-                }
+                update()
                 delay(60_000L) // 60 seconds
+            }
+        }
+    }
+
+    private suspend fun update() {
+        if (_uiState.value is ArrivalsState.Data) {
+            _uiState.value = ArrivalsState.Data((_uiState.value as ArrivalsState.Data).result, true)
+        }
+        try {
+            val result = arrivals.latest()
+            _uiState.value = ArrivalsState.Data(result, false)
+        } catch (e: Exception) {
+            if (_uiState.value !is ArrivalsState.Data) {
+                _uiState.value = ArrivalsState.Error(e.message ?: "Unknown error")
             }
         }
     }
@@ -34,6 +53,6 @@ class ArrivalsViewModel(arrivals: Arrivals) : ViewModel() {
 
 sealed class ArrivalsState {
     data object Loading : ArrivalsState()
-    data class Data(val result: ArrivalsInfo) : ArrivalsState()
+    data class Data(val result: ArrivalsInfo, val refreshing: Boolean) : ArrivalsState()
     data class Error(val message: String) : ArrivalsState()
 }

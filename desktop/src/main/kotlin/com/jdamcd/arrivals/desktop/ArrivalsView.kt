@@ -13,9 +13,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,7 +34,8 @@ import com.jdamcd.arrivals.Arrival
 
 @Composable
 fun ArrivalsView(
-    state: ArrivalsState
+    state: ArrivalsState,
+    onClickRefresh: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -37,7 +45,7 @@ fun ArrivalsView(
     ) {
         when (state) {
             is ArrivalsState.Loading -> Loading()
-            is ArrivalsState.Data -> Data(state)
+            is ArrivalsState.Data -> Data(state, onClickRefresh)
             is ArrivalsState.Error -> Error(state.message)
         }
     }
@@ -49,12 +57,12 @@ private fun Loading() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = Text)
+        CircularProgressIndicator(color = LedYellow)
     }
 }
 
 @Composable
-private fun Data(state: ArrivalsState.Data) {
+private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
     Column(
         modifier = Modifier
             .padding(32.dp)
@@ -68,8 +76,11 @@ private fun Data(state: ArrivalsState.Data) {
     Row(
         modifier = Modifier
             .background(color = Footer)
-            .padding(16.dp)
+            .padding(start = 32.dp, end = 28.dp, bottom = 4.dp)
             .fillMaxWidth()
+            .height(70.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = state.result.station,
@@ -78,6 +89,29 @@ private fun Data(state: ArrivalsState.Data) {
                 fontSize = 32.sp
             )
         )
+        Box(
+            modifier = Modifier.size(42.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (state.refreshing) {
+                CircularProgressIndicator(color = LedYellow, modifier = Modifier.size(22.dp))
+            } else {
+                TextButton(
+                    onClick = { onClickRefresh() },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = Text,
+                        backgroundColor = Footer
+                    )
+                ) {
+                    Icon(
+                        Icons.Rounded.Refresh,
+                        contentDescription = "Refresh",
+                        modifier = Modifier.size(32.dp),
+                        tint = Text
+                    )
+                }
+            }
+        }
     }
 }
 
