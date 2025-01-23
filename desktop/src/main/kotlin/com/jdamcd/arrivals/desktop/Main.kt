@@ -26,7 +26,8 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         state = windowState,
-        title = "Arrivals"
+        title = "Arrivals",
+        undecorated = true
     ) {
         ArrivalsView(state, viewModel::refresh)
     }

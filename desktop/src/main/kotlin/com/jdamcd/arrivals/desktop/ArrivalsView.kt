@@ -65,7 +65,7 @@ private fun Loading() {
 private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
     Column(
         modifier = Modifier
-            .padding(32.dp)
+            .padding(top = 44.dp, bottom = 16.dp, start = 32.dp, end = 32.dp)
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
@@ -76,13 +76,14 @@ private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
     Row(
         modifier = Modifier
             .background(color = Footer)
-            .padding(start = 32.dp, end = 28.dp, bottom = 4.dp)
+            .padding(start = 32.dp, end = 28.dp)
             .fillMaxWidth()
             .height(70.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
+            modifier = Modifier.padding(bottom = 4.dp),
             text = state.result.station,
             color = Text,
             style = TextStyle(
@@ -149,7 +150,7 @@ fun LedText(string: String) {
         color = LedYellow,
         style = TextStyle(
             fontFamily = LurFontFamily,
-            fontSize = 52.sp
+            fontSize = 56.sp
         )
     )
 }
@@ -170,7 +171,7 @@ fun FlashingLedText(string: String) {
         color = LedYellow.copy(alpha = alpha),
         style = TextStyle(
             fontFamily = LurFontFamily,
-            fontSize = 52.sp
+            fontSize = 56.sp
         )
     )
 }
