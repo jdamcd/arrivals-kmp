@@ -98,4 +98,14 @@ class GtfsArrivalsTest {
         coVerify { api.downloadStops("schedule_url") }
         latest.arrivals shouldHaveSize 3
     }
+
+    @Test
+    fun `throws NoDataException if stops fail to load`() = runBlocking<Unit> {
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        coEvery { api.downloadStops("schedule_url") } throws Exception()
+
+        assertFailsWith<NoDataException> {
+            arrivals.latest()
+        }
+    }
 }

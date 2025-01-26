@@ -31,16 +31,20 @@ internal class GtfsArrivals(
                 throw NoDataException("No arrivals found")
             }
         } catch (e: Exception) {
-            throw NoDataException("No connection")
+            throw NoDataException("Failed to connect")
         }
     }
 
     private suspend fun updateStops() {
-        if (!hasFreshStops()) {
-            stops = GtfsStops(api.downloadStops(settings.gtfsSchedule))
-            settings.gtfsStopsUpdated = clock.now().epochSeconds
-        } else if (!::stops.isInitialized) {
-            stops = GtfsStops(api.readStops())
+        try {
+            if (!hasFreshStops()) {
+                stops = GtfsStops(api.downloadStops(settings.gtfsSchedule))
+                settings.gtfsStopsUpdated = clock.now().epochSeconds
+            } else if (!::stops.isInitialized) {
+                stops = GtfsStops(api.readStops())
+            }
+        } catch (e: Exception) {
+            throw NoDataException("Failed to load stops")
         }
     }
 
