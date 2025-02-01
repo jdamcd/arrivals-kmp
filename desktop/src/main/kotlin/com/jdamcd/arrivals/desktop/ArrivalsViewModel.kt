@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
+import com.jdamcd.arrivals.NoDataException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,9 +44,11 @@ class ArrivalsViewModel(private val arrivals: Arrivals) : ViewModel() {
         try {
             val result = arrivals.latest()
             _uiState.value = ArrivalsState.Data(result, false)
+        } catch (e: NoDataException) {
+            _uiState.value = ArrivalsState.Error(e.message ?: "Unknown error")
         } catch (e: Exception) {
             if (_uiState.value !is ArrivalsState.Data) {
-                _uiState.value = ArrivalsState.Error(e.message ?: "Unknown error")
+                _uiState.value = ArrivalsState.Error("Unknown error")
             }
         }
     }

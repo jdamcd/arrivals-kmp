@@ -23,16 +23,16 @@ internal class GtfsArrivals(
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
         updateStops()
+        val model: ArrivalsInfo
         try {
-            val model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime))
-            if (model.arrivals.isNotEmpty()) {
-                return model
-            } else {
-                throw NoDataException("No arrivals found")
-            }
+            model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime))
         } catch (e: Exception) {
-            throw NoDataException("Failed to connect")
+            throw NoDataException("No connection")
         }
+        if (model.arrivals.isEmpty()) {
+            throw NoDataException("No arrivals found")
+        }
+        return model
     }
 
     private suspend fun updateStops() {
