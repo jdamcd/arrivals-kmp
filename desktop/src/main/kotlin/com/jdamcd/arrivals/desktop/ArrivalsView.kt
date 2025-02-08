@@ -63,53 +63,56 @@ private fun Loading() {
 
 @Composable
 private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .padding(top = 44.dp, bottom = 16.dp, start = 32.dp, end = 32.dp)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(32.dp)
-    ) {
-        state.result.arrivals.forEach {
-            ArrivalRow(it)
-        }
-    }
-    Row(
-        modifier = Modifier
-            .background(color = Footer)
-            .padding(start = 32.dp, end = 28.dp)
-            .fillMaxWidth()
-            .height(70.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.padding(bottom = 4.dp),
-            text = state.result.station,
-            color = Text,
-            style = TextStyle(
-                fontSize = 32.sp
-            )
-        )
-        Box(
-            modifier = Modifier.size(42.dp),
-            contentAlignment = Alignment.Center
+    Column {
+        Column(
+            modifier = Modifier
+                .padding(top = 32.dp, bottom = 20.dp, start = 32.dp, end = 32.dp)
+                .weight(1f)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            if (state.refreshing) {
-                CircularProgressIndicator(color = LedYellow, modifier = Modifier.size(22.dp))
-            } else {
-                TextButton(
-                    onClick = { onClickRefresh() },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = Text,
-                        backgroundColor = Footer
-                    )
-                ) {
-                    Icon(
-                        Icons.Rounded.Refresh,
-                        contentDescription = "Refresh",
-                        modifier = Modifier.size(32.dp),
-                        tint = Text
-                    )
+            state.result.arrivals.forEach {
+                ArrivalRow(it)
+            }
+        }
+        Row(
+            modifier = Modifier
+                .background(color = Footer)
+                .padding(start = 32.dp, end = 28.dp)
+                .fillMaxWidth()
+                .height(70.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.padding(bottom = 4.dp),
+                text = state.result.station,
+                color = Text,
+                style = TextStyle(
+                    fontSize = 32.sp
+                )
+            )
+            Box(
+                modifier = Modifier.size(42.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                if (state.refreshing) {
+                    CircularProgressIndicator(color = LedYellow, modifier = Modifier.size(22.dp))
+                } else {
+                    TextButton(
+                        onClick = { onClickRefresh() },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = Text,
+                            backgroundColor = Footer
+                        )
+                    ) {
+                        Icon(
+                            Icons.Rounded.Refresh,
+                            contentDescription = "Refresh",
+                            modifier = Modifier.size(32.dp),
+                            tint = Text
+                        )
+                    }
                 }
             }
         }

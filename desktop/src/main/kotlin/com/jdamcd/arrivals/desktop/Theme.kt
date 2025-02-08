@@ -18,5 +18,5 @@ val LurFontFamily = FontFamily(
 
 val LedYellow = Color(0xFFFFDD00)
 val Background = Color.Black
-val Footer = Color(0xFF121218)
-val Text = Color(0xFF707070)
+val Footer = Color(0xFF181822)
+val Text = Color(0xFF808080)
