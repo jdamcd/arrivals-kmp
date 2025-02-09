@@ -66,7 +66,7 @@ private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
     Column {
         Column(
             modifier = Modifier
-                .padding(top = 32.dp, bottom = 20.dp, start = 32.dp, end = 32.dp)
+                .padding(top = 20.dp, bottom = 8.dp, start = 32.dp, end = 32.dp)
                 .weight(1f)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceEvenly
