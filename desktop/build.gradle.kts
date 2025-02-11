@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.compose.viewmodel)
     implementation(libs.coroutines.swing)
     implementation(libs.koin)
+    implementation(libs.snakeyaml)
 }
 
 compose.desktop {

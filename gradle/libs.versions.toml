@@ -15,6 +15,7 @@ logging = "2.0.16"
 clikt = "5.0.2"
 composeMP = "1.7.3"
 viewModel = "2.8.2"
+snakeYaml = "2.3"
 
 [libraries]
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
@@ -32,6 +33,7 @@ logging-nop = { group = "org.slf4j", name = "slf4j-nop", version.ref = "logging"
 clikt = { group = "com.github.ajalt.clikt", name = "clikt", version.ref = "clikt" }
 compose-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "viewModel" }
 coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "coroutines" }
+snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeYaml" }
 
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }

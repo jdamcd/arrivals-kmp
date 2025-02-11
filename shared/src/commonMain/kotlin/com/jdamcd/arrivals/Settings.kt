@@ -18,8 +18,8 @@ object SettingsConfig {
     const val MODE_TFL = "tfl"
     const val MODE_GTFS = "gtfs"
 
-    const val TFL_STOP_ID = "selected_stop_id"
-    const val TFL_STOP_ID_DEFAULT = "910GSHRDHST"
+    const val TFL_STOP = "tfl_stop"
+    const val TFL_STOP_DEFAULT = "910GSHRDHST"
     const val TFL_PLATFORM = "tfl_platform"
     const val TFL_PLATFORM_DEFAULT = "Platform 2"
     const val TFL_DIRECTION = "tfl_direction"

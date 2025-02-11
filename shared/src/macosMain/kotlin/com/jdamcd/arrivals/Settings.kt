@@ -12,9 +12,9 @@ actual class Settings actual constructor() {
         }
 
     actual var tflStopId: String
-        get() = defaults.stringForKey(SettingsConfig.TFL_STOP_ID) ?: SettingsConfig.TFL_STOP_ID_DEFAULT
+        get() = defaults.stringForKey(SettingsConfig.TFL_STOP) ?: SettingsConfig.TFL_STOP_DEFAULT
         set(value) {
-            defaults.setObject(value, SettingsConfig.TFL_STOP_ID)
+            defaults.setObject(value, SettingsConfig.TFL_STOP)
         }
 
     actual var tflPlatform: String
