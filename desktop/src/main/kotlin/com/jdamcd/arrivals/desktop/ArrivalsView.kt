@@ -151,9 +151,10 @@ fun LedText(string: String) {
     Text(
         text = string,
         color = LedYellow,
+        maxLines = 1,
         style = TextStyle(
             fontFamily = LurFontFamily,
-            fontSize = 56.sp
+            fontSize = 58.sp
         )
     )
 }
@@ -172,9 +173,10 @@ fun FlashingLedText(string: String) {
     Text(
         text = string,
         color = LedYellow.copy(alpha = alpha),
+        maxLines = 1,
         style = TextStyle(
             fontFamily = LurFontFamily,
-            fontSize = 56.sp
+            fontSize = 58.sp
         )
     )
 }
