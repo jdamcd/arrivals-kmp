@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jdamcd.arrivals.Arrival
@@ -64,15 +67,20 @@ private fun Loading() {
 @Composable
 private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
     Column {
-        Column(
-            modifier = Modifier
-                .padding(top = 20.dp, bottom = 8.dp, start = 32.dp, end = 32.dp)
-                .weight(1f)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.SpaceEvenly
+        BoxWithConstraints(
+            modifier = Modifier.weight(1f)
+                .padding(top = 16.dp, bottom = 8.dp, start = 32.dp, end = 32.dp)
         ) {
-            state.result.arrivals.forEach {
-                ArrivalRow(it)
+            val rowHeight = maxHeight / 3
+            val textSize = (rowHeight * 0.63f).value.sp
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                state.result.arrivals.forEach {
+                    ArrivalRow(it, textSize)
+                }
             }
         }
         Row(
@@ -121,46 +129,52 @@ private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
 
 @Composable
 fun Error(message: String) {
-    Column(
-        modifier = Modifier
-            .padding(32.dp)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(32.dp)
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize()
+            .padding(top = 16.dp, bottom = 8.dp, start = 32.dp, end = 32.dp)
     ) {
-        LedText(message)
-    }
-}
+        val rowHeight = (maxHeight - 72.dp) / 3 // Match text size in Data composable
+        val textSize = (rowHeight * 0.63f).value.sp
 
-@Composable
-fun ArrivalRow(arrival: Arrival) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        LedText(arrival.destination)
-        if (arrival.secondsToStop < 60) {
-            FlashingLedText(arrival.time)
-        } else {
-            LedText(arrival.time)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            LedText(message, textSize)
         }
     }
 }
 
 @Composable
-fun LedText(string: String) {
+fun ArrivalRow(arrival: Arrival, textSize: TextUnit) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        LedText(arrival.destination, textSize)
+        if (arrival.secondsToStop < 60) {
+            FlashingLedText(arrival.time, textSize)
+        } else {
+            LedText(arrival.time, textSize)
+        }
+    }
+}
+
+@Composable
+fun LedText(string: String, textSize: TextUnit, color: Color = LedYellow) {
     Text(
         text = string,
-        color = LedYellow,
+        color = color,
         maxLines = 1,
         style = TextStyle(
             fontFamily = LurFontFamily,
-            fontSize = 58.sp
+            fontSize = textSize
         )
     )
 }
 
 @Composable
-fun FlashingLedText(string: String) {
+fun FlashingLedText(string: String, textSize: TextUnit) {
     val infiniteTransition = rememberInfiniteTransition()
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -170,13 +184,5 @@ fun FlashingLedText(string: String) {
             repeatMode = RepeatMode.Reverse
         )
     )
-    Text(
-        text = string,
-        color = LedYellow.copy(alpha = alpha),
-        maxLines = 1,
-        style = TextStyle(
-            fontFamily = LurFontFamily,
-            fontSize = 58.sp
-        )
-    )
+    LedText(string, textSize, LedYellow.copy(alpha = alpha))
 }
