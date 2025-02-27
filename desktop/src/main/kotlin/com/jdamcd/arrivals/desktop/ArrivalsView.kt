@@ -72,7 +72,7 @@ private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
                 .padding(top = 16.dp, bottom = 8.dp, start = 32.dp, end = 32.dp)
         ) {
             val rowHeight = maxHeight / 3
-            val textSize = (rowHeight * 0.63f).value.sp
+            val textSize = (rowHeight * textScale).value.sp
 
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -88,7 +88,7 @@ private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
                 .background(color = Footer)
                 .padding(start = 32.dp, end = 28.dp)
                 .fillMaxWidth()
-                .height(70.dp),
+                .height(footerHeight),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -133,8 +133,8 @@ fun Error(message: String) {
         modifier = Modifier.fillMaxSize()
             .padding(top = 16.dp, bottom = 8.dp, start = 32.dp, end = 32.dp)
     ) {
-        val rowHeight = (maxHeight - 72.dp) / 3 // Match text size in Data composable
-        val textSize = (rowHeight * 0.63f).value.sp
+        val rowHeight = (maxHeight - footerHeight) / 3 // Match text size in Data composable
+        val textSize = (rowHeight * textScale).value.sp
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -186,3 +186,6 @@ fun FlashingLedText(string: String, textSize: TextUnit) {
     )
     LedText(string, textSize, LedYellow.copy(alpha = alpha))
 }
+
+private val textScale = 0.6f
+private val footerHeight = 70.dp
