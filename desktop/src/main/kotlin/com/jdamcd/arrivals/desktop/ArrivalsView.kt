@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +73,7 @@ private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
                 .padding(top = 16.dp, bottom = 8.dp, start = 32.dp, end = 32.dp)
         ) {
             val rowHeight = maxHeight / 3
-            val textSize = (rowHeight * textScale).value.sp
+            val textSize = (rowHeight * TEXT_SCALE).value.sp
 
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -134,7 +135,7 @@ fun Error(message: String) {
             .padding(top = 16.dp, bottom = 8.dp, start = 32.dp, end = 32.dp)
     ) {
         val rowHeight = (maxHeight - footerHeight) / 3 // Match text size in Data composable
-        val textSize = (rowHeight * textScale).value.sp
+        val textSize = (rowHeight * TEXT_SCALE).value.sp
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -148,10 +149,9 @@ fun Error(message: String) {
 @Composable
 fun ArrivalRow(arrival: Arrival, textSize: TextUnit) {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
     ) {
-        LedText(arrival.destination, textSize)
+        LedText(arrival.destination, textSize, modifier = Modifier.weight(1f))
         if (arrival.secondsToStop < 60) {
             FlashingLedText(arrival.time, textSize)
         } else {
@@ -161,15 +161,22 @@ fun ArrivalRow(arrival: Arrival, textSize: TextUnit) {
 }
 
 @Composable
-fun LedText(string: String, textSize: TextUnit, color: Color = LedYellow) {
+fun LedText(
+    string: String,
+    textSize: TextUnit,
+    color: Color = LedYellow,
+    modifier: Modifier = Modifier
+) {
     Text(
         text = string,
         color = color,
         maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         style = TextStyle(
             fontFamily = LurFontFamily,
             fontSize = textSize
-        )
+        ),
+        modifier = modifier
     )
 }
 
@@ -187,5 +194,5 @@ fun FlashingLedText(string: String, textSize: TextUnit) {
     LedText(string, textSize, LedYellow.copy(alpha = alpha))
 }
 
-private val textScale = 0.6f
+private const val TEXT_SCALE = 0.58f
 private val footerHeight = 70.dp
