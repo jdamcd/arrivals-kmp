@@ -1,17 +1,18 @@
-import ArrivalsLib
+@preconcurrency import ArrivalsLib
 import SwiftUI
 
 struct GtfsSettingsView: View {
     private let settings = MacDI().settings
 
-    @State private var realtimeUrl: String
-    @State private var scheduleUrl: String
-    @State private var stopId: String
+    @State private var realtimeUrl: String = ""
+    @State private var scheduleUrl: String = ""
+    @State private var stopId: String = ""
 
     init() {
-        realtimeUrl = settings.gtfsRealtime
-        scheduleUrl = settings.gtfsSchedule
-        stopId = settings.gtfsStop
+        let settings = MacDI().settings
+        _realtimeUrl = State(initialValue: settings.gtfsRealtime)
+        _scheduleUrl = State(initialValue: settings.gtfsSchedule)
+        _stopId = State(initialValue: settings.gtfsStop)
     }
 
     var body: some View {

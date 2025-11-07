@@ -1,11 +1,11 @@
-import ArrivalsLib
+@preconcurrency import ArrivalsLib
 import Combine
 import Foundation
 import SettingsAccess
 import SwiftUI
 
 struct ArrivalsView: View {
-    @ObservedObject var viewModel = ArrivalsViewModel()
+    @StateObject var viewModel = ArrivalsViewModel()
     @ObservedObject var popoverState: PopoverState
     @State private var timer: AnyCancellable?
 

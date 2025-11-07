@@ -18,10 +18,20 @@ struct DebouncingTextField: View {
     @Binding private var value: String
     var label: String
 
-    init(label: String, value: Binding<String>, debounceInterval: TimeInterval = 0.75, valueChanged: @escaping (String) -> Void) {
+    init(
+        label: String,
+        value: Binding<String>,
+        debounceInterval: TimeInterval = 0.75,
+        valueChanged: @escaping (String) -> Void
+    ) {
         self.label = label
         _value = value
-        _viewModel = StateObject(wrappedValue: DebouncingTextFieldModel(debounceInterval: debounceInterval, valueChanged: valueChanged))
+        _viewModel = StateObject(
+            wrappedValue: DebouncingTextFieldModel(
+                debounceInterval: debounceInterval,
+                valueChanged: valueChanged
+            )
+        )
     }
 
     var body: some View {

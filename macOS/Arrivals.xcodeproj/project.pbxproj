@@ -209,8 +209,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1610;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					49386255297F4BE700C61AE3 = {
 						CreatedOnToolsVersion = 14.2;
@@ -497,7 +497,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -540,7 +540,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -557,7 +557,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jdamcd.ArrivalsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Arrivals.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Arrivals";
 			};
 			name = Debug;
@@ -575,7 +575,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jdamcd.ArrivalsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Arrivals.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Arrivals";
 			};
 			name = Release;
@@ -591,7 +591,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jdamcd.ArrivalsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TEST_TARGET_NAME = Arrivals;
 			};
 			name = Debug;
@@ -607,7 +607,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jdamcd.ArrivalsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TEST_TARGET_NAME = Arrivals;
 			};
 			name = Release;

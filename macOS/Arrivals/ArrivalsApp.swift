@@ -1,4 +1,4 @@
-import ArrivalsLib
+@preconcurrency import ArrivalsLib
 import SwiftUI
 
 @main
@@ -16,7 +16,8 @@ struct ArrivalsApp: App {
                 .background(WindowAccessor(window: $settingsWindow))
                 .onReceive(NotificationCenter.default.publisher(for: NSWindow.willCloseNotification)) { notif in
                     if let window = notif.object as? NSWindow {
-                        print("Window \(window.windowNumber) is closing. Settings is \(settingsWindow?.windowNumber ?? -1).")
+                        let settingsNum = settingsWindow?.windowNumber ?? -1
+                        print("Window \(window.windowNumber) is closing. Settings is \(settingsNum).")
                         if window.windowNumber == settingsWindow?.windowNumber {
                             NSApplication.accessoryMode()
                         }
@@ -31,8 +32,8 @@ struct WindowAccessor: NSViewRepresentable {
 
     func makeNSView(context _: Context) -> NSView {
         let view = NSView()
-        DispatchQueue.main.async {
-            self.window = view.window
+        DispatchQueue.main.async { [weak view] in
+            self.window = view?.window
         }
         return view
     }
@@ -44,6 +45,7 @@ class PopoverState: ObservableObject {
     @Published var isShown = false
 }
 
+@MainActor
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private let popover = NSPopover()

@@ -1,8 +1,8 @@
-import ArrivalsLib
+@preconcurrency import ArrivalsLib
 import SwiftUI
 
 struct TflSettingsView: View {
-    @ObservedObject private var viewModel = TflSettingsViewModel()
+    @StateObject private var viewModel = TflSettingsViewModel()
 
     @State private var searchQuery: String = ""
     @State private var selectedResult: StopResult?

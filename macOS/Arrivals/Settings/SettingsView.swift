@@ -1,4 +1,4 @@
-import ArrivalsLib
+@preconcurrency import ArrivalsLib
 import SwiftUI
 
 struct SettingsView: View {
@@ -6,7 +6,7 @@ struct SettingsView: View {
     @State private var selector: String
 
     init() {
-        selector = transitSystem.first!
+        selector = transitSystem.first ?? "TfL"
     }
 
     var body: some View {

@@ -1,4 +1,4 @@
-import ArrivalsLib
+@preconcurrency import ArrivalsLib
 import Foundation
 
 @MainActor

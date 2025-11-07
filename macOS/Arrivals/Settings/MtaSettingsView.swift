@@ -1,8 +1,8 @@
-import ArrivalsLib
+@preconcurrency import ArrivalsLib
 import SwiftUI
 
 struct MtaSettingsView: View {
-    @ObservedObject private var viewModel = MtaSettingsViewModel()
+    @StateObject private var viewModel = MtaSettingsViewModel()
 
     @State private var selectedLine: String?
     @State private var selectedStop: StopResult?
@@ -10,7 +10,7 @@ struct MtaSettingsView: View {
     private var lines = Mta().realtime
 
     init() {
-        selectedLine = lines.keys.sorted().first!
+        selectedLine = lines.keys.sorted().first
     }
 
     var body: some View {
@@ -23,8 +23,8 @@ struct MtaSettingsView: View {
                 .pickerStyle(.menu)
                 .onChange(of: selectedLine ?? "") { newValue in
                     selectedStop = nil
-                    if newValue.isNotEmpty {
-                        viewModel.getStops(feedUrl: lines[newValue]!)
+                    if newValue.isNotEmpty, let feedUrl = lines[newValue] {
+                        viewModel.getStops(feedUrl: feedUrl)
                     } else {
                         viewModel.reset()
                     }
@@ -49,8 +49,12 @@ struct MtaSettingsView: View {
             HStack {
                 Spacer()
                 Button("Save") {
-                    viewModel.save(lineUrl: lines[selectedLine!]!, stopId: selectedStop!.id)
-                    NSApp.keyWindow?.close()
+                    if let selectedLine = selectedLine,
+                       let lineUrl = lines[selectedLine],
+                       let selectedStop = selectedStop {
+                        viewModel.save(lineUrl: lineUrl, stopId: selectedStop.id)
+                        NSApp.keyWindow?.close()
+                    }
                 }
                 .disabled(selectedLine == nil || selectedStop == nil)
                 .buttonStyle(.borderedProminent)
