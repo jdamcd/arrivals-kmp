@@ -6,7 +6,7 @@ struct SettingsView: View {
     @State private var selector: String
 
     init() {
-        selector = transitSystem.first ?? "TfL"
+        selector = transitSystem.first!
     }
 
     var body: some View {

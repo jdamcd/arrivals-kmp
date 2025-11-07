@@ -10,7 +10,7 @@ struct MtaSettingsView: View {
     private var lines = Mta().realtime
 
     init() {
-        selectedLine = lines.keys.sorted().first
+        selectedLine = lines.keys.sorted().first!
     }
 
     var body: some View {
@@ -23,8 +23,8 @@ struct MtaSettingsView: View {
                 .pickerStyle(.menu)
                 .onChange(of: selectedLine ?? "") { newValue in
                     selectedStop = nil
-                    if newValue.isNotEmpty, let feedUrl = lines[newValue] {
-                        viewModel.getStops(feedUrl: feedUrl)
+                    if newValue.isNotEmpty {
+                        viewModel.getStops(feedUrl: lines[newValue]!)
                     } else {
                         viewModel.reset()
                     }
@@ -49,12 +49,8 @@ struct MtaSettingsView: View {
             HStack {
                 Spacer()
                 Button("Save") {
-                    if let selectedLine = selectedLine,
-                       let lineUrl = lines[selectedLine],
-                       let selectedStop = selectedStop {
-                        viewModel.save(lineUrl: lineUrl, stopId: selectedStop.id)
-                        NSApp.keyWindow?.close()
-                    }
+                    viewModel.save(lineUrl: lines[selectedLine!]!, stopId: selectedStop!.id)
+                    NSApp.keyWindow?.close()
                 }
                 .disabled(selectedLine == nil || selectedStop == nil)
                 .buttonStyle(.borderedProminent)
