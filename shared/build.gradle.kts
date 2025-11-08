@@ -23,7 +23,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.bundles.ktor.common)
-            implementation(libs.kotlin.datetime)
             implementation(libs.kotlin.coroutines)
             implementation(libs.wire.runtime)
             implementation(libs.okio)

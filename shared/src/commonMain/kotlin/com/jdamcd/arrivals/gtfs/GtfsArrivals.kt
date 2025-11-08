@@ -9,9 +9,10 @@ import com.jdamcd.arrivals.ArrivalsInfo
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.formatTime
-import kotlinx.datetime.Clock
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Clock
 
+@OptIn(kotlin.time.ExperimentalTime::class)
 internal class GtfsArrivals(
     private val api: GtfsApi,
     private val clock: Clock,

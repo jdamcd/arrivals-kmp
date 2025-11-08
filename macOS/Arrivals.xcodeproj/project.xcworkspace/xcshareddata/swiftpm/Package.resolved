@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/orchetect/SettingsAccess",
       "state" : {
-        "revision" : "f0b57b4c4c0de66b9f4d6c41d39f1d6ede0c9891",
-        "version" : "2.0.0"
+        "revision" : "08e80c35501f273afa2f5d6f737429bbe395ff81",
+        "version" : "2.1.0"
       }
     }
   ],

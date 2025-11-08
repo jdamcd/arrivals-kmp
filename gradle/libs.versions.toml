@@ -1,21 +1,20 @@
 [versions]
-kotlin = "2.0.21"
-buildKonfig = "0.15.2"
-spotless = "6.25.0"
-ktlint = "1.4.1"
-ktor = "3.0.1"
-coroutines = "1.9.0"
-dateTime = "0.6.1"
-wire = "5.1.0"
-okio = "3.9.1"
-koin = "4.0.0"
-mockk = "1.13.14"
-kotest = "5.9.1"
-logging = "2.0.16"
-clikt = "5.0.2"
-composeMP = "1.7.3"
-viewModel = "2.8.2"
-snakeYaml = "2.3"
+kotlin = "2.2.21"
+buildKonfig = "0.17.1"
+spotless = "8.0.0"
+ktlint = "1.7.1"
+ktor = "3.3.1"
+coroutines = "1.10.2"
+wire = "5.3.5"
+okio = "3.16.2"
+koin = "4.1.0"
+mockk = "1.14.6"
+kotest = "6.0.4"
+logging = "2.0.17"
+clikt = "5.0.3"
+composeMP = "1.9.2"
+viewModel = "2.9.6"
+snakeYaml = "2.5"
 
 [libraries]
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
@@ -25,7 +24,6 @@ ktor-client-macos = { group = "io.ktor", name = "ktor-client-darwin", version.re
 ktor-client-jvm = { group = "io.ktor", name = "ktor-client-java", version.ref = "ktor" }
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlin-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "dateTime" }
 wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 koin = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }

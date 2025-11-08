@@ -11,7 +11,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -19,6 +18,7 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.roundToInt
+import kotlin.time.Clock
 
 @Suppress("Unused")
 fun initKoin() = startKoin {
@@ -33,6 +33,7 @@ class MacDI : KoinComponent {
     val gtfsSearch: GtfsSearch by inject()
 }
 
+@OptIn(kotlin.time.ExperimentalTime::class)
 fun commonModule() = module {
     single<Clock> { Clock.System }
     single { Settings() }
