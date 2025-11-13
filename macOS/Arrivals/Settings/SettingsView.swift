@@ -13,7 +13,8 @@ struct SettingsView: View {
         Form {
             Section {
                 Picker("Transit system",
-                       selection: $selector) {
+                       selection: $selector)
+                {
                     ForEach(transitSystem, id: \.self) {
                         Text($0)
                     }
