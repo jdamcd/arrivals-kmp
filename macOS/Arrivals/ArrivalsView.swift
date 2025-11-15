@@ -12,6 +12,19 @@ struct ArrivalsView: View {
     let onOpenSettings: () -> Void
     let onQuit: () -> Void
 
+    // Extra padding needed for macOS 26 rounded popover style
+    private var isMacOS26: Bool {
+        if #available(macOS 26.0, *) { true } else { false }
+    }
+
+    private var framePadding: CGFloat {
+        isMacOS26 ? 12 : 8
+    }
+
+    private var frameHeight: CGFloat {
+        isMacOS26 ? 118 : 110
+    }
+
     var body: some View {
         let refresh = RefreshBehaviour(isLoading: viewModel.loading) {
             viewModel.load()
@@ -46,9 +59,9 @@ struct ArrivalsView: View {
                 })
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.top, 8)
-        .frame(width: 350, height: 110)
+        .padding(.horizontal, framePadding)
+        .padding(.top, framePadding)
+        .frame(width: 350, height: frameHeight)
         .onReceive(popoverState.$isShown) { isShown in
             if isShown {
                 viewModel.load()
