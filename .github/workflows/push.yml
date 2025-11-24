@@ -72,3 +72,10 @@ jobs:
         xcodebuild -project macOS/Arrivals.xcodeproj \
           -scheme Arrivals \
           -configuration Debug build
+
+    - name: Test
+      run: |
+        xcodebuild test \
+          -project macOS/Arrivals.xcodeproj \
+          -scheme Arrivals \
+          -destination 'platform=macOS'

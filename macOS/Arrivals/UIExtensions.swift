@@ -39,7 +39,7 @@ struct DebouncingTextField: View {
             .onAppear {
                 viewModel.text = value
             }
-            .onChange(of: viewModel.text) { newValue in
+            .onChange(of: viewModel.text) { oldValue, newValue in
                 value = newValue
             }
     }

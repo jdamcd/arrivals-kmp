@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,6 +15,8 @@
 		494945A829F7ABCD00D463D7 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494945A729F7ABCD00D463D7 /* SettingsView.swift */; };
 		498B00EB298474E7001E83C4 /* ArrivalsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498B00EA298474E7001E83C4 /* ArrivalsViewModel.swift */; };
 		499D198E2B22721D0023FFD2 /* LUR.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49386287298348A100C61AE3 /* LUR.ttf */; };
+		49BB4D7E2ED3E5D700DE9C02 /* DebouncingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */; };
+		49BB4D802ED3E5D700DE9C02 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */; };
 		49D28FF72B1B76600015C9D7 /* SettingsAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 49D28FF62B1B76600015C9D7 /* SettingsAccess */; };
 		49DFCAFC2D07881000CDBE29 /* TflSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */; };
 		49DFCB032D07A2C700CDBE29 /* GtfsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCB022D07A2BF00CDBE29 /* GtfsSettingsView.swift */; };
@@ -48,18 +50,16 @@
 		49386262297F4BE900C61AE3 /* Arrivals.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Arrivals.entitlements; sourceTree = "<group>"; };
 		49386267297F4BE900C61AE3 /* ArrivalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArrivalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		49386271297F4BE900C61AE3 /* ArrivalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArrivalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		493862862983404100C61AE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		493862862983404100C61AE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49386287298348A100C61AE3 /* LUR.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = LUR.ttf; sourceTree = "<group>"; };
 		494945A729F7ABCD00D463D7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		498B00EA298474E7001E83C4 /* ArrivalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsViewModel.swift; sourceTree = "<group>"; };
+		49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebouncingTests.swift; sourceTree = "<group>"; };
+		49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
 		49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TflSettingsView.swift; sourceTree = "<group>"; };
 		49DFCB022D07A2BF00CDBE29 /* GtfsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GtfsSettingsView.swift; sourceTree = "<group>"; };
 		49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MtaSettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		49244A612CD6841800108295 /* ArrivalsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ArrivalsTests; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		49386253297F4BE700C61AE3 /* Frameworks */ = {
@@ -90,8 +90,8 @@
 		4938624D297F4BE700C61AE3 = {
 			isa = PBXGroup;
 			children = (
-				49244A612CD6841800108295 /* ArrivalsTests */,
 				49386258297F4BE700C61AE3 /* Arrivals */,
+				49BB4D7D2ED3E5D700DE9C02 /* ArrivalsTests */,
 				49386257297F4BE700C61AE3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,6 +129,15 @@
 				49386260297F4BE900C61AE3 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		49BB4D7D2ED3E5D700DE9C02 /* ArrivalsTests */ = {
+			isa = PBXGroup;
+			children = (
+				49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */,
+				49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */,
+			);
+			path = ArrivalsTests;
 			sourceTree = "<group>";
 		};
 		49DFCAFA2D0786BC00CDBE29 /* Settings */ = {
@@ -316,6 +325,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49BB4D7E2ED3E5D700DE9C02 /* DebouncingTests.swift in Sources */,
+				49BB4D802ED3E5D700DE9C02 /* StringExtensionsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,7 +565,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jdamcd.ArrivalsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -572,7 +583,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jdamcd.ArrivalsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
