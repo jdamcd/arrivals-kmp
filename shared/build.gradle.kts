@@ -72,5 +72,10 @@ configure<BuildKonfigExtension> {
             "TFL_APP_KEY",
             props["tfl_app_key"]?.toString() ?: ""
         )
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "DARWIN_ACCESS_TOKEN",
+            props["darwin_access_token"]?.toString() ?: ""
+        )
     }
 }

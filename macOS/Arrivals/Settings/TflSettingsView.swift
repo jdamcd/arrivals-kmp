@@ -33,12 +33,10 @@ struct TflSettingsView: View {
                     List(results, id: \.self, selection: $selectedResult) { result in
                         Text(result.name)
                     }
-                    .onChange(of: selectedResult) { result in
-                        if let result {
-                            if result.isHub {
-                                viewModel.disambiguate(stop: result)
-                                selectedResult = nil
-                            }
+                    .onChange(of: selectedResult) { _, newValue in
+                        if let result = newValue, result.isHub {
+                            viewModel.disambiguate(stop: result)
+                            selectedResult = nil
                         }
                     }
                     .listStyle(PlainListStyle())

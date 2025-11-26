@@ -52,4 +52,16 @@ actual class Settings actual constructor() {
         set(value) {
             defaults.setObject(value, SettingsConfig.GTFS_STOP)
         }
+
+    actual var darwinCrsCode: String
+        get() = defaults.stringForKey(SettingsConfig.DARWIN_CRS) ?: SettingsConfig.DARWIN_CRS_DEFAULT
+        set(value) {
+            defaults.setObject(value, SettingsConfig.DARWIN_CRS)
+        }
+
+    actual var darwinPlatform: String
+        get() = defaults.stringForKey(SettingsConfig.DARWIN_PLATFORM) ?: SettingsConfig.DARWIN_PLATFORM_DEFAULT
+        set(value) {
+            defaults.setObject(value, SettingsConfig.DARWIN_PLATFORM)
+        }
 }

@@ -71,6 +71,8 @@ fun loadConfig(settings: Settings) {
                 data[SettingsConfig.TFL_STOP]?.let { settings.tflStopId = it }
                 data[SettingsConfig.TFL_PLATFORM]?.let { settings.tflPlatform = it }
                 data[SettingsConfig.TFL_DIRECTION]?.let { settings.tflDirection = it }
+                data[SettingsConfig.DARWIN_CRS]?.let { settings.darwinCrsCode = it }
+                data[SettingsConfig.DARWIN_PLATFORM]?.let { settings.darwinPlatform = it }
             }
         } catch (e: Exception) {
             println("Error reading config file: ${e.message}")

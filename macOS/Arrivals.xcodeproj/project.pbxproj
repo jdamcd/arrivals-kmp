@@ -17,6 +17,7 @@
 		499D198E2B22721D0023FFD2 /* LUR.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49386287298348A100C61AE3 /* LUR.ttf */; };
 		49BB4D7E2ED3E5D700DE9C02 /* DebouncingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */; };
 		49BB4D802ED3E5D700DE9C02 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */; };
+		49BB4D822ED6970900DE9C02 /* DarwinSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */; };
 		49D28FF72B1B76600015C9D7 /* SettingsAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 49D28FF62B1B76600015C9D7 /* SettingsAccess */; };
 		49DFCAFC2D07881000CDBE29 /* TflSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */; };
 		49DFCB032D07A2C700CDBE29 /* GtfsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCB022D07A2BF00CDBE29 /* GtfsSettingsView.swift */; };
@@ -48,6 +49,7 @@
 		498B00EA298474E7001E83C4 /* ArrivalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsViewModel.swift; sourceTree = "<group>"; };
 		49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebouncingTests.swift; sourceTree = "<group>"; };
 		49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
+		49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinSettingsView.swift; sourceTree = "<group>"; };
 		49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TflSettingsView.swift; sourceTree = "<group>"; };
 		49DFCB022D07A2BF00CDBE29 /* GtfsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GtfsSettingsView.swift; sourceTree = "<group>"; };
 		49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MtaSettingsView.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 			children = (
 				494945A729F7ABCD00D463D7 /* SettingsView.swift */,
 				49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */,
+				49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */,
 				49DFCB022D07A2BF00CDBE29 /* GtfsSettingsView.swift */,
 				49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */,
 			);
@@ -272,6 +275,7 @@
 				494945A829F7ABCD00D463D7 /* SettingsView.swift in Sources */,
 				490DFB872D0124D300DED8B2 /* UIExtensions.swift in Sources */,
 				4938625A297F4BE700C61AE3 /* ArrivalsApp.swift in Sources */,
+				49BB4D822ED6970900DE9C02 /* DarwinSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

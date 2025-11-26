@@ -2,7 +2,6 @@
 import XCTest
 
 final class StringExtensionsTests: XCTestCase {
-
     func testTrimRemovesWhitespace() {
         XCTAssertEqual("  test  ".trim(), "test")
         XCTAssertEqual("\ntest\n".trim(), "test")

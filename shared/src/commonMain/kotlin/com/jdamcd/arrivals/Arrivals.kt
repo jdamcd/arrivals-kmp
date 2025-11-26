@@ -1,5 +1,7 @@
 package com.jdamcd.arrivals
 
+import com.jdamcd.arrivals.darwin.DarwinApi
+import com.jdamcd.arrivals.darwin.DarwinArrivals
 import com.jdamcd.arrivals.gtfs.GtfsApi
 import com.jdamcd.arrivals.gtfs.GtfsArrivals
 import com.jdamcd.arrivals.gtfs.MtaSearch
@@ -31,6 +33,7 @@ class MacDI : KoinComponent {
     val settings: Settings by inject()
     val tflSearch: TflSearch by inject()
     val gtfsSearch: GtfsSearch by inject()
+    val darwinSearch: DarwinSearch by inject()
 }
 
 @OptIn(kotlin.time.ExperimentalTime::class)
@@ -39,11 +42,14 @@ fun commonModule() = module {
     single { Settings() }
     single { TflApi(get()) }
     single { GtfsApi(get()) }
+    single { DarwinApi(get()) }
     single { TflArrivals(get(), get()) }
     single { GtfsArrivals(get(), get(), get()) }
-    single<Arrivals> { ArrivalsSwitcher(get(), get(), get()) }
+    single { DarwinArrivals(get(), get(), get()) }
+    single<Arrivals> { ArrivalsSwitcher(get(), get(), get(), get()) }
     single<TflSearch> { get<TflArrivals>() }
     single<GtfsSearch> { MtaSearch(get()) }
+    single<DarwinSearch> { get<DarwinArrivals>() }
     single {
         HttpClient {
             install(HttpTimeout) {
@@ -67,13 +73,14 @@ fun commonModule() = module {
 internal class ArrivalsSwitcher(
     private val tfl: TflArrivals,
     private val gtfs: GtfsArrivals,
+    private val darwin: DarwinArrivals,
     private val settings: Settings
 ) : Arrivals {
 
-    override suspend fun latest(): ArrivalsInfo = if (settings.mode == SettingsConfig.MODE_TFL) {
-        tfl.latest()
-    } else {
-        gtfs.latest()
+    override suspend fun latest(): ArrivalsInfo = when (settings.mode) {
+        SettingsConfig.MODE_TFL -> tfl.latest()
+        SettingsConfig.MODE_DARWIN -> darwin.latest()
+        else -> gtfs.latest()
     }
 }
 
@@ -93,6 +100,11 @@ interface TflSearch {
 interface GtfsSearch {
     @Throws(CancellationException::class)
     suspend fun getStops(feedUrl: String): List<StopResult>
+}
+
+interface DarwinSearch {
+    @Throws(CancellationException::class)
+    suspend fun searchStops(query: String): List<StopResult>
 }
 
 data class ArrivalsInfo(

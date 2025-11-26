@@ -15,15 +15,20 @@ Supported data sources:
 - TfL API for London transit
 - MTA GTFS feeds for NYC Subway
 - Custom GTFS feeds for other transit systems
+- Darwin API (Huxley2) for UK National Rail live departure boards
 
 ## Build & Development Commands
 
 ### Prerequisites
 
-A TfL API key is required in `shared/secret.properties`:
+API keys are required in `shared/secret.properties`:
 ```
 tfl_app_key=YOURKEY
+darwin_access_token=YOURTOKEN
 ```
+
+- TfL API key: Get from https://api.tfl.gov.uk
+- Darwin access token: Register at https://raildata.org.uk and subscribe to Darwin data feeds (free tier)
 
 ### Run Targets
 
@@ -40,6 +45,8 @@ tfl_app_key=YOURKEY
 ```bash
 ./gradlew :cli:run --args="--help"
 ./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 'Platform 2'"
+./gradlew :cli:run --args="darwin --station CLJ --platform 5"
+./gradlew :cli:run --args="gtfs --station A42N"
 ```
 
 ### Testing & Quality
@@ -92,12 +99,13 @@ The shared module uses Koin for DI. The main module is defined in `shared/src/co
 
 - `initKoin()` - Initialize Koin (called from platform code)
 - `MacDI` - Helper class for Swift to access dependencies
-- `ArrivalsSwitcher` - Routes to TfL or GTFS based on `Settings.mode`
+- `ArrivalsSwitcher` - Routes to TfL, GTFS, or Darwin based on `Settings.mode`
 
 Core interfaces:
 - `Arrivals` - Main entry point for fetching arrival data
 - `TflSearch` - Search TfL stops
 - `GtfsSearch` - Search GTFS stops
+- `DarwinSearch` - Search UK National Rail stations
 
 ### Data Sources
 
@@ -111,6 +119,11 @@ Core interfaces:
 - `GtfsStops.kt` - GTFS schedule parsing for stop information
 - `MtaSearch.kt` - MTA-specific stop search
 - Protocol Buffer schemas in `shared/src/commonMain/proto/`
+
+**Darwin**: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/darwin/`
+- `DarwinApi.kt` - HTTP client for Huxley2 JSON proxy (converts Darwin SOAP to REST/JSON)
+- `DarwinArrivals.kt` - Business logic for UK National Rail departures + station search
+- Uses CRS codes (3-character station identifiers) like "CLJ" for Clapham Junction
 
 ### Settings
 
@@ -136,14 +149,14 @@ The macOS app uses SwiftUI for settings UI. The desktop app uses YAML configurat
 
 **CLI** (`cli/src/main/kotlin/`):
 - Clikt library for command-line parsing
-- Subcommands for TfL and GTFS
+- Subcommands for TfL, GTFS, and Darwin
 
 ### Secret Management
 
-The TfL API key is managed via BuildKonfig:
-- Key stored in `shared/secret.properties` (gitignored)
-- Generated as `BuildConfig.TFL_APP_KEY` constant
-- Config in `shared/build.gradle.kts` lines 60-76
+API keys are managed via BuildKonfig:
+- Keys stored in `shared/secret.properties` (gitignored)
+- Generated as `BuildConfig.TFL_APP_KEY` and `BuildConfig.DARWIN_ACCESS_TOKEN` constants
+- Config in `shared/build.gradle.kts` lines 60-80
 
 ## Key Implementation Details
 
