@@ -129,5 +129,4 @@ internal class DarwinArrivals(
     }
 
     private fun isValidDeparture(etd: String): Boolean = etd.contains(":") || etd == "On time"
-
 }
