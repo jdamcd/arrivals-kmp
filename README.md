@@ -6,6 +6,7 @@ Arrivals is a Kotlin Multiplatform project for live transit times. It currently 
 
 Supported data sources include:
 - TfL API for London Underground, Overground, DLR, etc.
+- Darwin API for UK National Rail
 - MTA GTFS feeds for NYC Subway
 - Custom GTFS feeds for other transit systems (many can be found [here](https://mobilitydatabase.org))
 
@@ -17,8 +18,14 @@ The macOS toolbar app can be downloaded from [releases](https://github.com/jdamc
 
 ### Prerequisites
 
-1. Get a [Transport for London API](https://api-portal.tfl.gov.uk) app key (required for TfL data sources)
-2. Create `shared/secret.properties` and add your key: `tfl_app_key=YOURKEY`
+1. Register to get API keys for the upstream data sources:
+   - **TfL**: [Transport for London API](https://api-portal.tfl.gov.uk) app key
+   - **UK National Rail**: [OpenLDBWS](https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Registration) access token
+2. Create `shared/secret.properties` and add your keys:
+   ```
+   tfl_app_key=YOURKEY
+   darwin_access_token=YOURTOKEN
+   ```
 3. Make sure you have a JDK configured at `$JAVA_HOME`
 
 ### Targets
@@ -67,13 +74,17 @@ Cross-platform desktop UI, built with Compose Multiplatform. Includes a fullscre
 Create a `.arrivals.yml` in the user home directory to configure:
 
 ```yaml
-# Mode: "tfl" or "gtfs"
+# Mode: "tfl", "darwin", or "gtfs"
 mode: tfl
 
 # TfL fields
 tfl_stop: 910GSHRDHST       # Station ID
 tfl_platform: Platform 2    # Optional platform filter
 tfl_direction: all          # "inbound", "outbound", or "all"
+
+MPR# Darwin (UK National Rail) fields
+darwin_crs: PMR             # Station CRS code
+darwin_platform: "2"        # Optional platform filter
 
 # GTFS fields
 gtfs_stop: G28S             # Station ID
@@ -93,17 +104,24 @@ Command-line interface (uses the JVM package). Run `./gradlew :cli:run --args="-
 ./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 'Platform 2'"
 ```
 
+#### Darwin (UK National Rail) example
+
+```bash
+./gradlew :cli:run --args="darwin --station PMR --platform 2"
+```
+
 #### GTFS example
 
 ```bash
-./gradlew :cli:run --args="gtfs --stop G28S \
+./gradlew :cli:run --args="gtfs --station G28S \
   --realtime https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g \
   --schedule https://transitfeeds.com/p/mta/79/latest/download"
 ```
 
 ## Attribution
 
-* Uses this [London Underground Typeface](https://github.com/petykowski/London-Underground-Dot-Matrix-Typeface) for dot matrix text
-* Powered by TfL Open Data
+* Powered by [TfL Open Data](https://api.tfl.gov.uk)
   * OS data © Crown copyright and database rights 2016
   * Geomni UK Map data © and database rights 2019
+* Powered by [Rail Data Marketplace](https://raildata.org.uk) via [Huxley2](https://github.com/jpsingleton/Huxley2)
+* Uses this [London Underground Typeface](https://github.com/petykowski/London-Underground-Dot-Matrix-Typeface) for dot matrix text

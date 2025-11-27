@@ -39,7 +39,7 @@ struct DarwinSettingsView: View {
                 }
             }
 
-            TextField("Platform filter (optional)", text: $platformFilter)
+            TextField("Platform filter", text: $platformFilter)
                 .autocorrectionDisabled()
                 .onAppear {
                     platformFilter = viewModel.initialPlatform()

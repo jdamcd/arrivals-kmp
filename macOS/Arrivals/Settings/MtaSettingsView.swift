@@ -21,7 +21,7 @@ struct MtaSettingsView: View {
                     Text(line).tag(String?.some(line))
                 }
                 .pickerStyle(.menu)
-                .onChange(of: selectedLine ?? "") { newValue in
+                .onChange(of: selectedLine ?? "") { _, newValue in
                     selectedStop = nil
                     if newValue.isNotEmpty {
                         viewModel.getStops(feedUrl: lines[newValue]!)
