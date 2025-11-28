@@ -82,7 +82,7 @@ tfl_stop: 910GSHRDHST       # Station ID
 tfl_platform: Platform 2    # Optional platform filter
 tfl_direction: all          # "inbound", "outbound", or "all"
 
-MPR# Darwin (UK National Rail) fields
+# Darwin (UK National Rail) fields
 darwin_crs: PMR             # Station CRS code
 darwin_platform: "2"        # Optional platform filter
 

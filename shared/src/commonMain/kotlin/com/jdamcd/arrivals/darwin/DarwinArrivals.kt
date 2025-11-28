@@ -8,12 +8,13 @@ import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.formatTime
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Clock
 
 @OptIn(kotlin.time.ExperimentalTime::class)
 internal class DarwinArrivals(
     private val api: DarwinApi,
     private val settings: Settings,
-    private val clock: kotlin.time.Clock
+    private val clock: Clock
 ) : DarwinSearch {
 
     @Throws(NoDataException::class, CancellationException::class)
