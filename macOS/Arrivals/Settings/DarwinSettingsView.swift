@@ -2,12 +2,18 @@
 import SwiftUI
 
 struct DarwinSettingsView: View {
+    @EnvironmentObject var coordinator: SettingsCoordinator
+
     @StateObject private var viewModel = DarwinSettingsViewModel()
 
     @State private var searchQuery: String = ""
     @State private var selectedResult: StopResult?
 
     @State private var platformFilter: String = ""
+
+    private var isValid: Bool {
+        selectedResult != nil
+    }
 
     var body: some View {
         Section {
@@ -39,26 +45,25 @@ struct DarwinSettingsView: View {
                 }
             }
 
-            TextField("Platform filter", text: $platformFilter)
+            TextField("Platform", text: $platformFilter)
                 .autocorrectionDisabled()
                 .onAppear {
                     platformFilter = viewModel.initialPlatform()
                 }
-
-            HStack {
-                Spacer()
-                Button("Save") {
-                    if let selectedResult {
-                        viewModel.save(
-                            station: selectedResult,
-                            platformFilter: platformFilter.trim()
-                        )
-                        NSApp.keyWindow?.close()
-                    }
+        }
+        .onAppear {
+            coordinator.onSave = {
+                if let selectedResult {
+                    viewModel.save(
+                        station: selectedResult,
+                        platformFilter: platformFilter.trim()
+                    )
                 }
-                .disabled(selectedResult == nil)
-                .buttonStyle(.borderedProminent)
             }
+            coordinator.canSave = isValid
+        }
+        .onChange(of: selectedResult) { _, _ in
+            coordinator.canSave = isValid
         }
     }
 }

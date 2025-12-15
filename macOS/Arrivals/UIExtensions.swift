@@ -9,7 +9,7 @@ struct ResultsArea<Content: View>: View {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(minHeight: 75, alignment: .center)
+        .frame(minHeight: 70, alignment: .center)
     }
 }
 

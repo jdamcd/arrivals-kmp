@@ -2,6 +2,8 @@
 import SwiftUI
 
 struct TflSettingsView: View {
+    @EnvironmentObject var coordinator: SettingsCoordinator
+
     @StateObject private var viewModel = TflSettingsViewModel()
 
     @State private var searchQuery: String = ""
@@ -11,6 +13,10 @@ struct TflSettingsView: View {
 
     private let directions = ["all", "inbound", "outbound"]
     @State private var directionFilter: String = "all"
+
+    private var isValid: Bool {
+        selectedResult != nil
+    }
 
     var body: some View {
         Section {
@@ -67,21 +73,21 @@ struct TflSettingsView: View {
                 .onAppear {
                     directionFilter = viewModel.initialDirection()
                 }
-
-            HStack {
-                Spacer()
-                Button("Save") {
-                    if let selectedResult {
-                        viewModel.save(
-                            stopPoint: selectedResult,
-                            platformFilter: platformFilter.trim(),
-                            directionFilter: directionFilter
-                        )
-                        NSApp.keyWindow?.close()
-                    }
-                }.disabled(selectedResult == nil)
-                    .buttonStyle(.borderedProminent)
+        }
+        .onAppear {
+            coordinator.onSave = {
+                if let selectedResult {
+                    viewModel.save(
+                        stopPoint: selectedResult,
+                        platformFilter: platformFilter.trim(),
+                        directionFilter: directionFilter
+                    )
+                }
             }
+            coordinator.canSave = isValid
+        }
+        .onChange(of: selectedResult) { _, _ in
+            coordinator.canSave = isValid
         }
     }
 }

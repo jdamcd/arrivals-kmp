@@ -2,12 +2,18 @@
 import SwiftUI
 
 struct MtaSettingsView: View {
+    @EnvironmentObject var coordinator: SettingsCoordinator
+
     @StateObject private var viewModel = MtaSettingsViewModel()
 
     @State private var selectedLine: String?
     @State private var selectedStop: StopResult?
 
     private var lines = Mta().realtime
+
+    private var isValid: Bool {
+        selectedLine != nil && selectedStop != nil
+    }
 
     init() {
         selectedLine = lines.keys.sorted().first!
@@ -46,15 +52,20 @@ struct MtaSettingsView: View {
                         .scaleEffect(0.5)
                 }
             }
-            HStack {
-                Spacer()
-                Button("Save") {
-                    viewModel.save(lineUrl: lines[selectedLine!]!, stopId: selectedStop!.id)
-                    NSApp.keyWindow?.close()
+        }
+        .onAppear {
+            coordinator.onSave = {
+                if let selectedLine, let selectedStop {
+                    viewModel.save(lineUrl: lines[selectedLine]!, stopId: selectedStop.id)
                 }
-                .disabled(selectedLine == nil || selectedStop == nil)
-                .buttonStyle(.borderedProminent)
             }
+            coordinator.canSave = isValid
+        }
+        .onChange(of: selectedLine) { _, _ in
+            coordinator.canSave = isValid
+        }
+        .onChange(of: selectedStop) { _, _ in
+            coordinator.canSave = isValid
         }
     }
 }
