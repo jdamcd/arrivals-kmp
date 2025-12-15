@@ -28,7 +28,7 @@ class TflArrivalsTest {
     @BeforeTest
     fun setup() {
         settings.tflStopId = "123"
-        settings.tflPlatform = "Platform 2"
+        settings.tflPlatform = "2"
         settings.tflDirection = "all"
     }
 
@@ -54,7 +54,7 @@ class TflArrivalsTest {
         coEvery { api.fetchArrivals("123") } returns response
 
         settings.tflDirection = "all"
-        settings.tflPlatform = "Platform 2"
+        settings.tflPlatform = "2"
         arrivals.latest().station shouldBe "Test Stop: Platform 2"
 
         settings.tflDirection = "inbound"
@@ -83,5 +83,56 @@ class TflArrivalsTest {
         assertFailsWith<NoDataException> {
             arrivals.latest()
         }
+    }
+
+    @Test
+    fun `platform filter matches exact number`() = runBlocking<Unit> {
+        val response = listOf(
+            ApiArrival(1, "Test Stop", "Platform 2", "all", "Dest A", 100),
+            ApiArrival(2, "Test Stop", "Platform 12", "all", "Dest B", 200),
+            ApiArrival(3, "Test Stop", "Platform 21", "all", "Dest C", 300)
+        )
+        coEvery { api.fetchArrivals("123") } returns response
+
+        settings.tflPlatform = "21"
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldBe "Dest C"
+    }
+
+    @Test
+    fun `platform filter does not match when filter is prefix of platform number`() = runBlocking<Unit> {
+        val response = listOf(
+            ApiArrival(1, "Test Stop", "Platform 1", "all", "Dest A", 100),
+            ApiArrival(2, "Test Stop", "Platform 10", "all", "Dest B", 200),
+            ApiArrival(3, "Test Stop", "Platform 11", "all", "Dest C", 300)
+        )
+        coEvery { api.fetchArrivals("123") } returns response
+
+        settings.tflPlatform = "1"
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldBe "Dest A"
+    }
+
+    @Test
+    fun `platform filter matches number with letter suffix`() = runBlocking<Unit> {
+        val response = listOf(
+            ApiArrival(1, "Test Stop", "Platform 2", "all", "Dest A", 100),
+            ApiArrival(2, "Test Stop", "Platform 2A", "all", "Dest B", 200),
+            ApiArrival(3, "Test Stop", "Platform 2B", "all", "Dest C", 300),
+            ApiArrival(4, "Test Stop", "Platform 12", "all", "Dest D", 400)
+        )
+        coEvery { api.fetchArrivals("123") } returns response
+
+        settings.tflPlatform = "2"
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 3
+        latest.arrivals[0].destination shouldBe "Dest A"
+        latest.arrivals[1].destination shouldBe "Dest B"
+        latest.arrivals[2].destination shouldBe "Dest C"
     }
 }

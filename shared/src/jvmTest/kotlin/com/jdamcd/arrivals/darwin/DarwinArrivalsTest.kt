@@ -183,4 +183,61 @@ class DarwinArrivalsTest {
 
         latest.arrivals shouldHaveSize 3
     }
+
+    @Test
+    fun `platform filter matches exact number`() = runBlocking<Unit> {
+        val board = mockBoard.copy(
+            trainServices = listOf(
+                ApiTrainService(serviceIdUrlSafe = "s1", std = "10:15", etd = "10:15", platform = "2", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest A", "DA"))),
+                ApiTrainService(serviceIdUrlSafe = "s2", std = "10:20", etd = "10:20", platform = "12", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest B", "DB"))),
+                ApiTrainService(serviceIdUrlSafe = "s3", std = "10:25", etd = "10:25", platform = "21", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest C", "DC")))
+            )
+        )
+        coEvery { api.fetchDepartures("CLJ", any()) } returns board
+
+        settings.darwinPlatform = "21"
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldBe "Dest C"
+    }
+
+    @Test
+    fun `platform filter does not match when filter is prefix of platform number`() = runBlocking<Unit> {
+        val board = mockBoard.copy(
+            trainServices = listOf(
+                ApiTrainService(serviceIdUrlSafe = "s1", std = "10:15", etd = "10:15", platform = "1", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest A", "DA"))),
+                ApiTrainService(serviceIdUrlSafe = "s2", std = "10:20", etd = "10:20", platform = "10", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest B", "DB"))),
+                ApiTrainService(serviceIdUrlSafe = "s3", std = "10:25", etd = "10:25", platform = "11", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest C", "DC")))
+            )
+        )
+        coEvery { api.fetchDepartures("CLJ", any()) } returns board
+
+        settings.darwinPlatform = "1"
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldBe "Dest A"
+    }
+
+    @Test
+    fun `platform filter matches number with letter suffix`() = runBlocking<Unit> {
+        val board = mockBoard.copy(
+            trainServices = listOf(
+                ApiTrainService(serviceIdUrlSafe = "s1", std = "10:15", etd = "10:15", platform = "2", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest A", "DA"))),
+                ApiTrainService(serviceIdUrlSafe = "s2", std = "10:20", etd = "10:20", platform = "2A", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest B", "DB"))),
+                ApiTrainService(serviceIdUrlSafe = "s3", std = "10:25", etd = "10:25", platform = "2B", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest C", "DC"))),
+                ApiTrainService(serviceIdUrlSafe = "s4", std = "10:30", etd = "10:30", platform = "12", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Dest D", "DD")))
+            )
+        )
+        coEvery { api.fetchDepartures("CLJ", any()) } returns board
+
+        settings.darwinPlatform = "2"
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 3
+        latest.arrivals[0].destination shouldBe "Dest A"
+        latest.arrivals[1].destination shouldBe "Dest B"
+        latest.arrivals[2].destination shouldBe "Dest C"
+    }
 }

@@ -24,7 +24,7 @@ object SettingsConfig {
     const val TFL_STOP = "tfl_stop"
     const val TFL_STOP_DEFAULT = "910GSHRDHST"
     const val TFL_PLATFORM = "tfl_platform"
-    const val TFL_PLATFORM_DEFAULT = "Platform 2"
+    const val TFL_PLATFORM_DEFAULT = "2"
     const val TFL_DIRECTION = "tfl_direction"
     const val TFL_DIRECTION_DEFAULT = "all"
 

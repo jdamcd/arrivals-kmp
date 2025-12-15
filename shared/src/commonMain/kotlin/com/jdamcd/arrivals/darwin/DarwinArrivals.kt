@@ -7,6 +7,7 @@ import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.formatTime
+import com.jdamcd.arrivals.sanitizePlatform
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 
@@ -62,7 +63,7 @@ internal class DarwinArrivals(
     private fun formatStationName(board: ApiDarwinBoard): String {
         val baseName = board.locationName.removeSuffix(" Rail Station").trim()
         return if (settings.darwinPlatform.isNotEmpty()) {
-            "$baseName: Platform ${settings.darwinPlatform}"
+            "$baseName: Platform ${sanitizePlatform(settings.darwinPlatform)}"
         } else {
             baseName
         }
@@ -70,7 +71,20 @@ internal class DarwinArrivals(
 
     private fun matchesPlatformFilter(platform: String?): Boolean {
         if (settings.darwinPlatform.isEmpty()) return true
-        return platform?.contains(settings.darwinPlatform, ignoreCase = true) ?: false
+        if (platform == null) return false
+
+        val number = sanitizePlatform(settings.darwinPlatform)
+
+        if (!platform.startsWith(number, ignoreCase = true)) {
+            return false
+        }
+
+        if (platform.length == number.length) {
+            return true // Exact match
+        }
+
+        val nextChar = platform[number.length]
+        return !nextChar.isDigit() // Allow "2A" but not "21" when filter is "2"
     }
 
     private fun createArrival(service: ApiTrainService, referenceTime: Long): Arrival {

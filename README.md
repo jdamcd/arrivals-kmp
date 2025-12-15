@@ -79,12 +79,12 @@ mode: tfl
 
 # TfL fields
 tfl_stop: 910GSHRDHST       # Station ID
-tfl_platform: Platform 2    # Optional platform filter
+tfl_platform: 2             # Optional platform number
 tfl_direction: all          # "inbound", "outbound", or "all"
 
 # Darwin (UK National Rail) fields
 darwin_crs: PMR             # Station CRS code
-darwin_platform: "2"        # Optional platform filter
+darwin_platform: 2          # Optional platform number
 
 # GTFS fields
 gtfs_stop: G28S             # Station ID
@@ -101,7 +101,7 @@ Command-line interface (uses the JVM package). Run `./gradlew :cli:run --args="-
 #### TfL example
 
 ```bash
-./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 'Platform 2'"
+./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 2"
 ```
 
 #### Darwin (UK National Rail) example

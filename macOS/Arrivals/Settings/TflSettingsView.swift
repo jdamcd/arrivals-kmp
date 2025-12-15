@@ -69,6 +69,7 @@ struct TflSettingsView: View {
             }
 
             TextField("Platform", text: $platformFilter)
+                .help("Platform number (e.g. 1, 2A, 10)")
                 .autocorrectionDisabled()
                 .onAppear {
                     directionFilter = viewModel.initialDirection()

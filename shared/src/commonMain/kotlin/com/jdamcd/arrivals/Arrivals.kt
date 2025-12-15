@@ -140,3 +140,9 @@ fun formatTime(seconds: Int) = if (seconds < 60) {
 } else {
     "${(seconds / 60f).roundToInt()} min"
 }
+
+fun sanitizePlatform(input: String): String = if (input.startsWith("Platform ", ignoreCase = true)) {
+    input.substring(9).trim()
+} else {
+    input.trim()
+}
