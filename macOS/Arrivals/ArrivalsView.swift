@@ -12,18 +12,7 @@ struct ArrivalsView: View {
     let onOpenSettings: () -> Void
     let onQuit: () -> Void
 
-    // Extra padding needed for macOS 26 rounded popover style
-    private var isMacOS26: Bool {
-        if #available(macOS 26.0, *) { true } else { false }
-    }
-
-    private var framePadding: CGFloat {
-        isMacOS26 ? 12 : 8
-    }
-
-    private var frameHeight: CGFloat {
-        isMacOS26 ? 118 : 110
-    }
+    private let metrics = DisplayMetrics.current
 
     var body: some View {
         let refresh = RefreshBehaviour(isLoading: viewModel.loading) {
@@ -42,7 +31,7 @@ struct ArrivalsView: View {
                                   refresh: refresh,
                                   onOpenSettings: onOpenSettings,
                                   onQuit: onQuit)
-                })
+                }, metrics: metrics)
             case let .data(arrivalsInfo):
                 MainDisplay(content: {
                     VStack(spacing: 6) {
@@ -56,12 +45,12 @@ struct ArrivalsView: View {
                                   refresh: refresh,
                                   onOpenSettings: onOpenSettings,
                                   onQuit: onQuit)
-                })
+                }, metrics: metrics)
             }
         }
-        .padding(.horizontal, framePadding)
-        .padding(.top, framePadding)
-        .frame(width: 350, height: frameHeight)
+        .padding(.horizontal, metrics.framePadding)
+        .padding(.top, metrics.framePadding)
+        .frame(width: 350, height: metrics.frameHeight)
         .onReceive(popoverState.$isShown) { isShown in
             if isShown {
                 viewModel.load()
@@ -89,6 +78,7 @@ struct ArrivalsView: View {
 private struct MainDisplay<Content: View, Footer: View>: View {
     @ViewBuilder var content: Content
     @ViewBuilder var footer: Footer
+    var metrics: DisplayMetrics
 
     var body: some View {
         VStack(spacing: 0) {
@@ -96,7 +86,7 @@ private struct MainDisplay<Content: View, Footer: View>: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(8)
                 .background(Color.black)
-                .cornerRadius(4)
+                .cornerRadius(metrics.cornerRadius)
             footer
         }
     }
@@ -172,6 +162,20 @@ private struct DotMatrixText: View {
 private struct RefreshBehaviour {
     var isLoading: Bool
     var onRefresh: () -> Void
+}
+
+private struct DisplayMetrics {
+    let framePadding: CGFloat
+    let frameHeight: CGFloat
+    let cornerRadius: CGFloat
+
+    static var current: DisplayMetrics {
+        if #available(macOS 26.0, *) {
+            DisplayMetrics(framePadding: 12, frameHeight: 118, cornerRadius: 10)
+        } else {
+            DisplayMetrics(framePadding: 8, frameHeight: 110, cornerRadius: 4)
+        }
+    }
 }
 
 #Preview {
