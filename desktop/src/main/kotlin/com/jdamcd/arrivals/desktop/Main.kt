@@ -63,19 +63,21 @@ fun loadConfig(settings: Settings) {
     if (configFile.exists()) {
         try {
             FileInputStream(configFile).use { inputStream ->
-                val data: Map<String, String> = Yaml().load(inputStream)
-                data[SettingsConfig.MODE]?.let { settings.mode = it }
-                data[SettingsConfig.GTFS_REALTIME]?.let { settings.gtfsRealtime = it }
-                data[SettingsConfig.GTFS_SCHEDULE]?.let { settings.gtfsSchedule = it }
-                data[SettingsConfig.GTFS_STOP]?.let { settings.gtfsStop = it }
-                data[SettingsConfig.TFL_STOP]?.let { settings.tflStopId = it }
-                data[SettingsConfig.TFL_PLATFORM]?.let { settings.tflPlatform = it }
-                data[SettingsConfig.TFL_DIRECTION]?.let { settings.tflDirection = it }
-                data[SettingsConfig.DARWIN_CRS]?.let { settings.darwinCrsCode = it }
-                data[SettingsConfig.DARWIN_PLATFORM]?.let { settings.darwinPlatform = it }
+                val data: Map<String, Any> = Yaml().load(inputStream)
+                data.getString(SettingsConfig.MODE)?.let { settings.mode = it }
+                data.getString(SettingsConfig.GTFS_REALTIME)?.let { settings.gtfsRealtime = it }
+                data.getString(SettingsConfig.GTFS_SCHEDULE)?.let { settings.gtfsSchedule = it }
+                data.getString(SettingsConfig.GTFS_STOP)?.let { settings.gtfsStop = it }
+                data.getString(SettingsConfig.TFL_STOP)?.let { settings.tflStopId = it }
+                data.getString(SettingsConfig.TFL_PLATFORM)?.let { settings.tflPlatform = it }
+                data.getString(SettingsConfig.TFL_DIRECTION)?.let { settings.tflDirection = it }
+                data.getString(SettingsConfig.DARWIN_CRS)?.let { settings.darwinCrsCode = it }
+                data.getString(SettingsConfig.DARWIN_PLATFORM)?.let { settings.darwinPlatform = it }
             }
         } catch (e: Exception) {
             println("Error reading config file: ${e.message}")
         }
     }
 }
+
+private fun Map<String, Any>.getString(key: String): String? = get(key)?.toString()
