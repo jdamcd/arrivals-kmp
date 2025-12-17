@@ -21,12 +21,7 @@ internal class TflArrivals(
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
-        val model: ArrivalsInfo
-        try {
-            model = formatArrivals(api.fetchArrivals(settings.tflStopId))
-        } catch (e: Exception) {
-            throw NoDataException("No connection")
-        }
+        val model = formatArrivals(api.fetchArrivals(settings.tflStopId))
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No arrivals found")
         }

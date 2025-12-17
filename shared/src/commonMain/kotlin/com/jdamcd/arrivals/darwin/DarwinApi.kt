@@ -1,22 +1,53 @@
 package com.jdamcd.arrivals.darwin
 
 import com.jdamcd.arrivals.BuildKonfig
+import com.jdamcd.arrivals.NoDataException
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.isSuccess
 import kotlinx.serialization.Serializable
 
 internal class DarwinApi(private val client: HttpClient) {
 
-    suspend fun fetchDepartures(crsCode: String, numRows: Int = 20): ApiDarwinBoard = client.get("$BASE_URL/departures/$crsCode/$numRows") {
+    suspend fun fetchDepartures(crsCode: String, numRows: Int = 20): ApiDarwinBoard = request("$BASE_URL/departures/$crsCode/$numRows") {
         parameter("accessToken", BuildKonfig.DARWIN_ACCESS_TOKEN)
         parameter("expand", "false")
-    }.body()
+    }
 
-    suspend fun searchCrs(query: String): List<ApiStationSearch> = client.get("$BASE_URL/crs/$query") {
+    suspend fun searchCrs(query: String): List<ApiStationSearch> = request("$BASE_URL/crs/$query") {
         parameter("accessToken", BuildKonfig.DARWIN_ACCESS_TOKEN)
-    }.body()
+    }
+
+    private suspend inline fun <reified T> request(
+        url: String,
+        crossinline parameters: HttpRequestBuilder.() -> Unit
+    ): T {
+        val response = try {
+            client.get(url) { parameters() }
+        } catch (_: Exception) {
+            throw NoDataException("Can't connect to Darwin API")
+        }
+        checkResponse(response)
+        return response.body()
+    }
+
+    private fun checkResponse(response: HttpResponse) {
+        if (!response.status.isSuccess()) {
+            throw NoDataException(
+                when (response.status) {
+                    HttpStatusCode.BadRequest, HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden ->
+                        "Darwin access token error"
+                    else ->
+                        "Can't connect to Darwin API"
+                }
+            )
+        }
+    }
 }
 
 @Serializable
