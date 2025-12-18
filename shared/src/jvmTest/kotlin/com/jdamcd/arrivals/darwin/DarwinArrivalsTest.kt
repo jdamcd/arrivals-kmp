@@ -240,4 +240,23 @@ class DarwinArrivalsTest {
         latest.arrivals[1].destination shouldBe "Dest B"
         latest.arrivals[2].destination shouldBe "Dest C"
     }
+
+    @Test
+    fun `excludes departures more than 2 hours away`() = runBlocking<Unit> {
+        // generatedAt is 10:00, so 12:01 is more than 2 hours
+        val board = mockBoard.copy(
+            trainServices = listOf(
+                ApiTrainService(serviceIdUrlSafe = "s1", std = "10:30", etd = "10:30", platform = "1", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Within 2hrs", "W2"))),
+                ApiTrainService(serviceIdUrlSafe = "s2", std = "11:59", etd = "11:59", platform = "2", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Just under 2hrs", "JU"))),
+                ApiTrainService(serviceIdUrlSafe = "s3", std = "12:01", etd = "12:01", platform = "3", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Over 2hrs", "O2")))
+            )
+        )
+        coEvery { api.fetchDepartures("CLJ", any()) } returns board
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 2
+        latest.arrivals[0].destination shouldBe "Within 2hrs"
+        latest.arrivals[1].destination shouldBe "Just under 2hrs"
+    }
 }

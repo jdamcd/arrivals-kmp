@@ -46,6 +46,7 @@ internal class DarwinArrivals(
             ?.filter { isValidDeparture(it.etd) }
             ?.filter { matchesPlatformFilter(it.platform) }
             ?.map { service -> createArrival(service, referenceTime) }
+            ?.filter { it.secondsToStop < MAX_SECONDS_AHEAD }
             ?.sortedBy { it.secondsToStop }
             ?.take(3)
             ?.toList()
@@ -131,11 +132,15 @@ internal class DarwinArrivals(
             val (_, _, _, hours, minutes, seconds) = match.destructured
             ((hours.toInt() * 3600) + (minutes.toInt() * 60) + seconds.toInt()).toLong()
         } else {
-            clock.now().epochSeconds.toLong()
+            clock.now().epochSeconds
         }
-    } catch (e: Exception) {
-        clock.now().epochSeconds.toLong()
+    } catch (_: Exception) {
+        clock.now().epochSeconds
     }
 
     private fun isValidDeparture(etd: String): Boolean = etd.contains(":") || etd == "On time"
+
+    companion object {
+        private const val MAX_SECONDS_AHEAD = 7200 // 2 hours
+    }
 }
