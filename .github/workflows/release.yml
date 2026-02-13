@@ -25,7 +25,9 @@ jobs:
           java-version: '17'
 
       - name: Load secrets
-        run: echo "tfl_app_key=${{ secrets.TFL_APP_KEY }}" > shared/secret.properties
+        run: |
+          echo "tfl_app_key=${{ secrets.TFL_APP_KEY }}" > shared/secret.properties
+          echo "darwin_access_token=${{ secrets.DARWIN_ACCESS_TOKEN }}" >> shared/secret.properties
 
       - name: Build
         run: |
