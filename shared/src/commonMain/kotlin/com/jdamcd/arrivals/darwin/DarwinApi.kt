@@ -42,6 +42,7 @@ internal class DarwinApi(private val client: HttpClient) {
                 when (response.status) {
                     HttpStatusCode.BadRequest, HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden ->
                         "Darwin access token error"
+
                     else ->
                         "Can't connect to Darwin API"
                 }

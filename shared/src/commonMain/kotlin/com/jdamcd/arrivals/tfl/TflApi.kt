@@ -54,6 +54,7 @@ internal class TflApi(private val client: HttpClient) {
                 when (response.status) {
                     HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden ->
                         "TfL API app key error"
+
                     else ->
                         "Can't connect to TfL API"
                 }
