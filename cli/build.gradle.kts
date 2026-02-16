@@ -5,6 +5,7 @@ plugins {
 
 application {
     mainClass.set("com.jdamcd.arrivals.cli.CliKt")
+    applicationName = "arrivals"
 }
 
 dependencies {

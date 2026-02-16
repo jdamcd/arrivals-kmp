@@ -133,7 +133,7 @@ data class StopDetails(
 
 class NoDataException(
     message: String
-) : Throwable(message = message)
+) : Exception(message)
 
 fun formatTime(seconds: Int) = if (seconds < 60) {
     "Due"

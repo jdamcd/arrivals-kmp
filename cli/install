@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+echo "Building CLI..."
+"$PROJECT_DIR/gradlew" -p "$PROJECT_DIR" :cli:installDist -q
+
+TARGET="$SCRIPT_DIR/build/install/arrivals/bin/arrivals"
+LINK="/usr/local/bin/arrivals"
+
+echo "Installing to $LINK (sudo)..."
+sudo ln -sf "$TARGET" "$LINK"
+
+echo "Installed. Run 'arrivals --help' to start."
