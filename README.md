@@ -34,7 +34,7 @@ The macOS toolbar app can be downloaded from [releases](https://github.com/jdamc
 |--------|----------|-------------|------------|
 | **macOS** | macOS | SwiftUI status bar app | Open `macOS/Arrivals.xcodeproj` in Xcode and click the Run button |
 | **Desktop** | Linux (incl. Raspberry Pi), macOS, Windows | Compose Multiplatform window with fullscreen mode | `./gradlew :desktop:run` |
-| **CLI** | JVM (all platforms) | Command-line interface | `./gradlew :cli:run` |
+| **CLI** | JVM (all platforms) | Command-line interface | `./cli/install` |
 
 ---
 
@@ -96,26 +96,28 @@ gtfs_schedule: https://transitfeeds.com/p/mta/79/latest/download
 
 ### CLI
 
-Command-line interface (uses the JVM package). Run `./gradlew :cli:run --args="--help"` for all options.
+Command-line interface (requires a JVM). Run `./cli/install` to install the `arrivals` command on macOS, or run it via Gradle with `./gradlew :cli:run`.
+
+![Screenshot: arrivals CLI command](cli.png)
 
 #### TfL example
 
 ```bash
-./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 2"
+arrivals tfl --station 910GSHRDHST --platform 2
 ```
 
 #### Darwin (UK National Rail) example
 
 ```bash
-./gradlew :cli:run --args="darwin --station PMR --platform 2"
+arrivals darwin --station PMR --platform 2
 ```
 
 #### GTFS example
 
 ```bash
-./gradlew :cli:run --args="gtfs --station G28S \
+arrivals gtfs --station G28S \
   --realtime https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g \
-  --schedule https://transitfeeds.com/p/mta/79/latest/download"
+  --schedule https://transitfeeds.com/p/mta/79/latest/download
 ```
 
 ## Attribution

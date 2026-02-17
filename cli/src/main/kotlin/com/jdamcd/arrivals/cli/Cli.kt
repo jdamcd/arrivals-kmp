@@ -6,6 +6,11 @@ import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
+import com.github.ajalt.mordant.rendering.TextAlign
+import com.github.ajalt.mordant.rendering.TextColors.yellow
+import com.github.ajalt.mordant.table.Borders
+import com.github.ajalt.mordant.table.ColumnWidth
+import com.github.ajalt.mordant.table.table
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.SettingsConfig
@@ -102,10 +107,20 @@ private class Darwin :
 private suspend fun SuspendingCliktCommand.fetchAndDisplay(arrivals: Arrivals) {
     try {
         val result = arrivals.latest()
-        echo(result.station)
-        result.arrivals.forEach {
-            echo("%-24s\t%6s".format(it.destination, it.time))
-        }
+        echo(yellow(result.station))
+        echo(
+            table {
+                tableBorders = Borders.ALL
+                cellBorders = Borders.NONE
+                column(0) { width = ColumnWidth.Fixed(24) }
+                column(1) { align = TextAlign.RIGHT }
+                body {
+                    result.arrivals.forEach {
+                        row(yellow(it.destination.take(24)), yellow(it.time))
+                    }
+                }
+            }
+        )
     } catch (e: Exception) {
         echo(e.message)
     }
