@@ -62,7 +62,7 @@ Cross-platform desktop UI, built with Compose Multiplatform. Includes a fullscre
 ./gradlew :desktop:run --args="-pi 1280 400"
 ```
 
-#### Build Native Distribution
+#### Build native distribution
 
 ```bash
 # Executable in desktop/build/compose/binaries/main/app/
