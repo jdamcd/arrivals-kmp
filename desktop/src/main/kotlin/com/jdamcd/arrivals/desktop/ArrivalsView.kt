@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jdamcd.arrivals.Arrival
+import com.jdamcd.arrivals.filterLedChars
 
 @Composable
 fun ArrivalsView(
@@ -168,7 +169,7 @@ fun LedText(
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = string,
+        text = filterLedChars(string),
         color = color,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,

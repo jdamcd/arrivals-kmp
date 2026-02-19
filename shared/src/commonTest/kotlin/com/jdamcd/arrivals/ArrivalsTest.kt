@@ -6,7 +6,7 @@ import kotlin.test.Test
 class ArrivalsTest {
 
     @Test
-    fun `fomatTime as Due`() {
+    fun `formatTime as Due`() {
         formatTime(0) shouldBe "Due"
     }
 
