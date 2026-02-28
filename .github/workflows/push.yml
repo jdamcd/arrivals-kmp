@@ -27,8 +27,8 @@ jobs:
 
     - name: Load secrets
       run: |
-          echo "tfl_app_key=${{ secrets.TFL_APP_KEY }}" > shared/secret.properties
-          echo "darwin_access_token=${{ secrets.DARWIN_ACCESS_TOKEN }}" >> shared/secret.properties
+          echo "tfl_key=${{ secrets.TFL_KEY }}" > shared/secret.properties
+          echo "darwin_key=${{ secrets.DARWIN_KEY }}" >> shared/secret.properties
 
     - name: Check
       run: ./gradlew spotlessCheck
@@ -68,8 +68,8 @@ jobs:
 
     - name: Load secrets
       run: |
-          echo "tfl_app_key=${{ secrets.TFL_APP_KEY }}" > shared/secret.properties
-          echo "darwin_access_token=${{ secrets.DARWIN_ACCESS_TOKEN }}" >> shared/secret.properties
+          echo "tfl_key=${{ secrets.TFL_KEY }}" > shared/secret.properties
+          echo "darwin_key=${{ secrets.DARWIN_KEY }}" >> shared/secret.properties
 
     - name: Build
       run: |

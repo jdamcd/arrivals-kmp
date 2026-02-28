@@ -23,8 +23,8 @@ Supported data sources:
 
 API keys are required in `shared/secret.properties`:
 ```
-tfl_app_key=YOURKEY
-darwin_access_token=YOURTOKEN
+tfl_key=YOURKEY
+darwin_key=YOURTOKEN
 ```
 
 - TfL API key: Get from https://api.tfl.gov.uk
@@ -155,7 +155,7 @@ The macOS app uses SwiftUI for settings UI. The desktop app uses YAML configurat
 
 API keys are managed via BuildKonfig:
 - Keys stored in `shared/secret.properties` (gitignored)
-- Generated as `BuildConfig.TFL_APP_KEY` and `BuildConfig.DARWIN_ACCESS_TOKEN` constants
+- Generated as `BuildConfig.TFL_KEY` and `BuildConfig.DARWIN_KEY` constants
 - Config in `shared/build.gradle.kts` lines 60-80
 
 ## Key Implementation Details

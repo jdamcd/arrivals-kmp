@@ -69,13 +69,13 @@ configure<BuildKonfigExtension> {
     defaultConfigs {
         buildConfigField(
             FieldSpec.Type.STRING,
-            "TFL_APP_KEY",
-            props["tfl_app_key"]?.toString() ?: ""
+            "TFL_KEY",
+            props["tfl_key"]?.toString() ?: ""
         )
         buildConfigField(
             FieldSpec.Type.STRING,
-            "DARWIN_ACCESS_TOKEN",
-            props["darwin_access_token"]?.toString() ?: ""
+            "DARWIN_KEY",
+            props["darwin_key"]?.toString() ?: ""
         )
     }
 }

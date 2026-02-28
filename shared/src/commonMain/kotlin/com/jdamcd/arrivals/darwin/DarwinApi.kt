@@ -15,12 +15,12 @@ import kotlinx.serialization.Serializable
 internal class DarwinApi(private val client: HttpClient) {
 
     suspend fun fetchDepartures(crsCode: String, numRows: Int = 20): ApiDarwinBoard = request("$BASE_URL/departures/$crsCode/$numRows") {
-        parameter("accessToken", BuildKonfig.DARWIN_ACCESS_TOKEN)
+        parameter("accessToken", BuildKonfig.DARWIN_KEY)
         parameter("expand", "false")
     }
 
     suspend fun searchCrs(query: String): List<ApiStationSearch> = request("$BASE_URL/crs/$query") {
-        parameter("accessToken", BuildKonfig.DARWIN_ACCESS_TOKEN)
+        parameter("accessToken", BuildKonfig.DARWIN_KEY)
     }
 
     private suspend inline fun <reified T> request(

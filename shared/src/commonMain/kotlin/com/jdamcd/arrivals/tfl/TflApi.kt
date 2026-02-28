@@ -17,7 +17,7 @@ internal class TflApi(private val client: HttpClient) {
 
     suspend fun fetchArrivals(station: String): List<ApiArrival> = try {
         request("$BASE_URL/StopPoint/$station/Arrivals") {
-            parameter("app_key", BuildKonfig.TFL_APP_KEY)
+            parameter("app_key", BuildKonfig.TFL_KEY)
         }
     } catch (_: JsonConvertException) {
         // API returns empty body for terminal stations
@@ -25,14 +25,14 @@ internal class TflApi(private val client: HttpClient) {
     }
 
     suspend fun searchStations(query: String): ApiSearchResult = request("$BASE_URL/StopPoint/Search") {
-        parameter("app_key", BuildKonfig.TFL_APP_KEY)
+        parameter("app_key", BuildKonfig.TFL_KEY)
         parameter("query", query)
         parameter("modes", "dlr,elizabeth-line,overground,tube,tram")
         parameter("tflOperatedNationalRailStationsOnly", true)
     }
 
     suspend fun stopDetails(id: String): ApiStopPoint = request("$BASE_URL/StopPoint/$id") {
-        parameter("app_key", BuildKonfig.TFL_APP_KEY)
+        parameter("app_key", BuildKonfig.TFL_KEY)
     }
 
     private suspend inline fun <reified T> request(
