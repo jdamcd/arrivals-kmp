@@ -77,5 +77,10 @@ configure<BuildKonfigExtension> {
             "DARWIN_KEY",
             props["darwin_key"]?.toString() ?: ""
         )
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "ORG_511_KEY",
+            props["org_511_key"]?.toString() ?: ""
+        )
     }
 }

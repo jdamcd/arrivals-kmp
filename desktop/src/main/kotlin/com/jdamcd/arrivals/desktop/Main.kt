@@ -68,6 +68,7 @@ fun loadConfig(settings: Settings) {
                 data.getString(SettingsConfig.GTFS_REALTIME)?.let { settings.gtfsRealtime = it }
                 data.getString(SettingsConfig.GTFS_SCHEDULE)?.let { settings.gtfsSchedule = it }
                 data.getString(SettingsConfig.GTFS_STOP)?.let { settings.gtfsStop = it }
+                data.getString(SettingsConfig.GTFS_API_KEY)?.let { settings.gtfsApiKey = it }
                 data.getString(SettingsConfig.TFL_STOP)?.let { settings.tflStopId = it }
                 data.getString(SettingsConfig.TFL_PLATFORM)?.let { settings.tflPlatform = it }
                 data.getString(SettingsConfig.TFL_DIRECTION)?.let { settings.tflDirection = it }

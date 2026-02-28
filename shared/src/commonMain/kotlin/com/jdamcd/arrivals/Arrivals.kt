@@ -4,7 +4,9 @@ import com.jdamcd.arrivals.darwin.DarwinApi
 import com.jdamcd.arrivals.darwin.DarwinArrivals
 import com.jdamcd.arrivals.gtfs.GtfsApi
 import com.jdamcd.arrivals.gtfs.GtfsArrivals
-import com.jdamcd.arrivals.gtfs.MtaSearch
+import com.jdamcd.arrivals.gtfs.GtfsStopSearch
+import com.jdamcd.arrivals.gtfs.system.Bart
+import com.jdamcd.arrivals.gtfs.system.Mta
 import com.jdamcd.arrivals.tfl.TflApi
 import com.jdamcd.arrivals.tfl.TflArrivals
 import io.ktor.client.HttpClient
@@ -17,6 +19,7 @@ import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.context.startKoin
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.roundToInt
@@ -32,7 +35,8 @@ class MacDI : KoinComponent {
     val arrivals: Arrivals by inject()
     val settings: Settings by inject()
     val tflSearch: TflSearch by inject()
-    val gtfsSearch: GtfsSearch by inject()
+    val mtaSearch: GtfsSearch by inject(named("mta"))
+    val bartSearch: GtfsSearch by inject(named("bart"))
     val darwinSearch: DarwinSearch by inject()
 }
 
@@ -48,7 +52,8 @@ fun commonModule() = module {
     single { DarwinArrivals(get(), get(), get()) }
     single<Arrivals> { ArrivalsSwitcher(get(), get(), get(), get()) }
     single<TflSearch> { get<TflArrivals>() }
-    single<GtfsSearch> { MtaSearch(get()) }
+    single<GtfsSearch>(named("mta")) { GtfsStopSearch(get(), Mta.SCHEDULE, "mta") }
+    single<GtfsSearch>(named("bart")) { GtfsStopSearch(get(), Bart.SCHEDULE, "bart", Bart.API_KEY) }
     single<DarwinSearch> { get<DarwinArrivals>() }
     single {
         HttpClient {

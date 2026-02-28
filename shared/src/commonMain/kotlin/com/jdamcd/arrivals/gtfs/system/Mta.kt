@@ -1,4 +1,4 @@
-package com.jdamcd.arrivals.gtfs
+package com.jdamcd.arrivals.gtfs.system
 
 object Mta {
 

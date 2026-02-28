@@ -101,6 +101,21 @@ class GtfsArrivalsTest {
     }
 
     @Test
+    fun `passes api key to api calls`() = runBlocking<Unit> {
+        settings.gtfsApiKey = "test_key"
+        settings.gtfsStopsUpdated = fetchTime - 172801
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        coEvery { api.downloadStops("schedule_url", apiKey = "test_key") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.fetchFeedMessage("realtime_url", "test_key") } returns feedMessage
+
+        val latest = arrivals.latest()
+
+        coVerify { api.downloadStops("schedule_url", apiKey = "test_key") }
+        coVerify { api.fetchFeedMessage("realtime_url", "test_key") }
+        latest.arrivals shouldHaveSize 3
+    }
+
+    @Test
     fun `throws NoDataException if stops fail to load`() = runBlocking<Unit> {
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         coEvery { api.downloadStops("schedule_url") } throws Exception()

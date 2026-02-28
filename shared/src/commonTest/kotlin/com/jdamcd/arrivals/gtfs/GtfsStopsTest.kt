@@ -32,6 +32,14 @@ class GtfsStopsTest {
     }
 
     @Test
+    fun `maps stop ID to name with quoted CSV fields`() {
+        stops = GtfsStops(Fixtures.STOPS_CSV_QUOTED)
+
+        stops.stopIdToName("place-north") shouldBe "North Station"
+        stops.stopIdToName("place-TC") shouldBe "Transit Center, Bay 1"
+    }
+
+    @Test
     fun `does not map header row`() {
         stops = GtfsStops(Fixtures.STOPS_CSV_2)
 

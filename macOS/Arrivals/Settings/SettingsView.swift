@@ -4,7 +4,7 @@ import SwiftUI
 struct SettingsView: View {
     @StateObject private var coordinator = SettingsCoordinator()
 
-    let transitSystem = ["TfL", "MTA", "UK National Rail", "Custom GTFS"]
+    let transitSystem = ["TfL", "MTA", "BART", "UK National Rail", "Custom GTFS"]
     @State private var selector: String
 
     init() {
@@ -35,10 +35,24 @@ struct SettingsView: View {
                         TflSettingsView()
                     case "MTA":
                         MtaSettingsView()
+                    case "BART":
+                        GtfsFeedSettingsView(
+                            fetcher: MacDI().bartSearch,
+                            feedUrl: Bart().REALTIME,
+                            save: { stopId in
+                                let settings = MacDI().settings
+                                settings.gtfsRealtime = Bart().REALTIME
+                                settings.gtfsSchedule = Bart().SCHEDULE
+                                settings.gtfsStop = stopId
+                                settings.gtfsApiKey = Bart().API_KEY
+                                settings.gtfsStopsUpdated = 0
+                                settings.mode = SettingsConfig().MODE_GTFS
+                            }
+                        )
                     case "UK National Rail":
                         DarwinSettingsView()
                     default:
-                        GtfsSettingsView()
+                        CustomGtfsSettingsView()
                     }
                 }
                 .formStyle(.grouped)

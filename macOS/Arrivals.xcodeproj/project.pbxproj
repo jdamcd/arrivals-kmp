@@ -21,7 +21,8 @@
 		49CD44F72EEF47EC00B10269 /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CD44F62EEF47EC00B10269 /* SettingsCoordinator.swift */; };
 		49D28FF72B1B76600015C9D7 /* SettingsAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 49D28FF62B1B76600015C9D7 /* SettingsAccess */; };
 		49DFCAFC2D07881000CDBE29 /* TflSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */; };
-		49DFCB032D07A2C700CDBE29 /* GtfsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCB022D07A2BF00CDBE29 /* GtfsSettingsView.swift */; };
+		49BDE17B2F47B17E00F0A558 /* GtfsFeedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BDE17C2F47B17E00F0A558 /* GtfsFeedSettingsView.swift */; };
+		49DFCB032D07A2C700CDBE29 /* CustomGtfsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCB022D07A2BF00CDBE29 /* CustomGtfsSettingsView.swift */; };
 		49DFCB0B2D0E059D00CDBE29 /* MtaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -53,7 +54,8 @@
 		49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinSettingsView.swift; sourceTree = "<group>"; };
 		49CD44F62EEF47EC00B10269 /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
 		49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TflSettingsView.swift; sourceTree = "<group>"; };
-		49DFCB022D07A2BF00CDBE29 /* GtfsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GtfsSettingsView.swift; sourceTree = "<group>"; };
+		49BDE17C2F47B17E00F0A558 /* GtfsFeedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GtfsFeedSettingsView.swift; sourceTree = "<group>"; };
+		49DFCB022D07A2BF00CDBE29 /* CustomGtfsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomGtfsSettingsView.swift; sourceTree = "<group>"; };
 		49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MtaSettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,11 +133,12 @@
 		49DFCAFA2D0786BC00CDBE29 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				49BDE17C2F47B17E00F0A558 /* GtfsFeedSettingsView.swift */,
 				49CD44F62EEF47EC00B10269 /* SettingsCoordinator.swift */,
 				494945A729F7ABCD00D463D7 /* SettingsView.swift */,
 				49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */,
 				49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */,
-				49DFCB022D07A2BF00CDBE29 /* GtfsSettingsView.swift */,
+				49DFCB022D07A2BF00CDBE29 /* CustomGtfsSettingsView.swift */,
 				49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */,
 			);
 			path = Settings;
@@ -270,9 +273,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49BDE17B2F47B17E00F0A558 /* GtfsFeedSettingsView.swift in Sources */,
 				49DFCB0B2D0E059D00CDBE29 /* MtaSettingsView.swift in Sources */,
 				4938625C297F4BE700C61AE3 /* ArrivalsView.swift in Sources */,
-				49DFCB032D07A2C700CDBE29 /* GtfsSettingsView.swift in Sources */,
+				49DFCB032D07A2C700CDBE29 /* CustomGtfsSettingsView.swift in Sources */,
 				498B00EB298474E7001E83C4 /* ArrivalsViewModel.swift in Sources */,
 				49DFCAFC2D07881000CDBE29 /* TflSettingsView.swift in Sources */,
 				49CD44F72EEF47EC00B10269 /* SettingsCoordinator.swift in Sources */,

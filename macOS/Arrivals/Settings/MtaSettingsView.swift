@@ -74,7 +74,7 @@ struct MtaSettingsView: View {
 private class MtaSettingsViewModel: ObservableObject {
     @Published var state: SettingsState = .idle
 
-    private let fetcher = MacDI().gtfsSearch
+    private let fetcher = MacDI().mtaSearch
     private let settings = MacDI().settings
 
     func reset() {
@@ -99,6 +99,7 @@ private class MtaSettingsViewModel: ObservableObject {
         settings.gtfsRealtime = lineUrl
         settings.gtfsSchedule = Mta().SCHEDULE
         settings.gtfsStop = stopId
+        settings.gtfsApiKey = ""
         settings.gtfsStopsUpdated = 0
         settings.mode = SettingsConfig().MODE_GTFS
     }

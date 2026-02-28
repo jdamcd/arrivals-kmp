@@ -25,6 +25,7 @@ The macOS toolbar app can be downloaded from [releases](https://github.com/jdamc
    ```
    tfl_key=YOURKEY
    darwin_key=YOURTOKEN
+   org_511_key=YOURKEY
    ```
 3. Make sure you have a JDK configured at `$JAVA_HOME`
 
@@ -90,6 +91,7 @@ darwin_platform: 2          # Optional platform number
 gtfs_stop: G28S             # Station ID
 gtfs_realtime: https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g
 gtfs_schedule: http://web.mta.info/developers/data/nyct/subway/google_transit.zip
+gtfs_api_key:               # Optional API key for authenticated feeds
 ```
 
 ---

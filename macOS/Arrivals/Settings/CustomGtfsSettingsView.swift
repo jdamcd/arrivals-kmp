@@ -1,7 +1,7 @@
 @preconcurrency import ArrivalsLib
 import SwiftUI
 
-struct GtfsSettingsView: View {
+struct CustomGtfsSettingsView: View {
     @EnvironmentObject var coordinator: SettingsCoordinator
 
     private let settings = MacDI().settings
@@ -9,6 +9,7 @@ struct GtfsSettingsView: View {
     @State private var realtimeUrl: String
     @State private var scheduleUrl: String
     @State private var stopId: String
+    @State private var apiKey: String
 
     private var isValid: Bool {
         realtimeUrl.isNotEmpty && scheduleUrl.isNotEmpty && stopId.isNotEmpty
@@ -18,6 +19,7 @@ struct GtfsSettingsView: View {
         realtimeUrl = settings.gtfsRealtime
         scheduleUrl = settings.gtfsSchedule
         stopId = settings.gtfsStop
+        apiKey = settings.gtfsApiKey
     }
 
     var body: some View {
@@ -25,12 +27,14 @@ struct GtfsSettingsView: View {
             TextField("Realtime URL", text: $realtimeUrl)
             TextField("Schedule URL", text: $scheduleUrl)
             TextField("Stop ID", text: $stopId)
+            TextField("API Key (optional)", text: $apiKey)
         }
         .onAppear {
             coordinator.onSave = {
                 settings.gtfsRealtime = realtimeUrl.trim()
                 settings.gtfsSchedule = scheduleUrl.trim()
                 settings.gtfsStop = stopId.trim()
+                settings.gtfsApiKey = apiKey.trim()
                 settings.gtfsStopsUpdated = 0
                 settings.mode = SettingsConfig().MODE_GTFS
             }
@@ -50,7 +54,7 @@ struct GtfsSettingsView: View {
 
 #Preview {
     Form {
-        GtfsSettingsView()
+        CustomGtfsSettingsView()
     }
     .formStyle(.grouped)
 }

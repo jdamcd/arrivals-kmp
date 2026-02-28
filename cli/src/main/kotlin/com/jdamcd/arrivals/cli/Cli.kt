@@ -73,11 +73,15 @@ private class Gtfs :
     private val schedule by option("--schedule")
         .help("GTFS schedule URL")
 
+    private val apiKey by option("--api-key")
+        .help("API key for authenticated feeds")
+
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_GTFS
         stop?.let { settings.gtfsStop = it }
         realtime?.let { settings.gtfsRealtime = it }
         schedule?.let { settings.gtfsSchedule = it }
+        apiKey?.let { settings.gtfsApiKey = it }
 
         fetchAndDisplay(arrivals)
     }
