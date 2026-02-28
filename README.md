@@ -1,26 +1,28 @@
 # Arrivals
 
-Arrivals is a Kotlin Multiplatform project for live transit times. It currently supports 3 targets: a macOS toolbar app, a CLI, and a desktop app (primarily intended for Raspberry Pi kiosk displays). 
+Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3 targets: a macOS toolbar app, a CLI, and a desktop app (tailored for Raspberry Pi kiosk displays). 
 
 ![Screenshot: Arrivals app in the MacOS status bar](screenshot.png)
 
-Supported data sources include:
-- TfL API for London Underground, Overground, DLR, etc.
-- Darwin API for UK National Rail
-- MTA GTFS feeds for NYC Subway
+Supported transit systems:
+- London: TfL API for Underground, Overground, DLR, etc.
+- UK: Darwin API for National Rail
+- NYC: MTA GTFS feeds for the Subway
+- SF Bay Area: 511.org GTFS feeds for BART
 - Custom GTFS feeds for other transit systems (many can be found [here](https://mobilitydatabase.org))
 
 ## Run
 
-The macOS toolbar app can be downloaded from [releases](https://github.com/jdamcd/arrivals-kmp/releases) and moved to your Applications folder. The other targets need to be built from source with the instructions below.
+The macOS toolbar app can be downloaded from [releases](https://github.com/jdamcd/arrivals-kmp/releases) and moved to your Applications folder. Other targets need to be built from source with the instructions below.
 
 ## Build
 
 ### Prerequisites
 
-1. Register to get API keys for the upstream data sources:
+1. Get API keys for authenticated data sources:
    - **TfL**: [Transport for London API](https://api-portal.tfl.gov.uk) app key
    - **UK National Rail**: [OpenLDBWS](https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Registration) access token
+   - **BART**: [511.org](https://511.org/open-data) API key
 2. Create `shared/secret.properties` and add your keys:
    ```
    tfl_key=YOURKEY
@@ -98,7 +100,7 @@ gtfs_api_key:               # Optional API key for authenticated feeds
 
 ### CLI
 
-Command-line interface (requires a JVM). Run `./cli/install` to install the `arrivals` command on macOS, or run it via Gradle with `./gradlew :cli:run`.
+Command-line interface (JVM required). Run `./cli/install` to install the `arrivals` command on macOS, or run it via Gradle with `./gradlew :cli:run`.
 
 ![Screenshot: arrivals CLI command](cli.png)
 
@@ -128,4 +130,5 @@ arrivals gtfs --station G28S \
   * OS data © Crown copyright and database rights 2016
   * Geomni UK Map data © and database rights 2019
 * Powered by [Rail Data Marketplace](https://raildata.org.uk) via [Huxley2](https://github.com/jpsingleton/Huxley2)
-* Uses this [London Underground Typeface](https://github.com/petykowski/London-Underground-Dot-Matrix-Typeface) for dot matrix text
+* Powered by [511 Open Data](https://511.org/open-data)
+* Uses this [London Underground Dot Matrix Typeface](https://github.com/petykowski/London-Underground-Dot-Matrix-Typeface)
