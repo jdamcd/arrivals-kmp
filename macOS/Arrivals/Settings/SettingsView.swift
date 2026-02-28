@@ -1,23 +1,32 @@
 @preconcurrency import ArrivalsLib
 import SwiftUI
 
+enum TransitSystem: CaseIterable {
+    case tfl, mta, bart, darwin, customGtfs
+
+    var displayName: String {
+        switch self {
+        case .tfl: "London (TfL)"
+        case .mta: "NYC (MTA)"
+        case .bart: "SF Bay Area (BART)"
+        case .darwin: "UK (National Rail)"
+        case .customGtfs: "Custom GTFS"
+        }
+    }
+}
+
 struct SettingsView: View {
     @StateObject private var coordinator = SettingsCoordinator()
 
-    let transitSystem = ["TfL", "MTA", "BART", "UK National Rail", "Custom GTFS"]
-    @State private var selector: String
-
-    init() {
-        selector = transitSystem.first!
-    }
+    @State private var selector: TransitSystem = .tfl
 
     var body: some View {
         VStack(spacing: 0) {
             Form {
                 Section {
                     Picker("Transit system", selection: $selector) {
-                        ForEach(transitSystem, id: \.self) {
-                            Text($0)
+                        ForEach(TransitSystem.allCases, id: \.self) {
+                            Text($0.displayName)
                         }
                         .pickerStyle(.menu)
                     }
@@ -31,11 +40,11 @@ struct SettingsView: View {
             ScrollView {
                 Form {
                     switch selector {
-                    case "TfL":
+                    case .tfl:
                         TflSettingsView()
-                    case "MTA":
+                    case .mta:
                         MtaSettingsView()
-                    case "BART":
+                    case .bart:
                         GtfsFeedSettingsView(
                             fetcher: MacDI().bartSearch,
                             feedUrl: Bart().REALTIME,
@@ -49,9 +58,9 @@ struct SettingsView: View {
                                 settings.mode = SettingsConfig().MODE_GTFS
                             }
                         )
-                    case "UK National Rail":
+                    case .darwin:
                         DarwinSettingsView()
-                    default:
+                    case .customGtfs:
                         CustomGtfsSettingsView()
                     }
                 }

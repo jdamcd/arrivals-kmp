@@ -19,7 +19,7 @@ struct CustomGtfsSettingsView: View {
         realtimeUrl = settings.gtfsRealtime
         scheduleUrl = settings.gtfsSchedule
         stopId = settings.gtfsStop
-        apiKey = settings.gtfsApiKey
+        apiKey = ""
     }
 
     var body: some View {
