@@ -26,7 +26,7 @@ internal class GtfsArrivals(
         updateStops()
         val model: ArrivalsInfo
         try {
-            model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime))
+            model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime, settings.gtfsApiKey))
         } catch (e: Exception) {
             throw NoDataException("No connection")
         }
@@ -39,7 +39,7 @@ internal class GtfsArrivals(
     private suspend fun updateStops() {
         try {
             if (!hasFreshStops()) {
-                stops = GtfsStops(api.downloadStops(settings.gtfsSchedule))
+                stops = GtfsStops(api.downloadStops(settings.gtfsSchedule, apiKey = settings.gtfsApiKey))
                 settings.gtfsStopsUpdated = clock.now().epochSeconds
             } else if (!::stops.isInitialized) {
                 stops = GtfsStops(api.readStops())

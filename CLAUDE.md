@@ -25,10 +25,12 @@ API keys are required in `shared/secret.properties`:
 ```
 tfl_key=YOURKEY
 darwin_key=YOURTOKEN
+org_511_key=YOURKEY
 ```
 
 - TfL API key: Get from https://api.tfl.gov.uk
 - Darwin access token: Register at https://raildata.org.uk and subscribe to Darwin data feeds (free tier)
+- 511.org API key: Register at https://511.org/open-data (used for BART feeds)
 
 ### Run Targets
 
@@ -117,7 +119,8 @@ Core interfaces:
 - `GtfsApi.kt` - HTTP client for GTFS feeds
 - `GtfsArrivals.kt` - Business logic for GTFS-RT arrivals
 - `GtfsStops.kt` - GTFS schedule parsing for stop information
-- `MtaSearch.kt` - MTA-specific stop search
+- `GtfsStopSearch.kt` - Generic GTFS stop search (used by MTA, BART, MBTA)
+- `system/` - Transit system constants (Mta, Bart, Mbta)
 - Protocol Buffer schemas in `shared/src/commonMain/proto/`
 
 **Darwin**: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/darwin/`
@@ -155,7 +158,7 @@ The macOS app uses SwiftUI for settings UI. The desktop app uses YAML configurat
 
 API keys are managed via BuildKonfig:
 - Keys stored in `shared/secret.properties` (gitignored)
-- Generated as `BuildConfig.TFL_KEY` and `BuildConfig.DARWIN_KEY` constants
+- Generated as `BuildConfig.TFL_KEY`, `BuildConfig.DARWIN_KEY`, and `BuildConfig.ORG_511_KEY` constants
 - Config in `shared/build.gradle.kts` lines 60-80
 
 ## Key Implementation Details

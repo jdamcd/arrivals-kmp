@@ -3,19 +3,24 @@ package com.jdamcd.arrivals.gtfs
 import com.jdamcd.arrivals.GtfsSearch
 import com.jdamcd.arrivals.StopResult
 
-internal class MtaSearch(private val api: GtfsApi) : GtfsSearch {
+internal class GtfsStopSearch(
+    private val api: GtfsApi,
+    private val scheduleUrl: String,
+    private val cacheFolder: String,
+    private val apiKey: String = ""
+) : GtfsSearch {
 
     private lateinit var stops: GtfsStops
 
     private suspend fun updateStops() {
         if (!::stops.isInitialized) {
-            stops = GtfsStops(api.downloadStops(Mta.SCHEDULE, "mta"))
+            stops = GtfsStops(api.downloadStops(scheduleUrl, cacheFolder, apiKey))
         }
     }
 
     override suspend fun getStops(feedUrl: String): List<StopResult> {
         updateStops()
-        val feedMessage = api.fetchFeedMessage(feedUrl)
+        val feedMessage = api.fetchFeedMessage(feedUrl, apiKey)
 
         return feedMessage.entity
             .asSequence()

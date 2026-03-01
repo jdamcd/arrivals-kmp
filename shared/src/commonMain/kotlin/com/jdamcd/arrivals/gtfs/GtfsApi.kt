@@ -3,6 +3,7 @@ package com.jdamcd.arrivals.gtfs
 import com.google.transit.realtime.FeedMessage
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.readRawBytes
 import okio.FileSystem
@@ -19,16 +20,20 @@ internal class GtfsApi(private val client: HttpClient) {
     private val defaultDir = "$baseDir/gtfs".toPath()
     private val stopsFileName = "stops.txt"
 
-    suspend fun fetchFeedMessage(url: String): FeedMessage {
-        val bodyBytes = client.get(url).bodyAsBytes()
+    suspend fun fetchFeedMessage(url: String, apiKey: String = ""): FeedMessage {
+        val bodyBytes = client.get(url) {
+            if (apiKey.isNotEmpty()) parameter("api_key", apiKey)
+        }.bodyAsBytes()
         return FeedMessage.ADAPTER.decode(bodyBytes)
     }
 
-    suspend fun downloadStops(url: String, folder: String = "gtfs"): String {
+    suspend fun downloadStops(url: String, folder: String = "gtfs", apiKey: String = ""): String {
         val tempZipFile = "$baseDir/gtfs.zip".toPath()
         val outputDir = "$baseDir/$folder".toPath()
         try {
-            val zipContent = client.get(url).readRawBytes()
+            val zipContent = client.get(url) {
+                if (apiKey.isNotEmpty()) parameter("api_key", apiKey)
+            }.readRawBytes()
             FileSystem.SYSTEM.write(tempZipFile) {
                 write(zipContent)
             }

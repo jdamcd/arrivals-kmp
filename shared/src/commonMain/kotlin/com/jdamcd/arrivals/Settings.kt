@@ -9,6 +9,7 @@ expect class Settings() {
     var gtfsRealtime: String
     var gtfsSchedule: String
     var gtfsStop: String
+    var gtfsApiKey: String
     var darwinCrsCode: String
     var darwinPlatform: String
 }
@@ -35,6 +36,8 @@ object SettingsConfig {
     const val GTFS_SCHEDULE_DEFAULT = "http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
     const val GTFS_STOP = "gtfs_stop"
     const val GTFS_STOP_DEFAULT = "A42N"
+    const val GTFS_API_KEY = "gtfs_api_key"
+    const val GTFS_API_KEY_DEFAULT = ""
 
     const val DARWIN_CRS = "darwin_crs"
     const val DARWIN_CRS_DEFAULT = "PMR"

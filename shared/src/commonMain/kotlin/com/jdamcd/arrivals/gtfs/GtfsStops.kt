@@ -7,13 +7,13 @@ internal class GtfsStops(stops: String) {
             .split("\n")
             .filter { it.isNotBlank() }
             .let { lines ->
-                val header = lines.first().split(",")
+                val header = parseCsvLine(lines.first())
                 val stopIdIndex = header.indexOf("stop_id")
                 val stopNameIndex = header.indexOf("stop_name")
                 lines
                     .drop(1) // Skip header
                     .mapNotNull { line ->
-                        val parts = line.split(",")
+                        val parts = parseCsvLine(line)
                         if (parts.size > maxOf(stopIdIndex, stopNameIndex)) {
                             parts[stopIdIndex] to parts[stopNameIndex]
                         } else {
@@ -24,4 +24,24 @@ internal class GtfsStops(stops: String) {
             .toMap()
 
     fun stopIdToName(stopId: String) = stopIdToName[stopId]
+}
+
+private fun parseCsvLine(line: String): List<String> {
+    val fields = mutableListOf<String>()
+    val current = StringBuilder()
+    var inQuotes = false
+    for (char in line) {
+        when (char) {
+            '"' -> inQuotes = !inQuotes
+
+            ',' if !inQuotes -> {
+                fields.add(current.toString())
+                current.clear()
+            }
+
+            else -> current.append(char)
+        }
+    }
+    fields.add(current.toString())
+    return fields
 }

@@ -29,4 +29,12 @@ stop_lat,wheelchair_boarding,stop_code,stop_lon,stop_timezone,stop_url,parent_st
 45.678661,0,3253,-122.635948,,,,,NE 78th St 3300 Block,0,3253,
 45.696539,0,3254,-122.654579,,,,,Hwy 99 & NE 104th St,0,3254,
 """
+
+    const val STOPS_CSV_QUOTED =
+        """
+stop_id,stop_name,stop_lat,stop_lon,location_type,parent_station
+place-north,"North Station",42.365577,-71.06129,1,
+place-sstat,"South Station",42.352271,-71.055242,1,
+place-TC,"Transit Center, Bay 1",42.395,-71.142,1,
+"""
 }
