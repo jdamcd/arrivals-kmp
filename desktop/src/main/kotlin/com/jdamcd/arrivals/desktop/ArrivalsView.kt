@@ -17,13 +17,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -109,13 +108,7 @@ private fun Data(state: ArrivalsState.Data, onClickRefresh: () -> Unit) {
                 if (state.refreshing) {
                     CircularProgressIndicator(color = LedYellow, modifier = Modifier.size(22.dp))
                 } else {
-                    TextButton(
-                        onClick = { onClickRefresh() },
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = Text,
-                            backgroundColor = Footer
-                        )
-                    ) {
+                    IconButton(onClick = { onClickRefresh() }) {
                         Icon(
                             Icons.Rounded.Refresh,
                             contentDescription = "Refresh",

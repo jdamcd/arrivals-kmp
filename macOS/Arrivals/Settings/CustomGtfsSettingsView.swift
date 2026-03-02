@@ -27,7 +27,7 @@ struct CustomGtfsSettingsView: View {
             TextField("Realtime URL", text: $realtimeUrl)
             TextField("Schedule URL", text: $scheduleUrl)
             TextField("Stop ID", text: $stopId)
-            TextField("API Key (optional)", text: $apiKey)
+            TextField("API key (optional)", text: $apiKey)
         }
         .onAppear {
             coordinator.onSave = {

@@ -1,6 +1,7 @@
 package com.jdamcd.arrivals.darwin
 
 import com.jdamcd.arrivals.Arrival
+import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
 import com.jdamcd.arrivals.DarwinSearch
 import com.jdamcd.arrivals.NoDataException
@@ -17,10 +18,11 @@ internal class DarwinArrivals(
     private val api: DarwinApi,
     private val settings: Settings,
     private val clock: Clock
-) : DarwinSearch {
+) : Arrivals,
+    DarwinSearch {
 
     @Throws(NoDataException::class, CancellationException::class)
-    suspend fun latest(): ArrivalsInfo {
+    override suspend fun latest(): ArrivalsInfo {
         val model = formatArrivals(api.fetchDepartures(settings.darwinCrsCode))
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No departures found")
