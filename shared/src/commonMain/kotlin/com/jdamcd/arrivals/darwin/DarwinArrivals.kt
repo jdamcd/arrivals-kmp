@@ -7,7 +7,8 @@ import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.formatTime
-import com.jdamcd.arrivals.sanitizePlatform
+import com.jdamcd.arrivals.matchesPlatformFilter
+import com.jdamcd.arrivals.stripPlatform
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 
@@ -44,7 +45,10 @@ internal class DarwinArrivals(
             ?.asSequence()
             ?.filter { !it.isCancelled }
             ?.filter { isValidDeparture(it.etd) }
-            ?.filter { matchesPlatformFilter(it.platform) }
+            ?.filter {
+                settings.darwinPlatform.isEmpty() ||
+                    (it.platform != null && matchesPlatformFilter(it.platform, settings.darwinPlatform))
+            }
             ?.map { service -> createArrival(service, referenceTime) }
             ?.filter { it.secondsToStop < MAX_SECONDS_AHEAD }
             ?.sortedBy { it.secondsToStop }
@@ -58,28 +62,10 @@ internal class DarwinArrivals(
     private fun formatStationName(board: ApiDarwinBoard): String {
         val baseName = board.locationName.removeSuffix(" Rail Station").trim()
         return if (settings.darwinPlatform.isNotEmpty()) {
-            "$baseName: Platform ${sanitizePlatform(settings.darwinPlatform)}"
+            "$baseName: Platform ${stripPlatform(settings.darwinPlatform)}"
         } else {
             baseName
         }
-    }
-
-    private fun matchesPlatformFilter(platform: String?): Boolean {
-        if (settings.darwinPlatform.isEmpty()) return true
-        if (platform == null) return false
-
-        val number = sanitizePlatform(settings.darwinPlatform)
-
-        if (!platform.startsWith(number, ignoreCase = true)) {
-            return false
-        }
-
-        if (platform.length == number.length) {
-            return true // Exact match
-        }
-
-        val nextChar = platform[number.length]
-        return !nextChar.isDigit() // Allow "2A" but not "21" when filter is "2"
     }
 
     private fun createArrival(service: ApiTrainService, referenceTime: Long): Arrival {

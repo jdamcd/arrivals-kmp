@@ -153,7 +153,7 @@ private struct DotMatrixText: View {
     var text: String
 
     var body: some View {
-        Text(LedDisplayKt.filterLedChars(input: text))
+        Text(UtilsKt.filterLedChars(input: text))
             .font(.custom("LondonUnderground", size: 14))
             .foregroundColor(.yellow)
     }

@@ -22,7 +22,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.math.roundToInt
 import kotlin.time.Clock
 
 @Suppress("Unused")
@@ -139,15 +138,3 @@ data class StopDetails(
 class NoDataException(
     message: String
 ) : Exception(message)
-
-fun formatTime(seconds: Int) = if (seconds < 60) {
-    "Due"
-} else {
-    "${(seconds / 60f).roundToInt()} min"
-}
-
-fun sanitizePlatform(input: String): String = if (input.startsWith("Platform ", ignoreCase = true)) {
-    input.substring(9).trim()
-} else {
-    input.trim()
-}
