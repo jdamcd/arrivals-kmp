@@ -4,12 +4,17 @@ Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3
 
 ![Screenshot: Arrivals app in the MacOS status bar](screenshot.png)
 
-Supported transit systems:
-- London: TfL API for Underground, Overground, DLR, etc.
-- UK: Darwin API for National Rail
-- NYC: MTA GTFS feeds for the Subway
-- SF Bay Area: 511.org GTFS feeds for BART
-- Custom GTFS feeds for other transit systems (many can be found [here](https://mobilitydatabase.org))
+### Supported transit systems
+
+|  | System | Source |
+|--|--------|--------|
+| **London** | Underground, Overground, DLR | TfL API |
+| **UK** | National Rail | Darwin API |
+| **NYC** | Subway | MTA GTFS |
+| **SF Bay Area** | BART | 511.org GTFS |
+
+
+... and any custom [GTFS-RT feed](https://mobilitydatabase.org)
 
 ## Run
 

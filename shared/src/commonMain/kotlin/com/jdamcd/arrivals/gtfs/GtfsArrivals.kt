@@ -51,7 +51,8 @@ internal class GtfsArrivals(
 
     private fun hasFreshStops(): Boolean {
         val twoDaysInSeconds = 48 * 60 * 60
-        return settings.gtfsStopsUpdated + twoDaysInSeconds > clock.now().epochSeconds
+        return api.hasStops() &&
+            settings.gtfsStopsUpdated + twoDaysInSeconds > clock.now().epochSeconds
     }
 
     private fun formatArrivals(feedMessage: FeedMessage): ArrivalsInfo {

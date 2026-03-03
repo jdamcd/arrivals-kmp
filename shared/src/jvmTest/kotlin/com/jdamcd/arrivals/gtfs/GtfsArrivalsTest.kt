@@ -35,6 +35,7 @@ class GtfsArrivalsTest {
         settings.gtfsSchedule = "schedule_url"
         settings.gtfsStop = "G28S"
         settings.gtfsStopsUpdated = fetchTime - 1000
+        every { api.hasStops() } returns true
 
         feedMessage = TestHelper.resource("feed_message.bin").let {
             FeedMessage.ADAPTER.decode(it)

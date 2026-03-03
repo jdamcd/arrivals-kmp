@@ -44,6 +44,8 @@ internal class GtfsApi(private val client: HttpClient) {
         }
     }
 
+    fun hasStops(): Boolean = FileSystem.SYSTEM.exists(defaultDir.resolve(stopsFileName))
+
     fun readStops(dir: Path = defaultDir): String {
         val stopsPath = dir.resolve(stopsFileName)
         return FileSystem.SYSTEM.read(stopsPath) { readUtf8() }
