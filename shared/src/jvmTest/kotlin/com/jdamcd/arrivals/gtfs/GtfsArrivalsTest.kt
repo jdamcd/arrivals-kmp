@@ -36,7 +36,7 @@ class GtfsArrivalsTest {
         settings.gtfsStop = "G28S"
         settings.gtfsStopsUpdated = fetchTime - 1000
 
-        feedMessage = TestHelper.resource("feed_message.pb").let {
+        feedMessage = TestHelper.resource("feed_message.bin").let {
             FeedMessage.ADAPTER.decode(it)
         }
     }

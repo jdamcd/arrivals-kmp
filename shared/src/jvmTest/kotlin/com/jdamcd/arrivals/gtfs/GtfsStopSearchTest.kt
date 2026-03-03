@@ -19,7 +19,7 @@ class GtfsStopSearchTest {
 
     @BeforeTest
     fun setup() {
-        feedMessage = TestHelper.resource("feed_message.pb").let {
+        feedMessage = TestHelper.resource("feed_message.bin").let {
             FeedMessage.ADAPTER.decode(it)
         }
     }

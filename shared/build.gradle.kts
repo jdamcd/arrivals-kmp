@@ -42,6 +42,7 @@ kotlin {
         jvmTest.dependencies {
             implementation(libs.coroutines.test)
             implementation(libs.mockk)
+            implementation(libs.ktor.client.mock)
         }
 
         macosMain.dependencies {

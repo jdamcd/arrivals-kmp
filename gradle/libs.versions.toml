@@ -38,6 +38,7 @@ snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeYaml" 
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 kotest = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
+ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
 
 [bundles]
 ktor-common = ["ktor-client-core", "ktor-client-content-negotiation", "ktor-client-logging", "ktor-serialization-json"]
