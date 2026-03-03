@@ -14,7 +14,7 @@ Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3
 | **SF Bay Area** | BART | 511.org GTFS |
 
 
-... and any custom [GTFS-RT feed](https://mobilitydatabase.org)
+... or any custom [GTFS-RT feed](https://mobilitydatabase.org)
 
 ## Run
 

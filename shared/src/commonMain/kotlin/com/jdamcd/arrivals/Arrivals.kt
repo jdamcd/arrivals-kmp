@@ -51,8 +51,8 @@ fun commonModule() = module {
     single { DarwinArrivals(get(), get(), get()) }
     single<Arrivals> { ArrivalsSwitcher(get(), get(), get(), get()) }
     single<TflSearch> { get<TflArrivals>() }
-    single<GtfsSearch>(named("mta")) { GtfsStopSearch(get(), Mta.SCHEDULE, "mta") }
-    single<GtfsSearch>(named("bart")) { GtfsStopSearch(get(), Bart.SCHEDULE, "bart", Bart.API_KEY) }
+    factory<GtfsSearch>(named("mta")) { GtfsStopSearch(get(), Mta.SCHEDULE, "mta") }
+    factory<GtfsSearch>(named("bart")) { GtfsStopSearch(get(), Bart.SCHEDULE, "bart", Bart.API_KEY) }
     single<DarwinSearch> { get<DarwinArrivals>() }
     single {
         HttpClient {
