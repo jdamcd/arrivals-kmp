@@ -1,7 +1,11 @@
 package com.jdamcd.arrivals.desktop
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
@@ -15,12 +19,18 @@ import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.SettingsConfig
 import com.jdamcd.arrivals.initKoin
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.FileInputStream
+import java.nio.file.FileSystems
+import java.nio.file.Path
+import java.nio.file.StandardWatchEventKinds
 import kotlin.system.exitProcess
 
 private val koin = initKoin().koin
+private val configFile = File("${System.getProperty("user.home")}/.arrivals.yml")
 
 fun main(args: Array<String>) = application {
     val fixWindow = args.contains("-pi")
@@ -32,10 +42,14 @@ fun main(args: Array<String>) = application {
         size = DpSize(width.dp, height.dp)
     )
 
-    loadConfig(koin.get<Settings>())
-
-    val viewModel = ArrivalsViewModel(koin.get<Arrivals>())
+    val settings = remember { koin.get<Settings>() }
+    val viewModel = remember {
+        loadConfig(settings)
+        ArrivalsViewModel(koin.get<Arrivals>())
+    }
     val state: ArrivalsState by viewModel.uiState.collectAsState(ArrivalsState.Loading)
+
+    watchConfig(settings, viewModel::refresh)
 
     Window(
         onCloseRequest = ::exitApplication,
@@ -56,10 +70,38 @@ fun main(args: Array<String>) = application {
 
 private fun dimenFromArg(args: Array<String>, index: Int): Int? = if (args.size > index) args[index].toIntOrNull() else null
 
-fun loadConfig(settings: Settings) {
-    val path = "${System.getProperty("user.home")}/.arrivals.yml"
-    val configFile = File(path)
+@Composable
+private fun watchConfig(settings: Settings, onReload: () -> Unit) {
+    val scope = rememberCoroutineScope()
 
+    DisposableEffect(Unit) {
+        val watchService = FileSystems.getDefault().newWatchService()
+        val job = scope.launch(Dispatchers.IO) {
+            val dir = configFile.parentFile.toPath()
+            dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
+            val fileName = configFile.name
+
+            while (true) {
+                val key = watchService.take()
+                for (event in key.pollEvents()) {
+                    val changed = event.context() as? Path
+                    if (changed?.toString() == fileName) {
+                        loadConfig(settings)
+                        onReload()
+                    }
+                }
+                key.reset()
+            }
+        }
+
+        onDispose {
+            job.cancel()
+            watchService.close()
+        }
+    }
+}
+
+fun loadConfig(settings: Settings) {
     if (configFile.exists()) {
         try {
             FileInputStream(configFile).use { inputStream ->
