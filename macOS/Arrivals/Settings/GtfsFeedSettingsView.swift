@@ -32,7 +32,7 @@ struct GtfsFeedSettingsView: View {
                 case .idle:
                     Text("Loading stops...")
                 case .error:
-                    Text("Error fetching stops")
+                    Text("Failed to load stops")
                 case .loading:
                     ProgressView()
                         .scaleEffect(0.5)

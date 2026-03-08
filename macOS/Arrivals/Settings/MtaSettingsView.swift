@@ -46,7 +46,7 @@ struct MtaSettingsView: View {
                 case .idle:
                     Text("Select a line")
                 case .error:
-                    Text("Error fetching stops")
+                    Text("Failed to load stops")
                 case .loading:
                     ProgressView()
                         .scaleEffect(0.5)
@@ -100,6 +100,7 @@ private class MtaSettingsViewModel: ObservableObject {
         settings.gtfsSchedule = Mta().SCHEDULE
         settings.gtfsStop = stopId
         settings.gtfsApiKey = ""
+        settings.gtfsApiKeyParam = ""
         settings.gtfsStopsUpdated = 0
         settings.mode = SettingsConfig().MODE_GTFS
     }

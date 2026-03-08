@@ -102,17 +102,52 @@ class GtfsArrivalsTest {
     }
 
     @Test
-    fun `passes api key to api calls`() = runBlocking<Unit> {
+    fun `passes api key as default query param`() = runBlocking<Unit> {
+        val expectedAuth = ApiAuth.QueryParam("api_key", "test_key")
         settings.gtfsApiKey = "test_key"
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadStops("schedule_url", apiKey = "test_key") } returns Fixtures.STOPS_CSV_1
-        coEvery { api.fetchFeedMessage("realtime_url", "test_key") } returns feedMessage
+        coEvery { api.downloadStops("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.fetchFeedMessage("realtime_url", expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
 
-        coVerify { api.downloadStops("schedule_url", apiKey = "test_key") }
-        coVerify { api.fetchFeedMessage("realtime_url", "test_key") }
+        coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
+        coVerify { api.fetchFeedMessage("realtime_url", expectedAuth) }
+        latest.arrivals shouldHaveSize 3
+    }
+
+    @Test
+    fun `passes api key as header auth`() = runBlocking<Unit> {
+        val expectedAuth = ApiAuth.Header("Authorization", "apikey mytoken")
+        settings.gtfsApiKey = "apikey mytoken"
+        settings.gtfsApiKeyParam = "header:Authorization"
+        settings.gtfsStopsUpdated = fetchTime - 172801
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        coEvery { api.downloadStops("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.fetchFeedMessage("realtime_url", expectedAuth) } returns feedMessage
+
+        val latest = arrivals.latest()
+
+        coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
+        coVerify { api.fetchFeedMessage("realtime_url", expectedAuth) }
+        latest.arrivals shouldHaveSize 3
+    }
+
+    @Test
+    fun `passes api key with custom query param`() = runBlocking<Unit> {
+        val expectedAuth = ApiAuth.QueryParam("app_id", "test_key")
+        settings.gtfsApiKey = "test_key"
+        settings.gtfsApiKeyParam = "app_id"
+        settings.gtfsStopsUpdated = fetchTime - 172801
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        coEvery { api.downloadStops("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.fetchFeedMessage("realtime_url", expectedAuth) } returns feedMessage
+
+        val latest = arrivals.latest()
+
+        coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
+        coVerify { api.fetchFeedMessage("realtime_url", expectedAuth) }
         latest.arrivals shouldHaveSize 3
     }
 

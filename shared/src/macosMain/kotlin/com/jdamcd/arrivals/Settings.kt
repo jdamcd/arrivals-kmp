@@ -59,6 +59,12 @@ actual class Settings actual constructor() {
             defaults.setObject(value, SettingsConfig.GTFS_API_KEY)
         }
 
+    actual var gtfsApiKeyParam: String
+        get() = defaults.stringForKey(SettingsConfig.GTFS_API_KEY_PARAM) ?: SettingsConfig.GTFS_API_KEY_PARAM_DEFAULT
+        set(value) {
+            defaults.setObject(value, SettingsConfig.GTFS_API_KEY_PARAM)
+        }
+
     actual var darwinCrsCode: String
         get() = defaults.stringForKey(SettingsConfig.DARWIN_CRS) ?: SettingsConfig.DARWIN_CRS_DEFAULT
         set(value) {

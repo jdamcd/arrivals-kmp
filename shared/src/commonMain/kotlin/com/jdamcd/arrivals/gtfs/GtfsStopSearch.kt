@@ -7,20 +7,20 @@ internal class GtfsStopSearch(
     private val api: GtfsApi,
     private val scheduleUrl: String,
     private val cacheFolder: String,
-    private val apiKey: String = ""
+    private val auth: ApiAuth? = null
 ) : GtfsSearch {
 
     private lateinit var stops: GtfsStops
 
     private suspend fun updateStops() {
         if (!::stops.isInitialized) {
-            stops = GtfsStops(api.downloadStops(scheduleUrl, cacheFolder, apiKey))
+            stops = GtfsStops(api.downloadStops(scheduleUrl, cacheFolder, auth))
         }
     }
 
     override suspend fun getStops(feedUrl: String): List<StopResult> {
         updateStops()
-        val feedMessage = api.fetchFeedMessage(feedUrl, apiKey)
+        val feedMessage = api.fetchFeedMessage(feedUrl, auth)
 
         return feedMessage.entity
             .asSequence()

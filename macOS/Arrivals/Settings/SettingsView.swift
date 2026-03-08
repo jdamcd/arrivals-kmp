@@ -54,6 +54,7 @@ struct SettingsView: View {
                                 settings.gtfsSchedule = Bart().SCHEDULE
                                 settings.gtfsStop = stopId
                                 settings.gtfsApiKey = Bart().API_KEY
+                                settings.gtfsApiKeyParam = ""
                                 settings.gtfsStopsUpdated = 0
                                 settings.mode = SettingsConfig().MODE_GTFS
                             }

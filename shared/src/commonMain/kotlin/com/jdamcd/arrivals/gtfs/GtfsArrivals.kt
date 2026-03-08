@@ -21,12 +21,15 @@ internal class GtfsArrivals(
 
     private lateinit var stops: GtfsStops
 
+    private val auth: ApiAuth?
+        get() = ApiAuth.parse(settings.gtfsApiKey, settings.gtfsApiKeyParam)
+
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
         updateStops()
         val model: ArrivalsInfo
         try {
-            model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime, settings.gtfsApiKey))
+            model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime, auth))
         } catch (e: Exception) {
             throw NoDataException("No connection")
         }
@@ -39,7 +42,7 @@ internal class GtfsArrivals(
     private suspend fun updateStops() {
         try {
             if (!hasFreshStops()) {
-                stops = GtfsStops(api.downloadStops(settings.gtfsSchedule, apiKey = settings.gtfsApiKey))
+                stops = GtfsStops(api.downloadStops(settings.gtfsSchedule, auth = auth))
                 settings.gtfsStopsUpdated = clock.now().epochSeconds
             } else if (!::stops.isInitialized) {
                 stops = GtfsStops(api.readStops())

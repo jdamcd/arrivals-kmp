@@ -2,6 +2,7 @@ package com.jdamcd.arrivals
 
 import com.jdamcd.arrivals.darwin.DarwinApi
 import com.jdamcd.arrivals.darwin.DarwinArrivals
+import com.jdamcd.arrivals.gtfs.ApiAuth
 import com.jdamcd.arrivals.gtfs.GtfsApi
 import com.jdamcd.arrivals.gtfs.GtfsArrivals
 import com.jdamcd.arrivals.gtfs.GtfsStopSearch
@@ -52,7 +53,7 @@ fun commonModule() = module {
     single<Arrivals> { ArrivalsSwitcher(get(), get(), get(), get()) }
     single<TflSearch> { get<TflArrivals>() }
     factory<GtfsSearch>(named("mta")) { GtfsStopSearch(get(), Mta.SCHEDULE, "mta") }
-    factory<GtfsSearch>(named("bart")) { GtfsStopSearch(get(), Bart.SCHEDULE, "bart", Bart.API_KEY) }
+    factory<GtfsSearch>(named("bart")) { GtfsStopSearch(get(), Bart.SCHEDULE, "bart", ApiAuth.QueryParam("api_key", Bart.API_KEY)) }
     single<DarwinSearch> { get<DarwinArrivals>() }
     single {
         HttpClient {
@@ -102,7 +103,7 @@ interface TflSearch {
 }
 
 interface GtfsSearch {
-    @Throws(CancellationException::class)
+    @Throws(Exception::class, CancellationException::class)
     suspend fun getStops(feedUrl: String): List<StopResult>
 }
 

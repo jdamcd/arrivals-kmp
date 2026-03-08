@@ -98,7 +98,9 @@ darwin_platform: 2          # Optional platform number
 gtfs_stop: G28S             # Station ID
 gtfs_realtime: https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g
 gtfs_schedule: http://web.mta.info/developers/data/nyct/subway/google_transit.zip
-gtfs_api_key:               # Optional API key for authenticated feeds
+# Optional for authenticated feeds
+gtfs_api_key_param:         # Param or header (e.g. "app_id", "header:Authorization")
+gtfs_api_key:               # API key
 ```
 
 ---

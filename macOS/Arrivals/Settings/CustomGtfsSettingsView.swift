@@ -10,6 +10,7 @@ struct CustomGtfsSettingsView: View {
     @State private var scheduleUrl: String
     @State private var stopId: String
     @State private var apiKey: String
+    @State private var apiKeyParam: String
 
     private var isValid: Bool {
         realtimeUrl.isNotEmpty && scheduleUrl.isNotEmpty && stopId.isNotEmpty
@@ -20,6 +21,7 @@ struct CustomGtfsSettingsView: View {
         scheduleUrl = settings.gtfsSchedule
         stopId = settings.gtfsStop
         apiKey = ""
+        apiKeyParam = settings.gtfsApiKeyParam
     }
 
     var body: some View {
@@ -27,6 +29,8 @@ struct CustomGtfsSettingsView: View {
             TextField("Realtime URL", text: $realtimeUrl)
             TextField("Schedule URL", text: $scheduleUrl)
             TextField("Stop ID", text: $stopId)
+            TextField("API key param (optional)", text: $apiKeyParam)
+                .help("e.g. 'app_id', 'header:Authorization'")
             TextField("API key (optional)", text: $apiKey)
         }
         .onAppear {
@@ -35,6 +39,7 @@ struct CustomGtfsSettingsView: View {
                 settings.gtfsSchedule = scheduleUrl.trim()
                 settings.gtfsStop = stopId.trim()
                 settings.gtfsApiKey = apiKey.trim()
+                settings.gtfsApiKeyParam = apiKeyParam.trim()
                 settings.gtfsStopsUpdated = 0
                 settings.mode = SettingsConfig().MODE_GTFS
             }

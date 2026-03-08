@@ -39,10 +39,11 @@ class GtfsStopSearchTest {
     }
 
     @Test
-    fun `passes api key to api calls`() = runBlocking<Unit> {
-        val searchWithKey = GtfsStopSearch(api, "https://example.com/schedule", "test_folder", "test_key")
-        coEvery { api.downloadStops("https://example.com/schedule", "test_folder", "test_key") } returns Fixtures.STOPS_CSV_1
-        coEvery { api.fetchFeedMessage("https://example.com/feed", "test_key") } returns feedMessage
+    fun `passes auth to api calls`() = runBlocking<Unit> {
+        val auth = ApiAuth.QueryParam("api_key", "test_key")
+        val searchWithKey = GtfsStopSearch(api, "https://example.com/schedule", "test_folder", auth)
+        coEvery { api.downloadStops("https://example.com/schedule", "test_folder", auth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.fetchFeedMessage("https://example.com/feed", auth) } returns feedMessage
 
         val results = searchWithKey.getStops("https://example.com/feed")
 

@@ -73,6 +73,9 @@ private class Gtfs :
     private val schedule by option("--schedule")
         .help("GTFS schedule URL")
 
+    private val apiKeyParam by option("--api-key-param")
+        .help("API key type (e.g. 'app_id', 'header:Authorization')")
+
     private val apiKey by option("--api-key")
         .help("API key for authenticated feeds")
 
@@ -82,6 +85,7 @@ private class Gtfs :
         realtime?.let { settings.gtfsRealtime = it }
         schedule?.let { settings.gtfsSchedule = it }
         apiKey?.let { settings.gtfsApiKey = it }
+        apiKeyParam?.let { settings.gtfsApiKeyParam = it }
 
         fetchAndDisplay(arrivals)
     }

@@ -2,7 +2,9 @@ package com.jdamcd.arrivals.gtfs
 
 import com.google.transit.realtime.FeedMessage
 import io.ktor.client.HttpClient
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.readRawBytes
@@ -14,25 +16,40 @@ import okio.buffer
 import okio.openZip
 import okio.use
 
+internal sealed class ApiAuth {
+    data class QueryParam(val name: String, val key: String) : ApiAuth()
+    data class Header(val name: String, val key: String) : ApiAuth()
+
+    companion object Companion {
+        fun parse(key: String, param: String = ""): ApiAuth? {
+            if (key.isEmpty()) return null
+            if (param.isEmpty()) return QueryParam("api_key", key)
+            if (param.startsWith("header:")) return Header(param.removePrefix("header:"), key)
+            val name = param.removePrefix("query:")
+            return QueryParam(name, key)
+        }
+    }
+}
+
 internal class GtfsApi(private val client: HttpClient) {
 
     private val baseDir = getFilesDir()
     private val defaultDir = "$baseDir/gtfs".toPath()
     private val stopsFileName = "stops.txt"
 
-    suspend fun fetchFeedMessage(url: String, apiKey: String = ""): FeedMessage {
+    suspend fun fetchFeedMessage(url: String, auth: ApiAuth? = null): FeedMessage {
         val bodyBytes = client.get(url) {
-            if (apiKey.isNotEmpty()) parameter("api_key", apiKey)
+            auth.applyTo(this)
         }.bodyAsBytes()
         return FeedMessage.ADAPTER.decode(bodyBytes)
     }
 
-    suspend fun downloadStops(url: String, folder: String = "gtfs", apiKey: String = ""): String {
+    suspend fun downloadStops(url: String, folder: String = "gtfs", auth: ApiAuth? = null): String {
         val tempZipFile = "$baseDir/gtfs.zip".toPath()
         val outputDir = "$baseDir/$folder".toPath()
         try {
             val zipContent = client.get(url) {
-                if (apiKey.isNotEmpty()) parameter("api_key", apiKey)
+                auth.applyTo(this)
             }.readRawBytes()
             FileSystem.SYSTEM.write(tempZipFile) {
                 write(zipContent)
@@ -67,6 +84,14 @@ internal class GtfsApi(private val client: HttpClient) {
                 }
             }
         }
+    }
+}
+
+private fun ApiAuth?.applyTo(builder: HttpRequestBuilder) {
+    when (this) {
+        is ApiAuth.QueryParam -> builder.parameter(name, key)
+        is ApiAuth.Header -> builder.header(name, key)
+        null -> {}
     }
 }
 

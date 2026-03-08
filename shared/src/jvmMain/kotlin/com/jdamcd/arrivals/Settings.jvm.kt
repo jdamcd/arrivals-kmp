@@ -10,6 +10,7 @@ actual class Settings actual constructor() {
     actual var gtfsSchedule = SettingsConfig.GTFS_SCHEDULE_DEFAULT
     actual var gtfsStop = SettingsConfig.GTFS_STOP_DEFAULT
     actual var gtfsApiKey = SettingsConfig.GTFS_API_KEY_DEFAULT
+    actual var gtfsApiKeyParam = SettingsConfig.GTFS_API_KEY_PARAM_DEFAULT
     actual var darwinCrsCode = SettingsConfig.DARWIN_CRS_DEFAULT
     actual var darwinPlatform = SettingsConfig.DARWIN_PLATFORM_DEFAULT
 }
