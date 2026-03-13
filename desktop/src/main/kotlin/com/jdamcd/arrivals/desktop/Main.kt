@@ -107,19 +107,14 @@ fun loadConfig(settings: Settings) {
             FileInputStream(configFile).use { inputStream ->
                 val data: Map<String, Any> = Yaml().load(inputStream)
                 data.getString(SettingsConfig.MODE)?.let { settings.mode = it }
+                data.getString(SettingsConfig.STATION_ID)?.let { settings.stationId = it }
+                data.getString(SettingsConfig.PLATFORM)?.let { settings.platform = it }
+                data.getString(SettingsConfig.TFL_DIRECTION)?.let { settings.tflDirection = it }
                 data.getString(SettingsConfig.GTFS_REALTIME)?.let { settings.gtfsRealtime = it }
                 data.getString(SettingsConfig.GTFS_SCHEDULE)?.let { settings.gtfsSchedule = it }
-                data.getString(SettingsConfig.GTFS_STOP)?.let { settings.gtfsStop = it }
                 data.getString(SettingsConfig.GTFS_API_KEY)?.let { settings.gtfsApiKey = it }
                 data.getString(SettingsConfig.GTFS_API_KEY_PARAM)?.let { settings.gtfsApiKeyParam = it }
-                data.getString(SettingsConfig.TFL_STOP)?.let { settings.tflStopId = it }
-                data.getString(SettingsConfig.TFL_PLATFORM)?.let { settings.tflPlatform = it }
-                data.getString(SettingsConfig.TFL_DIRECTION)?.let { settings.tflDirection = it }
-                data.getString(SettingsConfig.DARWIN_CRS)?.let { settings.darwinCrsCode = it }
-                data.getString(SettingsConfig.DARWIN_PLATFORM)?.let { settings.darwinPlatform = it }
-                data.getString(SettingsConfig.BVG_STOP)?.let { settings.bvgStopId = it }
                 data.getString(SettingsConfig.BVG_LINE)?.let { settings.bvgLine = it }
-                data.getString(SettingsConfig.BVG_PLATFORM)?.let { settings.bvgPlatform = it }
             }
         } catch (e: Exception) {
             println("Error reading config file: ${e.message}")

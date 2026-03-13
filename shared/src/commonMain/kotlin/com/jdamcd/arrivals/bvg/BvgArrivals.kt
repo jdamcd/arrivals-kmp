@@ -25,7 +25,7 @@ internal class BvgArrivals(
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
-        val stopId = settings.bvgStopId
+        val stopId = settings.stationId
         if (stopId.isEmpty()) throw NoDataException("No BVG stop configured")
         val stopName = getCachedStopName(stopId)
         val response = api.fetchDepartures(stopId)
@@ -61,8 +61,8 @@ internal class BvgArrivals(
                     it.line?.name.equals(settings.bvgLine, ignoreCase = true)
             }
             .filter {
-                settings.bvgPlatform.isEmpty() ||
-                    (it.platform != null && matchesPlatformFilter(it.platform, settings.bvgPlatform))
+                settings.platform.isEmpty() ||
+                    (it.platform != null && matchesPlatformFilter(it.platform, settings.platform))
             }
             .mapNotNull { departure -> createArrival(departure, nowSeconds) }
             .filter { it.secondsToStop in 0 until MAX_SECONDS_AHEAD }
@@ -80,7 +80,7 @@ internal class BvgArrivals(
             .trim()
         val suffix = listOfNotNull(
             settings.bvgLine.takeIf { it.isNotEmpty() },
-            "Platform ${stripPlatform(settings.bvgPlatform)}".takeIf { settings.bvgPlatform.isNotEmpty() }
+            "Platform ${stripPlatform(settings.platform)}".takeIf { settings.platform.isNotEmpty() }
         ).joinToString(", ")
         return if (suffix.isNotEmpty()) "$baseName: $suffix" else baseName
     }

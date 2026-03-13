@@ -97,12 +97,12 @@ private class DarwinSettingsViewModel: ObservableObject {
     }
 
     func initialPlatform() -> String {
-        settings.darwinPlatform
+        settings.platform
     }
 
     func save(station: StopResult, platformFilter: String) {
-        settings.darwinCrsCode = station.id
-        settings.darwinPlatform = platformFilter
+        settings.stationId = station.id
+        settings.platform = platformFilter
         settings.mode = SettingsConfig().MODE_DARWIN
     }
 }

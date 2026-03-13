@@ -11,16 +11,16 @@ actual class Settings actual constructor() {
             defaults.setObject(value, SettingsConfig.MODE)
         }
 
-    actual var tflStopId: String
-        get() = defaults.stringForKey(SettingsConfig.TFL_STOP) ?: SettingsConfig.TFL_STOP_DEFAULT
+    actual var stationId: String
+        get() = defaults.stringForKey(SettingsConfig.STATION_ID) ?: SettingsConfig.STATION_ID_DEFAULT
         set(value) {
-            defaults.setObject(value, SettingsConfig.TFL_STOP)
+            defaults.setObject(value, SettingsConfig.STATION_ID)
         }
 
-    actual var tflPlatform: String
-        get() = defaults.stringForKey(SettingsConfig.TFL_PLATFORM) ?: SettingsConfig.TFL_PLATFORM_DEFAULT
+    actual var platform: String
+        get() = defaults.stringForKey(SettingsConfig.PLATFORM) ?: SettingsConfig.PLATFORM_DEFAULT
         set(value) {
-            defaults.setObject(value, SettingsConfig.TFL_PLATFORM)
+            defaults.setObject(value, SettingsConfig.PLATFORM)
         }
 
     actual var tflDirection: String
@@ -47,12 +47,6 @@ actual class Settings actual constructor() {
             defaults.setObject(value, SettingsConfig.GTFS_SCHEDULE)
         }
 
-    actual var gtfsStop: String
-        get() = defaults.stringForKey(SettingsConfig.GTFS_STOP) ?: SettingsConfig.GTFS_STOP_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.GTFS_STOP)
-        }
-
     actual var gtfsApiKey: String
         get() = defaults.stringForKey(SettingsConfig.GTFS_API_KEY) ?: SettingsConfig.GTFS_API_KEY_DEFAULT
         set(value) {
@@ -65,33 +59,9 @@ actual class Settings actual constructor() {
             defaults.setObject(value, SettingsConfig.GTFS_API_KEY_PARAM)
         }
 
-    actual var darwinCrsCode: String
-        get() = defaults.stringForKey(SettingsConfig.DARWIN_CRS) ?: SettingsConfig.DARWIN_CRS_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.DARWIN_CRS)
-        }
-
-    actual var darwinPlatform: String
-        get() = defaults.stringForKey(SettingsConfig.DARWIN_PLATFORM) ?: SettingsConfig.DARWIN_PLATFORM_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.DARWIN_PLATFORM)
-        }
-
-    actual var bvgStopId: String
-        get() = defaults.stringForKey(SettingsConfig.BVG_STOP) ?: SettingsConfig.BVG_STOP_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.BVG_STOP)
-        }
-
     actual var bvgLine: String
         get() = defaults.stringForKey(SettingsConfig.BVG_LINE) ?: SettingsConfig.BVG_LINE_DEFAULT
         set(value) {
             defaults.setObject(value, SettingsConfig.BVG_LINE)
-        }
-
-    actual var bvgPlatform: String
-        get() = defaults.stringForKey(SettingsConfig.BVG_PLATFORM) ?: SettingsConfig.BVG_PLATFORM_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.BVG_PLATFORM)
         }
 }

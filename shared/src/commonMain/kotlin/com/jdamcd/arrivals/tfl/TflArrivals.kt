@@ -22,7 +22,7 @@ internal class TflArrivals(
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
-        val model = formatArrivals(api.fetchArrivals(settings.tflStopId))
+        val model = formatArrivals(api.fetchArrivals(settings.stationId))
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No arrivals found")
         }
@@ -54,8 +54,8 @@ internal class TflArrivals(
                 .asSequence()
                 .sortedBy { it.timeToStation }
                 .filter {
-                    settings.tflPlatform.isEmpty() ||
-                        matchesPlatformFilter(it.platformName, settings.tflPlatform)
+                    settings.platform.isEmpty() ||
+                        matchesPlatformFilter(it.platformName, settings.platform)
                 }
                 .filter { arrival ->
                     settings.tflDirection == SettingsConfig.TFL_DIRECTION_DEFAULT ||
@@ -81,8 +81,8 @@ internal class TflArrivals(
         val station = formatStation(name)
         return if (station.isEmpty()) {
             station
-        } else if (settings.tflPlatform.isNotEmpty()) {
-            "$station: Platform ${stripPlatform(settings.tflPlatform)}"
+        } else if (settings.platform.isNotEmpty()) {
+            "$station: Platform ${stripPlatform(settings.platform)}"
         } else if (settings.tflDirection != SettingsConfig.TFL_DIRECTION_DEFAULT) {
             "$station: ${formatDirection(settings.tflDirection)}"
         } else {
