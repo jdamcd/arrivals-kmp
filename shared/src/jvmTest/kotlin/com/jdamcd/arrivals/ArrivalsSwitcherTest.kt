@@ -1,5 +1,6 @@
 package com.jdamcd.arrivals
 
+import com.jdamcd.arrivals.bvg.BvgArrivals
 import com.jdamcd.arrivals.darwin.DarwinArrivals
 import com.jdamcd.arrivals.gtfs.GtfsArrivals
 import com.jdamcd.arrivals.tfl.TflArrivals
@@ -14,12 +15,14 @@ class ArrivalsSwitcherTest {
     private val tfl = mockk<TflArrivals>()
     private val gtfs = mockk<GtfsArrivals>()
     private val darwin = mockk<DarwinArrivals>()
+    private val bvg = mockk<BvgArrivals>()
     private val settings = Settings()
-    private val switcher = ArrivalsSwitcher(tfl, gtfs, darwin, settings)
+    private val switcher = ArrivalsSwitcher(tfl, gtfs, darwin, bvg, settings)
 
     private val tflResult = ArrivalsInfo("TfL Station", emptyList())
     private val gtfsResult = ArrivalsInfo("GTFS Station", emptyList())
     private val darwinResult = ArrivalsInfo("Darwin Station", emptyList())
+    private val bvgResult = ArrivalsInfo("BVG Station", emptyList())
 
     @Test
     fun `routes to TfL`() = runBlocking<Unit> {
@@ -35,6 +38,14 @@ class ArrivalsSwitcherTest {
         coEvery { darwin.latest() } returns darwinResult
 
         switcher.latest().station shouldBe "Darwin Station"
+    }
+
+    @Test
+    fun `routes to BVG`() = runBlocking<Unit> {
+        settings.mode = SettingsConfig.MODE_BVG
+        coEvery { bvg.latest() } returns bvgResult
+
+        switcher.latest().station shouldBe "BVG Station"
     }
 
     @Test

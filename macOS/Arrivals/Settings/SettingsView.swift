@@ -2,13 +2,14 @@
 import SwiftUI
 
 enum TransitSystem: CaseIterable {
-    case tfl, mta, bart, darwin, customGtfs
+    case tfl, mta, bart, bvg, darwin, customGtfs
 
     var displayName: String {
         switch self {
         case .tfl: "London (TfL)"
         case .mta: "NYC (MTA)"
         case .bart: "SF Bay Area (BART)"
+        case .bvg: "Berlin (BVG)"
         case .darwin: "UK (National Rail)"
         case .customGtfs: "Custom GTFS"
         }
@@ -59,6 +60,8 @@ struct SettingsView: View {
                                 settings.mode = SettingsConfig().MODE_GTFS
                             }
                         )
+                    case .bvg:
+                        BvgSettingsView()
                     case .darwin:
                         DarwinSettingsView()
                     case .customGtfs:
