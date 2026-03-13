@@ -76,4 +76,22 @@ actual class Settings actual constructor() {
         set(value) {
             defaults.setObject(value, SettingsConfig.DARWIN_PLATFORM)
         }
+
+    actual var bvgStopId: String
+        get() = defaults.stringForKey(SettingsConfig.BVG_STOP) ?: SettingsConfig.BVG_STOP_DEFAULT
+        set(value) {
+            defaults.setObject(value, SettingsConfig.BVG_STOP)
+        }
+
+    actual var bvgLine: String
+        get() = defaults.stringForKey(SettingsConfig.BVG_LINE) ?: SettingsConfig.BVG_LINE_DEFAULT
+        set(value) {
+            defaults.setObject(value, SettingsConfig.BVG_LINE)
+        }
+
+    actual var bvgPlatform: String
+        get() = defaults.stringForKey(SettingsConfig.BVG_PLATFORM) ?: SettingsConfig.BVG_PLATFORM_DEFAULT
+        set(value) {
+            defaults.setObject(value, SettingsConfig.BVG_PLATFORM)
+        }
 }

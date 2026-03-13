@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
     initKoin()
     runBlocking {
         Cli()
-            .subcommands(Tfl(), Gtfs(), Darwin())
+            .subcommands(Tfl(), Gtfs(), Darwin(), Bvg())
             .main(args)
     }
 }
@@ -107,6 +107,31 @@ private class Darwin :
         settings.mode = SettingsConfig.MODE_DARWIN
         station?.let { settings.darwinCrsCode = it }
         platform?.let { settings.darwinPlatform = it }
+
+        fetchAndDisplay(arrivals)
+    }
+}
+
+private class Bvg :
+    SuspendingCliktCommand("bvg"),
+    KoinComponent {
+    private val arrivals: Arrivals by inject()
+    private val settings: Settings by inject()
+
+    private val station by option("--station")
+        .help("Stop ID (e.g. 900013102)")
+
+    private val line by option("--line")
+        .help("Line filter (e.g. U2, S5, M10)")
+
+    private val platform by option("--platform")
+        .help("Platform filter (optional)")
+
+    override suspend fun run() {
+        settings.mode = SettingsConfig.MODE_BVG
+        station?.let { settings.bvgStopId = it }
+        line?.let { settings.bvgLine = it }
+        platform?.let { settings.bvgPlatform = it }
 
         fetchAndDisplay(arrivals)
     }

@@ -1,5 +1,7 @@
 package com.jdamcd.arrivals
 
+import com.jdamcd.arrivals.bvg.BvgApi
+import com.jdamcd.arrivals.bvg.BvgArrivals
 import com.jdamcd.arrivals.darwin.DarwinApi
 import com.jdamcd.arrivals.darwin.DarwinArrivals
 import com.jdamcd.arrivals.gtfs.ApiAuth
@@ -24,6 +26,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
+import kotlinx.datetime.Clock as DateTimeClock
 
 @Suppress("Unused")
 fun initKoin() = startKoin {
@@ -38,11 +41,13 @@ class MacDI : KoinComponent {
     val mtaSearch: GtfsSearch by inject(named("mta"))
     val bartSearch: GtfsSearch by inject(named("bart"))
     val darwinSearch: DarwinSearch by inject()
+    val bvgSearch: BvgSearch by inject()
 }
 
 @OptIn(kotlin.time.ExperimentalTime::class)
 fun commonModule() = module {
     single<Clock> { Clock.System }
+    single<DateTimeClock> { DateTimeClock.System }
     single { Settings() }
     single { TflApi(get()) }
     single { GtfsApi(get()) }
@@ -50,11 +55,14 @@ fun commonModule() = module {
     single { TflArrivals(get(), get()) }
     single { GtfsArrivals(get(), get(), get()) }
     single { DarwinArrivals(get(), get(), get()) }
-    single<Arrivals> { ArrivalsSwitcher(get(), get(), get(), get()) }
+    single { BvgApi(get()) }
+    single { BvgArrivals(get(), get(), get()) }
+    single<Arrivals> { ArrivalsSwitcher(get(), get(), get(), get(), get()) }
     single<TflSearch> { get<TflArrivals>() }
     factory<GtfsSearch>(named("mta")) { GtfsStopSearch(get(), Mta.SCHEDULE, "mta") }
     factory<GtfsSearch>(named("bart")) { GtfsStopSearch(get(), Bart.SCHEDULE, "bart", ApiAuth.QueryParam("api_key", Bart.API_KEY)) }
     single<DarwinSearch> { get<DarwinArrivals>() }
+    single<BvgSearch> { get<BvgArrivals>() }
     single {
         HttpClient {
             install(HttpTimeout) {
@@ -79,12 +87,14 @@ internal class ArrivalsSwitcher(
     private val tfl: TflArrivals,
     private val gtfs: GtfsArrivals,
     private val darwin: DarwinArrivals,
+    private val bvg: BvgArrivals,
     private val settings: Settings
 ) : Arrivals {
 
     override suspend fun latest(): ArrivalsInfo = when (settings.mode) {
         SettingsConfig.MODE_TFL -> tfl.latest()
         SettingsConfig.MODE_DARWIN -> darwin.latest()
+        SettingsConfig.MODE_BVG -> bvg.latest()
         else -> gtfs.latest()
     }
 }
@@ -108,6 +118,11 @@ interface GtfsSearch {
 }
 
 interface DarwinSearch {
+    @Throws(CancellationException::class)
+    suspend fun searchStops(query: String): List<StopResult>
+}
+
+interface BvgSearch {
     @Throws(CancellationException::class)
     suspend fun searchStops(query: String): List<StopResult>
 }

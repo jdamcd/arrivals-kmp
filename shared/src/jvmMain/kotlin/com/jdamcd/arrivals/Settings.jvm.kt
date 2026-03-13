@@ -13,4 +13,7 @@ actual class Settings actual constructor() {
     actual var gtfsApiKeyParam = SettingsConfig.GTFS_API_KEY_PARAM_DEFAULT
     actual var darwinCrsCode = SettingsConfig.DARWIN_CRS_DEFAULT
     actual var darwinPlatform = SettingsConfig.DARWIN_PLATFORM_DEFAULT
+    actual var bvgStopId = SettingsConfig.BVG_STOP_DEFAULT
+    actual var bvgLine = SettingsConfig.BVG_LINE_DEFAULT
+    actual var bvgPlatform = SettingsConfig.BVG_PLATFORM_DEFAULT
 }
