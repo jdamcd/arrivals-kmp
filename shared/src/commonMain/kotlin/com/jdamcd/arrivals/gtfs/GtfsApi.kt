@@ -2,6 +2,7 @@ package com.jdamcd.arrivals.gtfs
 
 import com.google.transit.realtime.FeedMessage
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.timeout
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -50,6 +51,9 @@ internal class GtfsApi(private val client: HttpClient) {
         try {
             val zipContent = client.get(url) {
                 auth.applyTo(this)
+                timeout {
+                    requestTimeoutMillis = 60_000 // 1 min for large schedule zips
+                }
             }.readRawBytes()
             FileSystem.SYSTEM.write(tempZipFile) {
                 write(zipContent)

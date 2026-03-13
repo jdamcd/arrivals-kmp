@@ -31,7 +31,7 @@ The macOS toolbar app can be downloaded from [releases](https://github.com/jdamc
 2. Create `shared/secret.properties` and add your keys:
    ```
    tfl_key=YOURKEY
-   darwin_key=YOURTOKEN
+   darwin_key=YOURKEY
    org_511_key=YOURKEY
    ```
 3. Make sure you have a JDK configured at `$JAVA_HOME`
