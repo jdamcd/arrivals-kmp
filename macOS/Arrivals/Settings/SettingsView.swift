@@ -53,7 +53,7 @@ struct SettingsView: View {
                                 let settings = MacDI().settings
                                 settings.gtfsRealtime = Bart().REALTIME
                                 settings.gtfsSchedule = Bart().SCHEDULE
-                                settings.stationId = stopId
+                                settings.stopId = stopId
                                 settings.gtfsApiKey = Bart().API_KEY
                                 settings.gtfsApiKeyParam = ""
                                 settings.gtfsStopsUpdated = 0

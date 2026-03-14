@@ -27,7 +27,7 @@ class TflArrivalsTest {
 
     @BeforeTest
     fun setup() {
-        settings.stationId = "123"
+        settings.stopId = "123"
         settings.platform = "2"
         settings.tflDirection = "all"
     }

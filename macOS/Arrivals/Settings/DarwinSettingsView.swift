@@ -101,7 +101,7 @@ private class DarwinSettingsViewModel: ObservableObject {
     }
 
     func save(station: StopResult, platformFilter: String) {
-        settings.stationId = station.id
+        settings.stopId = station.id
         settings.platform = platformFilter
         settings.mode = SettingsConfig().MODE_DARWIN
     }

@@ -114,7 +114,7 @@ private class BvgSettingsViewModel: ObservableObject {
     }
 
     func save(station: StopResult, lineFilter: String, platformFilter: String) {
-        settings.stationId = station.id
+        settings.stopId = station.id
         settings.bvgLine = lineFilter
         settings.platform = platformFilter
         settings.mode = SettingsConfig().MODE_BVG

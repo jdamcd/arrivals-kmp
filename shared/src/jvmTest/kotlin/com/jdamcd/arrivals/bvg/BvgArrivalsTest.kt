@@ -64,7 +64,7 @@ class BvgArrivalsTest {
 
     @BeforeTest
     fun setup() {
-        settings.stationId = "900100003"
+        settings.stopId = "900100003"
         settings.bvgLine = ""
         settings.platform = ""
     }
@@ -219,7 +219,7 @@ class BvgArrivalsTest {
 
     @Test
     fun `throws NoDataException when stop not configured`() = runBlocking<Unit> {
-        settings.stationId = ""
+        settings.stopId = ""
 
         val e = assertFailsWith<NoDataException> {
             arrivals.latest()

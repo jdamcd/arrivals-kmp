@@ -25,7 +25,7 @@ internal class BvgArrivals(
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
-        val stopId = settings.stationId
+        val stopId = settings.stopId
         if (stopId.isEmpty()) throw NoDataException("No BVG stop configured")
         val stopName = getCachedStopName(stopId)
         val response = api.fetchDepartures(stopId)

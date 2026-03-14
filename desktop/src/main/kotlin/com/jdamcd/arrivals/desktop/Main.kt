@@ -107,7 +107,7 @@ fun loadConfig(settings: Settings) {
             FileInputStream(configFile).use { inputStream ->
                 val data: Map<String, Any> = Yaml().load(inputStream)
                 data.getString(SettingsConfig.MODE)?.let { settings.mode = it }
-                data.getString(SettingsConfig.STATION_ID)?.let { settings.stationId = it }
+                data.getString(SettingsConfig.STOP_ID)?.let { settings.stopId = it }
                 data.getString(SettingsConfig.PLATFORM)?.let { settings.platform = it }
                 data.getString(SettingsConfig.TFL_DIRECTION)?.let { settings.tflDirection = it }
                 data.getString(SettingsConfig.GTFS_REALTIME)?.let { settings.gtfsRealtime = it }

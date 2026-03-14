@@ -39,7 +39,7 @@ private class Tfl :
     private val settings: Settings by inject()
 
     private val station by option("--station")
-        .help("Station ID (e.g. 910GSHRDHST)")
+        .help("Stop ID (e.g. 910GSHRDHST)")
 
     private val platform by option("--platform")
         .help("Platform filter (optional)")
@@ -50,7 +50,7 @@ private class Tfl :
 
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_TFL
-        station?.let { settings.stationId = it }
+        station?.let { settings.stopId = it }
         platform?.let { settings.platform = it }
         direction?.let { settings.tflDirection = it }
 
@@ -65,7 +65,7 @@ private class Gtfs :
     private val settings: Settings by inject()
 
     private val stop by option("--station")
-        .help("Station stop ID (e.g. A42N)")
+        .help("Stop ID (e.g. A42N)")
 
     private val realtime by option("--realtime")
         .help("GTFS-RT feed URL")
@@ -81,7 +81,7 @@ private class Gtfs :
 
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_GTFS
-        stop?.let { settings.stationId = it }
+        stop?.let { settings.stopId = it }
         realtime?.let { settings.gtfsRealtime = it }
         schedule?.let { settings.gtfsSchedule = it }
         apiKey?.let { settings.gtfsApiKey = it }
@@ -98,14 +98,14 @@ private class Darwin :
     private val settings: Settings by inject()
 
     private val station by option("--station")
-        .help("Station CRS code (e.g. PMR)")
+        .help("Stop ID / CRS code (e.g. PMR)")
 
     private val platform by option("--platform")
         .help("Platform filter (optional)")
 
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_DARWIN
-        station?.let { settings.stationId = it }
+        station?.let { settings.stopId = it }
         platform?.let { settings.platform = it }
 
         fetchAndDisplay(arrivals)
@@ -129,7 +129,7 @@ private class Bvg :
 
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_BVG
-        station?.let { settings.stationId = it }
+        station?.let { settings.stopId = it }
         line?.let { settings.bvgLine = it }
         platform?.let { settings.platform = it }
 

@@ -78,7 +78,7 @@ class DarwinArrivalsTest {
 
     @BeforeTest
     fun setup() {
-        settings.stationId = "CLJ"
+        settings.stopId = "CLJ"
         settings.platform = ""
     }
 

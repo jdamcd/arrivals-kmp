@@ -33,7 +33,7 @@ class GtfsArrivalsTest {
     fun setup() {
         settings.gtfsRealtime = "realtime_url"
         settings.gtfsSchedule = "schedule_url"
-        settings.stationId = "G28S"
+        settings.stopId = "G28S"
         settings.gtfsStopsUpdated = fetchTime - 1000
         every { api.hasStops() } returns true
 
@@ -78,7 +78,7 @@ class GtfsArrivalsTest {
 
     @Test
     fun `throws NoDataException if no arrivals match stop`() = runBlocking<Unit> {
-        settings.stationId = "1234"
+        settings.stopId = "1234"
         coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.readStops() } returns Fixtures.STOPS_CSV_1

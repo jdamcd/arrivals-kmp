@@ -98,7 +98,7 @@ private class MtaSettingsViewModel: ObservableObject {
     func save(lineUrl: String, stopId: String) {
         settings.gtfsRealtime = lineUrl
         settings.gtfsSchedule = Mta().SCHEDULE
-        settings.stationId = stopId
+        settings.stopId = stopId
         settings.gtfsApiKey = ""
         settings.gtfsApiKeyParam = ""
         settings.gtfsStopsUpdated = 0

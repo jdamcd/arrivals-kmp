@@ -23,7 +23,7 @@ internal class DarwinArrivals(
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
-        val model = formatArrivals(api.fetchDepartures(settings.stationId))
+        val model = formatArrivals(api.fetchDepartures(settings.stopId))
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No departures found")
         }
