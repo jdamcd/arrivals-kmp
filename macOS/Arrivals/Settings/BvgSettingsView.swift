@@ -80,7 +80,7 @@ struct BvgSettingsView: View {
 
 @MainActor
 private class BvgSettingsViewModel: ObservableObject {
-    @Published var state: BvgSettingsState = .idle
+    @Published var state: SettingsState = .idle
 
     private let fetcher = MacDI().bvgSearch
     private let settings = MacDI().settings
@@ -119,14 +119,6 @@ private class BvgSettingsViewModel: ObservableObject {
         settings.bvgPlatform = platformFilter
         settings.mode = SettingsConfig().MODE_BVG
     }
-}
-
-private enum BvgSettingsState: Equatable {
-    case idle
-    case loading
-    case data([StopResult])
-    case empty
-    case error
 }
 
 #Preview {

@@ -31,6 +31,8 @@ struct GtfsFeedSettingsView: View {
                     .listStyle(PlainListStyle())
                 case .idle:
                     Text("Loading stops...")
+                case .empty:
+                    Text("No stops found")
                 case .error:
                     Text("Failed to load stops")
                 case .loading:
@@ -85,11 +87,4 @@ private class GtfsFeedSettingsViewModel: ObservableObject {
     func save(stopId: String) {
         onSave(stopId)
     }
-}
-
-private enum SettingsState: Equatable {
-    case idle
-    case loading
-    case data([StopResult])
-    case error
 }

@@ -45,6 +45,8 @@ struct MtaSettingsView: View {
                     .listStyle(PlainListStyle())
                 case .idle:
                     Text("Select a line")
+                case .empty:
+                    Text("No stops found")
                 case .error:
                     Text("Failed to load stops")
                 case .loading:
@@ -76,19 +78,28 @@ private class MtaSettingsViewModel: ObservableObject {
 
     private let fetcher = MacDI().mtaSearch
     private let settings = MacDI().settings
+    private var loadTask: Task<Void, Never>?
+
+    deinit {
+        loadTask?.cancel()
+    }
 
     func reset() {
+        loadTask?.cancel()
         state = .idle
     }
 
     func getStops(feedUrl: String) {
-        if state != .loading {
-            state = .loading
-            Task {
-                do {
-                    let result = try await fetcher.getStops(feedUrl: feedUrl)
+        loadTask?.cancel()
+        state = .loading
+        loadTask = Task {
+            do {
+                let result = try await fetcher.getStops(feedUrl: feedUrl)
+                if !Task.isCancelled {
                     state = .data(result)
-                } catch {
+                }
+            } catch {
+                if !Task.isCancelled {
                     state = .error
                 }
             }
@@ -104,13 +115,6 @@ private class MtaSettingsViewModel: ObservableObject {
         settings.gtfsStopsUpdated = 0
         settings.mode = SettingsConfig().MODE_GTFS
     }
-}
-
-private enum SettingsState: Equatable {
-    case idle
-    case loading
-    case data([StopResult])
-    case error
 }
 
 #Preview {
