@@ -3,10 +3,11 @@ package com.jdamcd.arrivals.darwin
 import com.jdamcd.arrivals.Arrival
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
-import com.jdamcd.arrivals.DarwinSearch
+import com.jdamcd.arrivals.MAX_SECONDS_AHEAD
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.StopResult
+import com.jdamcd.arrivals.StopSearch
 import com.jdamcd.arrivals.formatTime
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
@@ -19,7 +20,7 @@ internal class DarwinArrivals(
     private val settings: Settings,
     private val clock: Clock
 ) : Arrivals,
-    DarwinSearch {
+    StopSearch {
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
@@ -127,8 +128,4 @@ internal class DarwinArrivals(
     }
 
     private fun isValidDeparture(etd: String): Boolean = etd.contains(":") || etd == "On time"
-
-    companion object {
-        private const val MAX_SECONDS_AHEAD = 7200 // 2 hours
-    }
 }

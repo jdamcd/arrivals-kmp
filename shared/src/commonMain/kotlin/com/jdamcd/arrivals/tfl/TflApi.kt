@@ -1,66 +1,38 @@
 package com.jdamcd.arrivals.tfl
 
 import com.jdamcd.arrivals.BuildKonfig
-import com.jdamcd.arrivals.NoDataException
+import com.jdamcd.arrivals.JsonApiClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.isSuccess
 import io.ktor.serialization.JsonConvertException
 import kotlinx.serialization.Serializable
 
-internal class TflApi(private val client: HttpClient) {
+internal class TflApi(client: HttpClient) :
+    JsonApiClient(
+        client = client,
+        apiName = "TfL API"
+    ) {
 
     suspend fun fetchArrivals(station: String): List<ApiArrival> = try {
-        request("$BASE_URL/StopPoint/$station/Arrivals") {
+        executeRequest("$BASE_URL/StopPoint/$station/Arrivals") {
             parameter("app_key", BuildKonfig.TFL_KEY)
-        }
+        }.body()
     } catch (_: JsonConvertException) {
         // API returns empty body for terminal stations
         emptyList()
     }
 
-    suspend fun searchStations(query: String): ApiSearchResult = request("$BASE_URL/StopPoint/Search") {
+    suspend fun searchStations(query: String): ApiSearchResult = executeRequest("$BASE_URL/StopPoint/Search") {
         parameter("app_key", BuildKonfig.TFL_KEY)
         parameter("query", query)
         parameter("modes", "dlr,elizabeth-line,overground,tube,tram")
         parameter("tflOperatedNationalRailStationsOnly", true)
-    }
+    }.body()
 
-    suspend fun stopDetails(id: String): ApiStopPoint = request("$BASE_URL/StopPoint/$id") {
+    suspend fun stopDetails(id: String): ApiStopPoint = executeRequest("$BASE_URL/StopPoint/$id") {
         parameter("app_key", BuildKonfig.TFL_KEY)
-    }
-
-    private suspend inline fun <reified T> request(
-        url: String,
-        crossinline parameters: HttpRequestBuilder.() -> Unit
-    ): T {
-        val response = try {
-            client.get(url) { parameters() }
-        } catch (_: Exception) {
-            throw NoDataException("Can't connect to TfL API")
-        }
-        checkResponse(response)
-        return response.body()
-    }
-
-    private fun checkResponse(response: HttpResponse) {
-        if (!response.status.isSuccess()) {
-            throw NoDataException(
-                when (response.status) {
-                    HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden ->
-                        "TfL API app key error"
-
-                    else ->
-                        "Can't connect to TfL API"
-                }
-            )
-        }
-    }
+    }.body()
 }
 
 @Serializable

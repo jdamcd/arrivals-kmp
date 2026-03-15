@@ -84,7 +84,7 @@ class DarwinApiTest {
         val e = assertFailsWith<NoDataException> {
             api.fetchDepartures("CLJ")
         }
-        e.message shouldBe "Darwin access token error"
+        e.message shouldBe "Darwin API error"
     }
 
     @Test
@@ -98,7 +98,7 @@ class DarwinApiTest {
         val e = assertFailsWith<NoDataException> {
             api.fetchDepartures("CLJ")
         }
-        e.message shouldBe "Darwin access token error"
+        e.message shouldBe "Darwin API error"
     }
 
     @Test

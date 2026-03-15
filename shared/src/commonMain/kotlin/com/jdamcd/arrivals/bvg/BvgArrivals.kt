@@ -3,10 +3,11 @@ package com.jdamcd.arrivals.bvg
 import com.jdamcd.arrivals.Arrival
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
-import com.jdamcd.arrivals.BvgSearch
+import com.jdamcd.arrivals.MAX_SECONDS_AHEAD
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.StopResult
+import com.jdamcd.arrivals.StopSearch
 import com.jdamcd.arrivals.formatTime
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
@@ -19,7 +20,7 @@ internal class BvgArrivals(
     private val settings: Settings,
     private val clock: Clock
 ) : Arrivals,
-    BvgSearch {
+    StopSearch {
 
     private var cachedStopName: Pair<String, String>? = null
 
@@ -96,9 +97,5 @@ internal class BvgArrivals(
             time = formatTime(seconds),
             secondsToStop = seconds
         )
-    }
-
-    companion object {
-        private const val MAX_SECONDS_AHEAD = 7200 // 2 hours
     }
 }

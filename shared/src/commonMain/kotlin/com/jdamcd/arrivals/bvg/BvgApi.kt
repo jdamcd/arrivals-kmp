@@ -1,24 +1,24 @@
 package com.jdamcd.arrivals.bvg
 
-import com.jdamcd.arrivals.NoDataException
+import com.jdamcd.arrivals.JsonApiClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.isSuccess
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-internal class BvgApi(private val client: HttpClient) {
+internal class BvgApi(client: HttpClient) :
+    JsonApiClient(
+        client = client,
+        apiName = "BVG API"
+    ) {
 
-    suspend fun searchStops(query: String): List<ApiBvgLocation> = request("$BASE_URL/locations") {
+    suspend fun searchStops(query: String): List<ApiBvgLocation> = executeRequest("$BASE_URL/locations") {
         parameter("query", query)
         parameter("results", 10)
-    }
+    }.body()
 
-    suspend fun fetchDepartures(stopId: String, duration: Int = 15): ApiBvgDepartureResponse = request("$BASE_URL/stops/$stopId/departures") {
+    suspend fun fetchDepartures(stopId: String, duration: Int = 15): ApiBvgDepartureResponse = executeRequest("$BASE_URL/stops/$stopId/departures") {
         parameter("duration", duration)
         parameter("suburban", true)
         parameter("subway", true)
@@ -27,28 +27,9 @@ internal class BvgApi(private val client: HttpClient) {
         parameter("ferry", false)
         parameter("express", false)
         parameter("regional", false)
-    }
+    }.body()
 
-    suspend fun fetchStop(stopId: String): ApiBvgLocation = request("$BASE_URL/stops/$stopId")
-
-    private suspend inline fun <reified T> request(
-        url: String,
-        crossinline parameters: HttpRequestBuilder.() -> Unit = {}
-    ): T {
-        val response = try {
-            client.get(url) { parameters() }
-        } catch (_: Exception) {
-            throw NoDataException("Can't connect to BVG API")
-        }
-        checkResponse(response)
-        return response.body()
-    }
-
-    private fun checkResponse(response: HttpResponse) {
-        if (!response.status.isSuccess()) {
-            throw NoDataException("Can't connect to BVG API")
-        }
-    }
+    suspend fun fetchStop(stopId: String): ApiBvgLocation = executeRequest("$BASE_URL/stops/$stopId").body()
 }
 
 @Serializable

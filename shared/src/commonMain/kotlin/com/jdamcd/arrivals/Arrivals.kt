@@ -40,8 +40,8 @@ class MacDI : KoinComponent {
     val tflSearch: TflSearch by inject()
     val mtaSearch: GtfsSearch by inject(named("mta"))
     val bartSearch: GtfsSearch by inject(named("bart"))
-    val darwinSearch: DarwinSearch by inject()
-    val bvgSearch: BvgSearch by inject()
+    val darwinSearch: StopSearch by inject(named("darwin"))
+    val bvgSearch: StopSearch by inject(named("bvg"))
 }
 
 @OptIn(kotlin.time.ExperimentalTime::class)
@@ -61,8 +61,8 @@ fun commonModule() = module {
     single<TflSearch> { get<TflArrivals>() }
     factory<GtfsSearch>(named("mta")) { GtfsStopSearch(get(), Mta.SCHEDULE, "mta") }
     factory<GtfsSearch>(named("bart")) { GtfsStopSearch(get(), Bart.SCHEDULE, "bart", ApiAuth.QueryParam("api_key", Bart.API_KEY)) }
-    single<DarwinSearch> { get<DarwinArrivals>() }
-    single<BvgSearch> { get<BvgArrivals>() }
+    single<StopSearch>(named("darwin")) { get<DarwinArrivals>() }
+    single<StopSearch>(named("bvg")) { get<BvgArrivals>() }
     single {
         HttpClient {
             install(HttpTimeout) {
@@ -117,12 +117,7 @@ interface GtfsSearch {
     suspend fun getStops(feedUrl: String): List<StopResult>
 }
 
-interface DarwinSearch {
-    @Throws(Exception::class, CancellationException::class)
-    suspend fun searchStops(query: String): List<StopResult>
-}
-
-interface BvgSearch {
+interface StopSearch {
     @Throws(Exception::class, CancellationException::class)
     suspend fun searchStops(query: String): List<StopResult>
 }

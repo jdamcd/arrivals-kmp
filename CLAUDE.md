@@ -108,8 +108,7 @@ Core interfaces:
 - `Arrivals` - Main entry point for fetching arrival data
 - `TflSearch` - Search TfL stops
 - `GtfsSearch` - Search GTFS stops
-- `DarwinSearch` - Search UK National Rail stations
-- `BvgSearch` - Search Berlin transit stops
+- `StopSearch` - Search stops (used by Darwin and BVG with named Koin qualifiers)
 
 ### Data Sources
 

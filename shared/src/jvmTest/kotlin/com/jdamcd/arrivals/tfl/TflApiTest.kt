@@ -63,7 +63,7 @@ class TflApiTest {
         val e = assertFailsWith<NoDataException> {
             api.fetchArrivals("123")
         }
-        e.message shouldBe "TfL API app key error"
+        e.message shouldBe "TfL API error"
     }
 
     @Test
@@ -77,7 +77,7 @@ class TflApiTest {
         val e = assertFailsWith<NoDataException> {
             api.fetchArrivals("123")
         }
-        e.message shouldBe "TfL API app key error"
+        e.message shouldBe "TfL API error"
     }
 
     @Test

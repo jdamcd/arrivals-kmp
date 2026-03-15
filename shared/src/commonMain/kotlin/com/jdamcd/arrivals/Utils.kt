@@ -2,6 +2,8 @@ package com.jdamcd.arrivals
 
 import kotlin.math.roundToInt
 
+internal const val MAX_SECONDS_AHEAD = 7200 // 2 hours
+
 fun formatTime(seconds: Int) = if (seconds < 60) {
     "Due"
 } else {
