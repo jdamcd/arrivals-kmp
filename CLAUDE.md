@@ -16,6 +16,7 @@ Supported data sources:
 - MTA GTFS feeds for NYC Subway
 - Custom GTFS feeds for other transit systems
 - Darwin API (Huxley2) for UK National Rail live departure boards
+- BVG API for Berlin transit (S-Bahn, U-Bahn, Tram)
 
 ## Build & Development Commands
 
@@ -101,13 +102,14 @@ The shared module uses Koin for DI. The main module is defined in `shared/src/co
 
 - `initKoin()` - Initialize Koin (called from platform code)
 - `MacDI` - Helper class for Swift to access dependencies
-- `ArrivalsSwitcher` - Routes to TfL, GTFS, or Darwin based on `Settings.mode`
+- `ArrivalsSwitcher` - Routes to TfL, GTFS, Darwin, or BVG based on `Settings.mode`
 
 Core interfaces:
 - `Arrivals` - Main entry point for fetching arrival data
 - `TflSearch` - Search TfL stops
 - `GtfsSearch` - Search GTFS stops
 - `DarwinSearch` - Search UK National Rail stations
+- `BvgSearch` - Search Berlin transit stops
 
 ### Data Sources
 
@@ -119,14 +121,21 @@ Core interfaces:
 - `GtfsApi.kt` - HTTP client for GTFS feeds
 - `GtfsArrivals.kt` - Business logic for GTFS-RT arrivals
 - `GtfsStops.kt` - GTFS schedule parsing for stop information
-- `GtfsStopSearch.kt` - Generic GTFS stop search (used by MTA, BART, MBTA)
-- `system/` - Transit system constants (Mta, Bart, Mbta)
+- `GtfsStopSearch.kt` - Generic GTFS stop search (used by MTA, BART)
+- `GtfsApi.kt` also defines `ApiAuth` sealed class for flexible API authentication (query param or header)
+- `system/` - Transit system constants (Mta, Bart)
 - Protocol Buffer schemas in `shared/src/commonMain/proto/`
 
 **Darwin**: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/darwin/`
 - `DarwinApi.kt` - HTTP client for Huxley2 JSON proxy (converts Darwin SOAP to REST/JSON)
 - `DarwinArrivals.kt` - Business logic for UK National Rail departures + station search
 - Uses CRS codes (3-character station identifiers) like "CLJ" for Clapham Junction
+
+**BVG**: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/bvg/`
+- `BvgApi.kt` - HTTP client for v6.bvg.transport.rest (public REST API, no key required)
+- `BvgArrivals.kt` - Business logic for Berlin departures + stop search
+- Filters by line name and platform; requests S-Bahn, U-Bahn, and Tram (excludes bus/ferry/regional)
+- Uses kotlinx-datetime for departure time parsing
 
 ### Settings
 
@@ -152,7 +161,7 @@ The macOS app uses SwiftUI for settings UI. The desktop app uses YAML configurat
 
 **CLI** (`cli/src/main/kotlin/`):
 - Clikt library for command-line parsing
-- Subcommands for TfL, GTFS, and Darwin
+- Subcommands for TfL, GTFS, Darwin, and BVG
 
 ### Secret Management
 
@@ -176,13 +185,14 @@ Ktor uses different engines:
 - JVM: `ktor-client-jvm` (Apache HttpClient)
 - macOS: `ktor-client-darwin` (NSURLSession)
 
-Configured in `shared/src/commonMain/kotlin/com/jdamcd/arrivals/Arrivals.kt` with 10s timeout.
+Configured in `shared/src/commonMain/kotlin/com/jdamcd/arrivals/Arrivals.kt` with 10s default timeout (60s for GTFS schedule downloads).
 
 ### Testing
 
 - Common tests: Kotest assertions
-- JVM tests: MockK for mocking, coroutines-test
+- JVM tests: MockK for mocking, coroutines-test, Ktor mock engine for API tests
 - Test resources: `shared/src/jvmTest/resources/`
+- `TestClient.kt` - Shared Ktor mock client helper for API tests
 
 ## Code Formatting
 
