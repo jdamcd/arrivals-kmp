@@ -110,8 +110,8 @@ class BvgApiTest {
 
         response.departures shouldHaveSize 2
         response.departures[0].direction shouldBe "S Westkreuz (Berlin)"
-        response.departures[0].line?.name shouldBe "S5"
-        response.departures[0].line?.product shouldBe "suburban"
+        response.departures[0].line.name shouldBe "S5"
+        response.departures[0].line.product shouldBe "suburban"
         response.departures[0].departureTime shouldBe "2026-03-09T12:48:00+01:00"
         response.departures[0].platform shouldBe "4"
         response.departures[1].departureTime shouldBe null

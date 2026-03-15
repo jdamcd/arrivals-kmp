@@ -12,7 +12,7 @@ Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3
 | **UK** | National Rail | Darwin API |
 | **NYC** | Subway | MTA GTFS |
 | **SF Bay Area** | BART | 511.org GTFS |
-| **Berlin** | U-Bahn, S-Bahn, Tram | BVG API |
+| **Berlin** | U-Bahn, S-Bahn, Tram | transport.rest |
 
 
 ... or any custom [GTFS-RT feed](https://mobilitydatabase.org)
@@ -144,5 +144,5 @@ arrivals gtfs --station G28S \
   * Geomni UK Map data © and database rights 2019
 * Powered by [Rail Data Marketplace](https://raildata.org.uk) via [Huxley2](https://github.com/jpsingleton/Huxley2)
 * Powered by [511 Open Data](https://511.org/open-data)
-* Powered by [bvg-rest](https://github.com/derhuerst/bvg-rest) — BVG data
+* Powered by [transport.rest](https://transport.rest) — BVG data
 * Uses this [London Underground Dot Matrix Typeface](https://github.com/petykowski/London-Underground-Dot-Matrix-Typeface)

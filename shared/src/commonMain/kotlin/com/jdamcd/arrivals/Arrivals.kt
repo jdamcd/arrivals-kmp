@@ -105,10 +105,10 @@ interface Arrivals {
 }
 
 interface TflSearch {
-    @Throws(CancellationException::class)
+    @Throws(Exception::class, CancellationException::class)
     suspend fun searchStops(query: String): List<StopResult>
 
-    @Throws(CancellationException::class)
+    @Throws(Exception::class, CancellationException::class)
     suspend fun stopDetails(id: String): StopDetails
 }
 
@@ -118,12 +118,12 @@ interface GtfsSearch {
 }
 
 interface DarwinSearch {
-    @Throws(CancellationException::class)
+    @Throws(Exception::class, CancellationException::class)
     suspend fun searchStops(query: String): List<StopResult>
 }
 
 interface BvgSearch {
-    @Throws(CancellationException::class)
+    @Throws(Exception::class, CancellationException::class)
     suspend fun searchStops(query: String): List<StopResult>
 }
 

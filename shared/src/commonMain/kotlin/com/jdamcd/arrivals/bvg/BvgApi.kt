@@ -59,11 +59,11 @@ internal data class ApiBvgDepartureResponse(
 @Serializable
 internal data class ApiBvgDeparture(
     val tripId: String,
-    val direction: String? = null,
-    val line: ApiBvgLine? = null,
+    val direction: String,
+    val line: ApiBvgLine,
     @SerialName("when")
     val departureTime: String? = null,
-    val plannedWhen: String? = null,
+    val plannedWhen: String,
     val delay: Int? = null,
     val platform: String? = null,
     val plannedPlatform: String? = null
@@ -71,8 +71,8 @@ internal data class ApiBvgDeparture(
 
 @Serializable
 internal data class ApiBvgLine(
-    val name: String? = null,
-    val product: String? = null
+    val name: String,
+    val product: String
 )
 
 @Serializable

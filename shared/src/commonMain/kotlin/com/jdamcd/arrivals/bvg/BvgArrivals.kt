@@ -44,7 +44,7 @@ internal class BvgArrivals(
         return name
     }
 
-    @Throws(CancellationException::class)
+    @Throws(Exception::class, CancellationException::class)
     override suspend fun searchStops(query: String): List<StopResult> = api.searchStops(query)
         .filter { it.type == "stop" && it.id != null && it.name != null }
         .map { StopResult(id = it.id!!, name = it.name!!, isHub = false) }
@@ -55,10 +55,9 @@ internal class BvgArrivals(
 
         val arrivals = departures
             .asSequence()
-            .filter { it.departureTime != null }
             .filter {
                 settings.bvgLine.isEmpty() ||
-                    it.line?.name.equals(settings.bvgLine, ignoreCase = true)
+                    it.line.name.equals(settings.bvgLine, ignoreCase = true)
             }
             .filter {
                 settings.bvgPlatform.isEmpty() ||
@@ -87,15 +86,8 @@ internal class BvgArrivals(
 
     private fun createArrival(departure: ApiBvgDeparture, nowSeconds: Long): Arrival? {
         val departureTime = departure.departureTime ?: return null
-        val direction = departure.direction ?: "Unknown"
-        val lineName = departure.line?.name
-        val destination = if (lineName != null) "$lineName $direction" else direction
-
-        val departureSeconds = try {
-            Instant.parse(departureTime).epochSeconds
-        } catch (_: Exception) {
-            return null
-        }
+        val destination = "${departure.line.name} ${departure.direction}"
+        val departureSeconds = Instant.parse(departureTime).epochSeconds
         val seconds = (departureSeconds - nowSeconds).toInt()
 
         return Arrival(

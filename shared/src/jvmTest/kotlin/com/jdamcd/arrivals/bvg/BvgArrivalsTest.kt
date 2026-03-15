@@ -104,14 +104,13 @@ class BvgArrivalsTest {
                     plannedWhen = "2026-03-07T12:05:00+00:00",
                     delay = 0,
                     platform = "4"
+
                 ),
                 ApiBvgDeparture(
                     tripId = "trip2",
                     direction = "Pankow",
                     line = ApiBvgLine(name = "U2", product = "subway"),
-                    departureTime = null,
                     plannedWhen = "2026-03-07T12:10:00+00:00",
-                    delay = null,
                     platform = "2"
                 )
             )
