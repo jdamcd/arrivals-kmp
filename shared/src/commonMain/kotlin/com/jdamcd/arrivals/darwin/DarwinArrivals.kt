@@ -30,7 +30,7 @@ internal class DarwinArrivals(
         return model
     }
 
-    @Throws(CancellationException::class)
+    @Throws(Exception::class, CancellationException::class)
     override suspend fun searchStops(query: String): List<StopResult> = api.searchCrs(query).map {
         StopResult(
             id = it.crsCode,

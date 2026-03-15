@@ -29,13 +29,13 @@ internal class TflArrivals(
         return model
     }
 
-    @Throws(CancellationException::class)
+    @Throws(Exception::class, CancellationException::class)
     override suspend fun searchStops(query: String): List<StopResult> = api
         .searchStations(query)
         .matches
         .map { StopResult(it.id, it.name, it.id.startsWith("HUB")) }
 
-    @Throws(CancellationException::class)
+    @Throws(Exception::class, CancellationException::class)
     override suspend fun stopDetails(id: String): StopDetails {
         val stopPoint = api.stopDetails(id)
         return StopDetails(

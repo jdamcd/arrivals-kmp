@@ -12,6 +12,7 @@ Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3
 | **UK** | National Rail | Darwin API |
 | **NYC** | Subway | MTA GTFS |
 | **SF Bay Area** | BART | 511.org GTFS |
+| **Berlin** | U-Bahn, S-Bahn, Tram | transport.rest |
 
 
 ... or any custom [GTFS-RT feed](https://mobilitydatabase.org)
@@ -82,7 +83,7 @@ Cross-platform desktop UI, built with Compose Multiplatform. Includes a fullscre
 Create a `.arrivals.yml` in the user home directory to configure:
 
 ```yaml
-# Mode: "tfl", "darwin", or "gtfs"
+# Mode: "tfl", "darwin", "bvg", or "gtfs"
 mode: tfl
 
 # TfL fields
@@ -93,6 +94,11 @@ tfl_direction: all          # "inbound", "outbound", or "all"
 # Darwin (UK National Rail) fields
 darwin_crs: PMR             # Station CRS code
 darwin_platform: 2          # Optional platform number
+
+# BVG (Berlin) fields
+bvg_stop: 900100003         # Stop ID
+bvg_line:                   # Optional line filter (e.g. U2, S5, M10)
+bvg_platform:               # Optional platform number
 
 # GTFS fields
 gtfs_stop: G28S             # Station ID
@@ -138,4 +144,5 @@ arrivals gtfs --station G28S \
   * Geomni UK Map data © and database rights 2019
 * Powered by [Rail Data Marketplace](https://raildata.org.uk) via [Huxley2](https://github.com/jpsingleton/Huxley2)
 * Powered by [511 Open Data](https://511.org/open-data)
+* Powered by [transport.rest](https://transport.rest) — BVG data
 * Uses this [London Underground Dot Matrix Typeface](https://github.com/petykowski/London-Underground-Dot-Matrix-Typeface)

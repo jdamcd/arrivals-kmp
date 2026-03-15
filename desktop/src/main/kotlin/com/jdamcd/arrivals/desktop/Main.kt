@@ -117,6 +117,9 @@ fun loadConfig(settings: Settings) {
                 data.getString(SettingsConfig.TFL_DIRECTION)?.let { settings.tflDirection = it }
                 data.getString(SettingsConfig.DARWIN_CRS)?.let { settings.darwinCrsCode = it }
                 data.getString(SettingsConfig.DARWIN_PLATFORM)?.let { settings.darwinPlatform = it }
+                data.getString(SettingsConfig.BVG_STOP)?.let { settings.bvgStopId = it }
+                data.getString(SettingsConfig.BVG_LINE)?.let { settings.bvgLine = it }
+                data.getString(SettingsConfig.BVG_PLATFORM)?.let { settings.bvgPlatform = it }
             }
         } catch (e: Exception) {
             println("Error reading config file: ${e.message}")
