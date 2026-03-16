@@ -2,20 +2,22 @@ package com.jdamcd.arrivals
 
 expect class Settings() {
     var mode: String
-    var tflStopId: String
-    var tflPlatform: String
-    var tflDirection: String
+    var stopId: String
+    var platform: String
+    var line: String
+    var direction: String
     var gtfsStopsUpdated: Long
     var gtfsRealtime: String
     var gtfsSchedule: String
-    var gtfsStop: String
     var gtfsApiKey: String
     var gtfsApiKeyParam: String
-    var darwinCrsCode: String
-    var darwinPlatform: String
-    var bvgStopId: String
-    var bvgLine: String
-    var bvgPlatform: String
+}
+
+fun Settings.clearStopConfig() {
+    stopId = ""
+    platform = ""
+    line = ""
+    direction = SettingsConfig.DIRECTION_DEFAULT
 }
 
 object SettingsConfig {
@@ -27,34 +29,19 @@ object SettingsConfig {
     const val MODE_DARWIN = "darwin"
     const val MODE_BVG = "bvg"
 
-    const val TFL_STOP = "tfl_stop"
-    const val TFL_STOP_DEFAULT = "910GSHRDHST"
-    const val TFL_PLATFORM = "tfl_platform"
-    const val TFL_PLATFORM_DEFAULT = "2"
-    const val TFL_DIRECTION = "tfl_direction"
-    const val TFL_DIRECTION_DEFAULT = "all"
+    const val STOP = "stop"
+    const val PLATFORM = "platform"
+    const val LINE = "line"
+    const val DIRECTION = "direction"
+    const val DIRECTION_DEFAULT = "all"
 
     const val GTFS_STOPS_UPDATED = "gtfs_stops_updated"
     const val GTFS_REALTIME = "gtfs_realtime"
     const val GTFS_REALTIME_DEFAULT = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace"
     const val GTFS_SCHEDULE = "gtfs_schedule"
     const val GTFS_SCHEDULE_DEFAULT = "http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
-    const val GTFS_STOP = "gtfs_stop"
-    const val GTFS_STOP_DEFAULT = "A42N"
     const val GTFS_API_KEY = "gtfs_api_key"
     const val GTFS_API_KEY_DEFAULT = ""
     const val GTFS_API_KEY_PARAM = "gtfs_api_key_param"
     const val GTFS_API_KEY_PARAM_DEFAULT = ""
-
-    const val DARWIN_CRS = "darwin_crs"
-    const val DARWIN_CRS_DEFAULT = "PMR"
-    const val DARWIN_PLATFORM = "darwin_platform"
-    const val DARWIN_PLATFORM_DEFAULT = "2"
-
-    const val BVG_STOP = "bvg_stop"
-    const val BVG_STOP_DEFAULT = ""
-    const val BVG_LINE = "bvg_line"
-    const val BVG_LINE_DEFAULT = ""
-    const val BVG_PLATFORM = "bvg_platform"
-    const val BVG_PLATFORM_DEFAULT = ""
 }

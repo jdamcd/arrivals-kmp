@@ -51,9 +51,10 @@ struct SettingsView: View {
                             feedUrl: Bart().REALTIME,
                             save: { stopId in
                                 let settings = MacDI().settings
+                                settings.clearStopConfig()
                                 settings.gtfsRealtime = Bart().REALTIME
                                 settings.gtfsSchedule = Bart().SCHEDULE
-                                settings.gtfsStop = stopId
+                                settings.stopId = stopId
                                 settings.gtfsApiKey = Bart().API_KEY
                                 settings.gtfsApiKeyParam = ""
                                 settings.gtfsStopsUpdated = 0

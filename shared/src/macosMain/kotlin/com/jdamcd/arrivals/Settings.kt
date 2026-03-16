@@ -5,28 +5,39 @@ import platform.Foundation.NSUserDefaults
 actual class Settings actual constructor() {
     private val defaults: NSUserDefaults = NSUserDefaults(suiteName = SettingsConfig.STORE_NAME)
 
+    companion object {
+        private const val COLD_START_STOP = "910GSHRDHST"
+        private const val COLD_START_PLATFORM = "2"
+    }
+
     actual var mode: String
         get() = defaults.stringForKey(SettingsConfig.MODE) ?: SettingsConfig.MODE_TFL
         set(value) {
             defaults.setObject(value, SettingsConfig.MODE)
         }
 
-    actual var tflStopId: String
-        get() = defaults.stringForKey(SettingsConfig.TFL_STOP) ?: SettingsConfig.TFL_STOP_DEFAULT
+    actual var stopId: String
+        get() = defaults.stringForKey(SettingsConfig.STOP) ?: COLD_START_STOP
         set(value) {
-            defaults.setObject(value, SettingsConfig.TFL_STOP)
+            defaults.setObject(value, SettingsConfig.STOP)
         }
 
-    actual var tflPlatform: String
-        get() = defaults.stringForKey(SettingsConfig.TFL_PLATFORM) ?: SettingsConfig.TFL_PLATFORM_DEFAULT
+    actual var platform: String
+        get() = defaults.stringForKey(SettingsConfig.PLATFORM) ?: COLD_START_PLATFORM
         set(value) {
-            defaults.setObject(value, SettingsConfig.TFL_PLATFORM)
+            defaults.setObject(value, SettingsConfig.PLATFORM)
         }
 
-    actual var tflDirection: String
-        get() = defaults.stringForKey(SettingsConfig.TFL_DIRECTION) ?: SettingsConfig.TFL_DIRECTION_DEFAULT
+    actual var line: String
+        get() = defaults.stringForKey(SettingsConfig.LINE) ?: ""
         set(value) {
-            defaults.setObject(value, SettingsConfig.TFL_DIRECTION)
+            defaults.setObject(value, SettingsConfig.LINE)
+        }
+
+    actual var direction: String
+        get() = defaults.stringForKey(SettingsConfig.DIRECTION) ?: SettingsConfig.DIRECTION_DEFAULT
+        set(value) {
+            defaults.setObject(value, SettingsConfig.DIRECTION)
         }
 
     actual var gtfsStopsUpdated: Long
@@ -47,12 +58,6 @@ actual class Settings actual constructor() {
             defaults.setObject(value, SettingsConfig.GTFS_SCHEDULE)
         }
 
-    actual var gtfsStop: String
-        get() = defaults.stringForKey(SettingsConfig.GTFS_STOP) ?: SettingsConfig.GTFS_STOP_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.GTFS_STOP)
-        }
-
     actual var gtfsApiKey: String
         get() = defaults.stringForKey(SettingsConfig.GTFS_API_KEY) ?: SettingsConfig.GTFS_API_KEY_DEFAULT
         set(value) {
@@ -63,35 +68,5 @@ actual class Settings actual constructor() {
         get() = defaults.stringForKey(SettingsConfig.GTFS_API_KEY_PARAM) ?: SettingsConfig.GTFS_API_KEY_PARAM_DEFAULT
         set(value) {
             defaults.setObject(value, SettingsConfig.GTFS_API_KEY_PARAM)
-        }
-
-    actual var darwinCrsCode: String
-        get() = defaults.stringForKey(SettingsConfig.DARWIN_CRS) ?: SettingsConfig.DARWIN_CRS_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.DARWIN_CRS)
-        }
-
-    actual var darwinPlatform: String
-        get() = defaults.stringForKey(SettingsConfig.DARWIN_PLATFORM) ?: SettingsConfig.DARWIN_PLATFORM_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.DARWIN_PLATFORM)
-        }
-
-    actual var bvgStopId: String
-        get() = defaults.stringForKey(SettingsConfig.BVG_STOP) ?: SettingsConfig.BVG_STOP_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.BVG_STOP)
-        }
-
-    actual var bvgLine: String
-        get() = defaults.stringForKey(SettingsConfig.BVG_LINE) ?: SettingsConfig.BVG_LINE_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.BVG_LINE)
-        }
-
-    actual var bvgPlatform: String
-        get() = defaults.stringForKey(SettingsConfig.BVG_PLATFORM) ?: SettingsConfig.BVG_PLATFORM_DEFAULT
-        set(value) {
-            defaults.setObject(value, SettingsConfig.BVG_PLATFORM)
         }
 }

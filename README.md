@@ -86,22 +86,13 @@ Create a `.arrivals.yml` in the user home directory to configure:
 # Mode: "tfl", "darwin", "bvg", or "gtfs"
 mode: tfl
 
-# TfL fields
-tfl_stop: 910GSHRDHST       # Station ID
-tfl_platform: 2             # Optional platform number
-tfl_direction: all          # "inbound", "outbound", or "all"
+# Shared fields (used by all modes)
+stop: 910GSHRDHST           # Station/stop ID
+platform: 2                 # Optional platform filter
+line:                       # Optional line filter (BVG only, e.g. U2, S5, M10)
+direction: all              # Direction filter (TfL only: "inbound", "outbound", or "all")
 
-# Darwin (UK National Rail) fields
-darwin_crs: PMR             # Station CRS code
-darwin_platform: 2          # Optional platform number
-
-# BVG (Berlin) fields
-bvg_stop: 900100003         # Stop ID
-bvg_line:                   # Optional line filter (e.g. U2, S5, M10)
-bvg_platform:               # Optional platform number
-
-# GTFS fields
-gtfs_stop: G28S             # Station ID
+# GTFS-specific fields (only needed for gtfs mode)
 gtfs_realtime: https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g
 gtfs_schedule: http://web.mta.info/developers/data/nyct/subway/google_transit.zip
 # Optional for authenticated feeds
@@ -127,6 +118,12 @@ arrivals tfl --station 910GSHRDHST --platform 2
 
 ```bash
 arrivals darwin --station PMR --platform 2
+```
+
+#### BVG (Berlin) example
+
+```bash
+arrivals bvg --station 900013102 --line U2
 ```
 
 #### GTFS example

@@ -78,8 +78,8 @@ class DarwinArrivalsTest {
 
     @BeforeTest
     fun setup() {
-        settings.darwinCrsCode = "CLJ"
-        settings.darwinPlatform = ""
+        settings.stopId = "CLJ"
+        settings.platform = ""
     }
 
     @Test
@@ -113,7 +113,7 @@ class DarwinArrivalsTest {
 
     @Test
     fun `formats station name with platform filter`() = runBlocking<Unit> {
-        settings.darwinPlatform = "5"
+        settings.platform = "5"
         coEvery { api.fetchDepartures("CLJ", any()) } returns mockBoard
 
         val latest = arrivals.latest()
@@ -123,7 +123,7 @@ class DarwinArrivalsTest {
 
     @Test
     fun `applies platform filter`() = runBlocking<Unit> {
-        settings.darwinPlatform = "5"
+        settings.platform = "5"
         coEvery { api.fetchDepartures("CLJ", any()) } returns mockBoard
 
         val latest = arrivals.latest()
@@ -195,7 +195,7 @@ class DarwinArrivalsTest {
         )
         coEvery { api.fetchDepartures("CLJ", any()) } returns board
 
-        settings.darwinPlatform = "21"
+        settings.platform = "21"
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
@@ -213,7 +213,7 @@ class DarwinArrivalsTest {
         )
         coEvery { api.fetchDepartures("CLJ", any()) } returns board
 
-        settings.darwinPlatform = "1"
+        settings.platform = "1"
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
@@ -232,7 +232,7 @@ class DarwinArrivalsTest {
         )
         coEvery { api.fetchDepartures("CLJ", any()) } returns board
 
-        settings.darwinPlatform = "2"
+        settings.platform = "2"
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 3

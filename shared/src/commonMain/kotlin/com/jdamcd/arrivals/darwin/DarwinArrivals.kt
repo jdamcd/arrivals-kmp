@@ -24,7 +24,7 @@ internal class DarwinArrivals(
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
-        val model = formatArrivals(api.fetchDepartures(settings.darwinCrsCode))
+        val model = formatArrivals(api.fetchDepartures(settings.stopId))
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No departures found")
         }
@@ -49,8 +49,8 @@ internal class DarwinArrivals(
             ?.filter { !it.isCancelled }
             ?.filter { isValidDeparture(it.etd) }
             ?.filter {
-                settings.darwinPlatform.isEmpty() ||
-                    (it.platform != null && matchesPlatformFilter(it.platform, settings.darwinPlatform))
+                settings.platform.isEmpty() ||
+                    (it.platform != null && matchesPlatformFilter(it.platform, settings.platform))
             }
             ?.map { service -> createArrival(service, referenceTime) }
             ?.filter { it.secondsToStop < MAX_SECONDS_AHEAD }
@@ -64,8 +64,8 @@ internal class DarwinArrivals(
 
     private fun formatStationName(board: ApiDarwinBoard): String {
         val baseName = board.locationName.removeSuffix(" Rail Station").trim()
-        return if (settings.darwinPlatform.isNotEmpty()) {
-            "$baseName: Platform ${stripPlatform(settings.darwinPlatform)}"
+        return if (settings.platform.isNotEmpty()) {
+            "$baseName: Platform ${stripPlatform(settings.platform)}"
         } else {
             baseName
         }

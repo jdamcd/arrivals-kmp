@@ -19,7 +19,7 @@ struct CustomGtfsSettingsView: View {
     init() {
         realtimeUrl = settings.gtfsRealtime
         scheduleUrl = settings.gtfsSchedule
-        stopId = settings.gtfsStop
+        stopId = settings.stopId
         apiKey = ""
         apiKeyParam = settings.gtfsApiKeyParam
     }
@@ -35,9 +35,10 @@ struct CustomGtfsSettingsView: View {
         }
         .onAppear {
             coordinator.onSave = {
+                settings.clearStopConfig()
                 settings.gtfsRealtime = realtimeUrl.trim()
                 settings.gtfsSchedule = scheduleUrl.trim()
-                settings.gtfsStop = stopId.trim()
+                settings.stopId = stopId.trim()
                 settings.gtfsApiKey = apiKey.trim()
                 settings.gtfsApiKeyParam = apiKeyParam.trim()
                 settings.gtfsStopsUpdated = 0
