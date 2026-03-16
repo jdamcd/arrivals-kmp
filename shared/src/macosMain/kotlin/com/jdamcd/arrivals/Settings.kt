@@ -47,25 +47,25 @@ actual class Settings actual constructor() {
         }
 
     actual var gtfsRealtime: String
-        get() = defaults.stringForKey(SettingsConfig.GTFS_REALTIME) ?: SettingsConfig.GTFS_REALTIME_DEFAULT
+        get() = defaults.stringForKey(SettingsConfig.GTFS_REALTIME) ?: ""
         set(value) {
             defaults.setObject(value, SettingsConfig.GTFS_REALTIME)
         }
 
     actual var gtfsSchedule: String
-        get() = defaults.stringForKey(SettingsConfig.GTFS_SCHEDULE) ?: SettingsConfig.GTFS_SCHEDULE_DEFAULT
+        get() = defaults.stringForKey(SettingsConfig.GTFS_SCHEDULE) ?: ""
         set(value) {
             defaults.setObject(value, SettingsConfig.GTFS_SCHEDULE)
         }
 
     actual var gtfsApiKey: String
-        get() = defaults.stringForKey(SettingsConfig.GTFS_API_KEY) ?: SettingsConfig.GTFS_API_KEY_DEFAULT
+        get() = defaults.stringForKey(SettingsConfig.GTFS_API_KEY) ?: ""
         set(value) {
             defaults.setObject(value, SettingsConfig.GTFS_API_KEY)
         }
 
     actual var gtfsApiKeyParam: String
-        get() = defaults.stringForKey(SettingsConfig.GTFS_API_KEY_PARAM) ?: SettingsConfig.GTFS_API_KEY_PARAM_DEFAULT
+        get() = defaults.stringForKey(SettingsConfig.GTFS_API_KEY_PARAM) ?: ""
         set(value) {
             defaults.setObject(value, SettingsConfig.GTFS_API_KEY_PARAM)
         }

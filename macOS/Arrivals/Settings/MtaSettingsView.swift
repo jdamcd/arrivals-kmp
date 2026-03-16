@@ -107,14 +107,13 @@ private class MtaSettingsViewModel: ObservableObject {
     }
 
     func save(lineUrl: String, stopId: String) {
-        settings.clearStopConfig()
-        settings.gtfsRealtime = lineUrl
-        settings.gtfsSchedule = Mta().SCHEDULE
-        settings.stopId = stopId
-        settings.gtfsApiKey = ""
-        settings.gtfsApiKeyParam = ""
-        settings.gtfsStopsUpdated = 0
-        settings.mode = SettingsConfig().MODE_GTFS
+        settings.saveGtfsConfig(
+            stopId: stopId,
+            realtimeUrl: lineUrl,
+            scheduleUrl: Mta().SCHEDULE,
+            apiKey: "",
+            apiKeyParam: ""
+        )
     }
 }
 

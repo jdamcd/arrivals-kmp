@@ -20,6 +20,23 @@ fun Settings.clearStopConfig() {
     direction = SettingsConfig.DIRECTION_DEFAULT
 }
 
+fun Settings.saveGtfsConfig(
+    stopId: String,
+    realtimeUrl: String,
+    scheduleUrl: String,
+    apiKey: String = "",
+    apiKeyParam: String = ""
+) {
+    clearStopConfig()
+    this.stopId = stopId
+    gtfsRealtime = realtimeUrl
+    gtfsSchedule = scheduleUrl
+    gtfsApiKey = apiKey
+    gtfsApiKeyParam = apiKeyParam
+    gtfsStopsUpdated = 0
+    mode = SettingsConfig.MODE_GTFS
+}
+
 object SettingsConfig {
     const val STORE_NAME = "arrivals_settings"
 
@@ -37,11 +54,7 @@ object SettingsConfig {
 
     const val GTFS_STOPS_UPDATED = "gtfs_stops_updated"
     const val GTFS_REALTIME = "gtfs_realtime"
-    const val GTFS_REALTIME_DEFAULT = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace"
     const val GTFS_SCHEDULE = "gtfs_schedule"
-    const val GTFS_SCHEDULE_DEFAULT = "http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
     const val GTFS_API_KEY = "gtfs_api_key"
-    const val GTFS_API_KEY_DEFAULT = ""
     const val GTFS_API_KEY_PARAM = "gtfs_api_key_param"
-    const val GTFS_API_KEY_PARAM_DEFAULT = ""
 }

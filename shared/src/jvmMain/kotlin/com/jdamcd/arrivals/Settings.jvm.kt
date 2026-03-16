@@ -7,8 +7,8 @@ actual class Settings actual constructor() {
     actual var line = ""
     actual var direction = SettingsConfig.DIRECTION_DEFAULT
     actual var gtfsStopsUpdated = 0L
-    actual var gtfsRealtime = SettingsConfig.GTFS_REALTIME_DEFAULT
-    actual var gtfsSchedule = SettingsConfig.GTFS_SCHEDULE_DEFAULT
-    actual var gtfsApiKey = SettingsConfig.GTFS_API_KEY_DEFAULT
-    actual var gtfsApiKeyParam = SettingsConfig.GTFS_API_KEY_PARAM_DEFAULT
+    actual var gtfsRealtime = ""
+    actual var gtfsSchedule = ""
+    actual var gtfsApiKey = ""
+    actual var gtfsApiKeyParam = ""
 }

@@ -50,15 +50,13 @@ struct SettingsView: View {
                             fetcher: MacDI().bartSearch,
                             feedUrl: Bart().REALTIME,
                             save: { stopId in
-                                let settings = MacDI().settings
-                                settings.clearStopConfig()
-                                settings.gtfsRealtime = Bart().REALTIME
-                                settings.gtfsSchedule = Bart().SCHEDULE
-                                settings.stopId = stopId
-                                settings.gtfsApiKey = Bart().API_KEY
-                                settings.gtfsApiKeyParam = ""
-                                settings.gtfsStopsUpdated = 0
-                                settings.mode = SettingsConfig().MODE_GTFS
+                                MacDI().settings.saveGtfsConfig(
+                                    stopId: stopId,
+                                    realtimeUrl: Bart().REALTIME,
+                                    scheduleUrl: Bart().SCHEDULE,
+                                    apiKey: Bart().API_KEY,
+                                    apiKeyParam: ""
+                                )
                             }
                         )
                     case .bvg:
