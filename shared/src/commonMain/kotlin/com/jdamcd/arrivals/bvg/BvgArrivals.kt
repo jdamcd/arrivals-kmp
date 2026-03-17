@@ -11,10 +11,11 @@ import com.jdamcd.arrivals.StopSearch
 import com.jdamcd.arrivals.formatTime
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Clock
+import kotlin.time.Instant
 
+@OptIn(kotlin.time.ExperimentalTime::class)
 internal class BvgArrivals(
     private val api: BvgApi,
     private val settings: Settings,

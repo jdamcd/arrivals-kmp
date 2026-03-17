@@ -40,6 +40,9 @@ jobs:
     - name: Test
       run: ./gradlew allTests
 
+    - name: Smoke test CLI
+      run: ./gradlew :cli:run --args="--help"
+
     - name: Publish test results
       uses: dorny/test-reporter@v2.1.1
       if: always()

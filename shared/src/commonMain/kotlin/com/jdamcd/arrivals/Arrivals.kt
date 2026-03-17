@@ -26,7 +26,6 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
-import kotlinx.datetime.Clock as DateTimeClock
 
 @Suppress("Unused")
 fun initKoin() = startKoin {
@@ -47,7 +46,6 @@ class MacDI : KoinComponent {
 @OptIn(kotlin.time.ExperimentalTime::class)
 fun commonModule() = module {
     single<Clock> { Clock.System }
-    single<DateTimeClock> { DateTimeClock.System }
     single { Settings() }
     single { TflApi(get()) }
     single { GtfsApi(get()) }
