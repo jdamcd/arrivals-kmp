@@ -8,6 +8,10 @@ struct ArrivalsApp: App {
 
     init() {
         ArrivalsKt.doInitKoin()
+        let settings = MacDI().settings
+        if settings.stopId.isEmpty {
+            settings.applyColdStart()
+        }
     }
 
     var body: some Scene {

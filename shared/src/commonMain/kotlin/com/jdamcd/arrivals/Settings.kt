@@ -13,6 +13,14 @@ expect class Settings() {
     var gtfsApiKeyParam: String
 }
 
+fun Settings.applyColdStart() {
+    saveGtfsConfig(
+        stopId = "A42N",
+        realtimeUrl = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace",
+        scheduleUrl = "http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
+    )
+}
+
 fun Settings.clearStopConfig() {
     stopId = ""
     platform = ""

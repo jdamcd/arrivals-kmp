@@ -5,11 +5,6 @@ import platform.Foundation.NSUserDefaults
 actual class Settings actual constructor() {
     private val defaults: NSUserDefaults = NSUserDefaults(suiteName = SettingsConfig.STORE_NAME)
 
-    companion object {
-        private const val COLD_START_STOP = "910GSHRDHST"
-        private const val COLD_START_PLATFORM = "2"
-    }
-
     actual var mode: String
         get() = defaults.stringForKey(SettingsConfig.MODE) ?: SettingsConfig.MODE_TFL
         set(value) {
@@ -17,13 +12,13 @@ actual class Settings actual constructor() {
         }
 
     actual var stopId: String
-        get() = defaults.stringForKey(SettingsConfig.STOP) ?: COLD_START_STOP
+        get() = defaults.stringForKey(SettingsConfig.STOP) ?: ""
         set(value) {
             defaults.setObject(value, SettingsConfig.STOP)
         }
 
     actual var platform: String
-        get() = defaults.stringForKey(SettingsConfig.PLATFORM) ?: COLD_START_PLATFORM
+        get() = defaults.stringForKey(SettingsConfig.PLATFORM) ?: ""
         set(value) {
             defaults.setObject(value, SettingsConfig.PLATFORM)
         }
