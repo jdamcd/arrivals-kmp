@@ -21,7 +21,7 @@ import kotlin.time.Instant
 @OptIn(kotlin.time.ExperimentalTime::class)
 class GtfsArrivalsTest {
 
-    private val api = mockk<GtfsApi>()
+    private val api = mockk<GtfsApi>(relaxUnitFun = true)
     private val clock = mockk<Clock>()
     private val settings = Settings()
     private val arrivals = GtfsArrivals(api, clock, settings)
@@ -148,6 +148,50 @@ class GtfsArrivalsTest {
 
         coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
         coVerify { api.fetchFeedMessage("realtime_url", expectedAuth) }
+        latest.arrivals shouldHaveSize 3
+    }
+
+    @Test
+    fun `uses file modification time when settings timestamp is zero`() = runBlocking<Unit> {
+        settings.gtfsStopsUpdated = 0L
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        every { api.stopsSource() } returns "schedule_url"
+        every { api.stopsLastModifiedEpochSeconds() } returns fetchTime - 1000
+        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
+
+        val latest = arrivals.latest()
+
+        coVerify(exactly = 0) { api.downloadStops(any(), any(), any()) }
+        latest.arrivals shouldHaveSize 3
+    }
+
+    @Test
+    fun `downloads stops when file modification time is stale and settings timestamp is zero`() = runBlocking<Unit> {
+        settings.gtfsStopsUpdated = 0L
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        every { api.stopsSource() } returns "schedule_url"
+        every { api.stopsLastModifiedEpochSeconds() } returns fetchTime - 172801
+        coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+
+        val latest = arrivals.latest()
+
+        coVerify { api.downloadStops("schedule_url") }
+        latest.arrivals shouldHaveSize 3
+    }
+
+    @Test
+    fun `downloads stops when cached source does not match schedule url`() = runBlocking<Unit> {
+        settings.gtfsStopsUpdated = 0L
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        every { api.stopsSource() } returns "old_schedule_url"
+        coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+
+        val latest = arrivals.latest()
+
+        coVerify { api.downloadStops("schedule_url") }
         latest.arrivals shouldHaveSize 3
     }
 

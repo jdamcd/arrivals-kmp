@@ -37,6 +37,7 @@ internal class GtfsApi(private val client: HttpClient) {
     private val baseDir = getFilesDir()
     private val defaultDir = "$baseDir/gtfs".toPath()
     private val stopsFileName = "stops.txt"
+    private val sourceFileName = "stops.source"
 
     suspend fun fetchFeedMessage(url: String, auth: ApiAuth? = null): FeedMessage {
         val bodyBytes = client.get(url) {
@@ -59,6 +60,7 @@ internal class GtfsApi(private val client: HttpClient) {
                 write(zipContent)
             }
             unpackZip(tempZipFile, outputDir)
+            writeStopsSource(url)
             return readStops(outputDir)
         } finally {
             FileSystem.SYSTEM.delete(tempZipFile)
@@ -66,6 +68,21 @@ internal class GtfsApi(private val client: HttpClient) {
     }
 
     fun hasStops(): Boolean = FileSystem.SYSTEM.exists(defaultDir.resolve(stopsFileName))
+
+    fun stopsLastModifiedEpochSeconds(): Long {
+        val metadata = FileSystem.SYSTEM.metadata(defaultDir.resolve(stopsFileName))
+        return metadata.lastModifiedAtMillis?.div(1000) ?: 0L
+    }
+
+    fun stopsSource(): String? = try {
+        FileSystem.SYSTEM.read(defaultDir.resolve(sourceFileName)) { readUtf8() }.trim()
+    } catch (_: Exception) {
+        null
+    }
+
+    private fun writeStopsSource(url: String) {
+        FileSystem.SYSTEM.write(defaultDir.resolve(sourceFileName)) { writeUtf8(url) }
+    }
 
     fun readStops(dir: Path = defaultDir): String {
         val stopsPath = dir.resolve(stopsFileName)
