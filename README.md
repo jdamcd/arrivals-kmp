@@ -123,7 +123,7 @@ arrivals darwin --station PMR --platform 2
 #### BVG (Berlin) example
 
 ```bash
-arrivals bvg --station 900013102 --line U2
+arrivals bvg --station 900013102 --line U8
 ```
 
 #### GTFS example

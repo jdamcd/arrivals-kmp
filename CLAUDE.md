@@ -49,7 +49,7 @@ org_511_key=YOURKEY
 ./gradlew :cli:run --args="--help"
 ./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 2"
 ./gradlew :cli:run --args="darwin --station CLJ --platform 5"
-./gradlew :cli:run --args="bvg --station 900013102 --line U2"
+./gradlew :cli:run --args="bvg --station 900013102 --line U8"
 ./gradlew :cli:run --args="gtfs --station A42N"
 ```
 
