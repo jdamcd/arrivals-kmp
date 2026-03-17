@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.FileInputStream
+import java.nio.file.ClosedWatchServiceException
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.StandardWatchEventKinds
@@ -78,20 +79,24 @@ private fun watchConfig(settings: Settings, onReload: () -> Unit) {
     DisposableEffect(Unit) {
         val watchService = FileSystems.getDefault().newWatchService()
         val job = scope.launch(Dispatchers.IO) {
-            val dir = configFile.parentFile.toPath()
-            dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
-            val fileName = configFile.name
+            try {
+                val dir = configFile.parentFile.toPath()
+                dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
+                val fileName = configFile.name
 
-            while (true) {
-                val key = watchService.take()
-                for (event in key.pollEvents()) {
-                    val changed = event.context() as? Path
-                    if (changed?.toString() == fileName) {
-                        loadConfig(settings)
-                        onReload()
+                while (true) {
+                    val key = watchService.take()
+                    for (event in key.pollEvents()) {
+                        val changed = event.context() as? Path
+                        if (changed?.toString() == fileName) {
+                            loadConfig(settings)
+                            onReload()
+                        }
                     }
+                    key.reset()
                 }
-                key.reset()
+            } catch (_: ClosedWatchServiceException) {
+                // Expected on shutdown
             }
         }
 

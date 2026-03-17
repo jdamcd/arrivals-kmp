@@ -60,8 +60,16 @@ org_511_key=YOURKEY
 ./gradlew jvmTest          # Run JVM tests only
 ./gradlew spotlessCheck    # Check Kotlin formatting
 ./gradlew spotlessApply    # Apply Kotlin formatting
-./gradlew check           # Run all checks
 ./check                   # Convenience script: swiftformat + gradlew clean spotlessApply assemble allTests
+```
+
+When reviewing code for commit, run `./check` to verify everything passes.
+
+Smoke test changes to the shared module via the CLI to catch runtime issues, e.g.:
+```bash
+./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 2"
+./gradlew :cli:run --args="darwin --station CLJ --platform 5"
+./gradlew :cli:run --args="bvg --station 900013102 --line U8"
 ```
 
 Swift code formatting:
