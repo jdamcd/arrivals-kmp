@@ -1,5 +1,7 @@
 package com.jdamcd.arrivals
 
+import com.jdamcd.arrivals.gtfs.system.Mta
+
 expect class Settings() {
     var mode: String
     var stopId: String
@@ -16,8 +18,8 @@ expect class Settings() {
 fun Settings.applyColdStart() {
     saveGtfsConfig(
         stopId = "A42N",
-        realtimeUrl = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace",
-        scheduleUrl = "http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
+        realtimeUrl = Mta.realtime["ACE"]!!,
+        scheduleUrl = Mta.SCHEDULE
     )
 }
 
