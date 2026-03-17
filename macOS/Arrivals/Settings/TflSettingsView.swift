@@ -65,14 +65,15 @@ struct TflSettingsView: View {
             }
             .pickerStyle(.automatic)
             .onAppear {
-                platformFilter = viewModel.initialPlatform()
+                platformFilter = viewModel.settings.platform
             }
 
             TextField("Platform", text: $platformFilter)
                 .help("Platform number (e.g. 1, 2A, 10)")
                 .autocorrectionDisabled()
                 .onAppear {
-                    directionFilter = viewModel.initialDirection()
+                    let saved = viewModel.settings.direction
+                    directionFilter = saved.isEmpty ? "all" : saved
                 }
         }
         .onAppear {
@@ -94,60 +95,32 @@ struct TflSettingsView: View {
 }
 
 @MainActor
-private class TflSettingsViewModel: ObservableObject {
-    @Published var state: SettingsState = .idle
+private class TflSettingsViewModel: StopSearchViewModel {
+    private let tflSearch: TflSearch
 
-    private let fetcher = MacDI().tflSearch
-    private let settings = MacDI().settings
-
-    func reset() {
-        state = .idle
-    }
-
-    func performSearch(_ query: String) {
-        state = .loading
-        Task {
-            do {
-                let result = try await fetcher.searchStops(query: query)
-                if result.isEmpty {
-                    state = .empty
-                } else {
-                    state = .data(result)
-                }
-            } catch {
-                state = .error
-            }
-        }
+    init() {
+        let search = MacDI().tflSearch
+        tflSearch = search
+        super.init { query in try await search.searchStops(query: query) }
     }
 
     func disambiguate(stop: StopResult) {
         state = .loading
         Task {
             do {
-                let result = try await fetcher.stopDetails(id: stop.id)
-                if result.children.isEmpty {
-                    state = .empty
-                } else {
-                    state = .data(result.children)
-                }
+                let result = try await tflSearch.stopDetails(id: stop.id)
+                state = result.children.isEmpty ? .empty : .data(result.children)
             } catch {
                 state = .error
             }
         }
     }
 
-    func initialPlatform() -> String {
-        settings.tflPlatform
-    }
-
-    func initialDirection() -> String {
-        settings.tflDirection
-    }
-
     func save(stopPoint: StopResult, platformFilter: String, directionFilter: String) {
-        settings.tflStopId = stopPoint.id
-        settings.tflPlatform = platformFilter
-        settings.tflDirection = directionFilter
+        settings.clearStopConfig()
+        settings.stopId = stopPoint.id
+        settings.platform = platformFilter
+        settings.direction = directionFilter
         settings.mode = SettingsConfig().MODE_TFL
     }
 }

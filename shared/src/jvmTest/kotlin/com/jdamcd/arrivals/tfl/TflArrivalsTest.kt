@@ -27,9 +27,9 @@ class TflArrivalsTest {
 
     @BeforeTest
     fun setup() {
-        settings.tflStopId = "123"
-        settings.tflPlatform = "2"
-        settings.tflDirection = "all"
+        settings.stopId = "123"
+        settings.platform = "2"
+        settings.direction = ""
     }
 
     @Test
@@ -53,22 +53,22 @@ class TflArrivalsTest {
     fun `formats station name with filters`() = runBlocking<Unit> {
         coEvery { api.fetchArrivals("123") } returns response
 
-        settings.tflDirection = "all"
-        settings.tflPlatform = "2"
+        settings.direction = ""
+        settings.platform = "2"
         arrivals.latest().station shouldBe "Test Stop: Platform 2"
 
-        settings.tflDirection = "inbound"
-        settings.tflPlatform = ""
+        settings.direction = "inbound"
+        settings.platform = ""
         arrivals.latest().station shouldBe "Test Stop: Inbound"
 
-        settings.tflDirection = "all"
-        settings.tflPlatform = ""
+        settings.direction = ""
+        settings.platform = ""
         arrivals.latest().station shouldBe "Test Stop"
     }
 
     @Test
     fun `returns up to 3 arrivals`() = runBlocking<Unit> {
-        settings.tflPlatform = ""
+        settings.platform = ""
         coEvery { api.fetchArrivals("123") } returns response
 
         val latest = arrivals.latest()
@@ -94,7 +94,7 @@ class TflArrivalsTest {
         )
         coEvery { api.fetchArrivals("123") } returns response
 
-        settings.tflPlatform = "21"
+        settings.platform = "21"
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
@@ -110,7 +110,7 @@ class TflArrivalsTest {
         )
         coEvery { api.fetchArrivals("123") } returns response
 
-        settings.tflPlatform = "1"
+        settings.platform = "1"
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
@@ -127,7 +127,7 @@ class TflArrivalsTest {
         )
         coEvery { api.fetchArrivals("123") } returns response
 
-        settings.tflPlatform = "2"
+        settings.platform = "2"
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 3

@@ -50,14 +50,14 @@ struct BvgSettingsView: View {
                 .help("Line name (e.g. U2, S5, M10)")
                 .autocorrectionDisabled()
                 .onAppear {
-                    lineFilter = viewModel.initialLine()
+                    lineFilter = viewModel.settings.line
                 }
 
             TextField("Platform", text: $platformFilter)
                 .help("Platform number (e.g. 1, 2)")
                 .autocorrectionDisabled()
                 .onAppear {
-                    platformFilter = viewModel.initialPlatform()
+                    platformFilter = viewModel.settings.platform
                 }
         }
         .onAppear {
@@ -79,44 +79,17 @@ struct BvgSettingsView: View {
 }
 
 @MainActor
-private class BvgSettingsViewModel: ObservableObject {
-    @Published var state: SettingsState = .idle
-
-    private let fetcher = MacDI().bvgSearch
-    private let settings = MacDI().settings
-
-    func reset() {
-        state = .idle
-    }
-
-    func performSearch(_ query: String) {
-        state = .loading
-        Task {
-            do {
-                let result = try await fetcher.searchStops(query: query)
-                if result.isEmpty {
-                    state = .empty
-                } else {
-                    state = .data(result)
-                }
-            } catch {
-                state = .error
-            }
-        }
-    }
-
-    func initialLine() -> String {
-        settings.bvgLine
-    }
-
-    func initialPlatform() -> String {
-        settings.bvgPlatform
+private class BvgSettingsViewModel: StopSearchViewModel {
+    init() {
+        let search = MacDI().bvgSearch
+        super.init { query in try await search.searchStops(query: query) }
     }
 
     func save(station: StopResult, lineFilter: String, platformFilter: String) {
-        settings.bvgStopId = station.id
-        settings.bvgLine = lineFilter
-        settings.bvgPlatform = platformFilter
+        settings.clearStopConfig()
+        settings.stopId = station.id
+        settings.line = lineFilter
+        settings.platform = platformFilter
         settings.mode = SettingsConfig().MODE_BVG
     }
 }

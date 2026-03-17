@@ -49,7 +49,7 @@ struct DarwinSettingsView: View {
                 .help("Platform number (e.g. 1, 2A, 10)")
                 .autocorrectionDisabled()
                 .onAppear {
-                    platformFilter = viewModel.initialPlatform()
+                    platformFilter = viewModel.settings.platform
                 }
         }
         .onAppear {
@@ -70,39 +70,16 @@ struct DarwinSettingsView: View {
 }
 
 @MainActor
-private class DarwinSettingsViewModel: ObservableObject {
-    @Published var state: SettingsState = .idle
-
-    private let fetcher = MacDI().darwinSearch
-    private let settings = MacDI().settings
-
-    func reset() {
-        state = .idle
-    }
-
-    func performSearch(_ query: String) {
-        state = .loading
-        Task {
-            do {
-                let result = try await fetcher.searchStops(query: query)
-                if result.isEmpty {
-                    state = .empty
-                } else {
-                    state = .data(result)
-                }
-            } catch {
-                state = .error
-            }
-        }
-    }
-
-    func initialPlatform() -> String {
-        settings.darwinPlatform
+private class DarwinSettingsViewModel: StopSearchViewModel {
+    init() {
+        let search = MacDI().darwinSearch
+        super.init { query in try await search.searchStops(query: query) }
     }
 
     func save(station: StopResult, platformFilter: String) {
-        settings.darwinCrsCode = station.id
-        settings.darwinPlatform = platformFilter
+        settings.clearStopConfig()
+        settings.stopId = station.id
+        settings.platform = platformFilter
         settings.mode = SettingsConfig().MODE_DARWIN
     }
 }

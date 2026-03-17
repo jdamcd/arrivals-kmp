@@ -47,8 +47,9 @@ org_511_key=YOURKEY
 **CLI**:
 ```bash
 ./gradlew :cli:run --args="--help"
-./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 'Platform 2'"
+./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 2"
 ./gradlew :cli:run --args="darwin --station CLJ --platform 5"
+./gradlew :cli:run --args="bvg --station 900013102 --line U8"
 ./gradlew :cli:run --args="gtfs --station A42N"
 ```
 
@@ -140,8 +141,20 @@ Core interfaces:
 
 `Settings` is an expect/actual class:
 - Expect declaration: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/Settings.kt`
-- JVM actual: `shared/src/jvmMain/kotlin/com/jdamcd/arrivals/Settings.kt`
+- JVM actual: `shared/src/jvmMain/kotlin/com/jdamcd/arrivals/Settings.jvm.kt`
 - macOS actual: `shared/src/macosMain/kotlin/com/jdamcd/arrivals/Settings.kt`
+
+Settings uses shared fields across all transit systems (only one system is active at a time):
+- `mode` - Active transit system (`tfl`, `darwin`, `bvg`, `gtfs`)
+- `stopId` - Station/stop identifier (shared across all modes)
+- `platform` - Platform filter (shared across all modes)
+- `line` - Line filter (used by BVG)
+- `direction` - Direction filter (used by TfL: `inbound`, `outbound`, `all`)
+- GTFS-specific fields: `gtfsRealtime`, `gtfsSchedule`, `gtfsApiKey`, `gtfsApiKeyParam`, `gtfsStopsUpdated`
+
+`clearStopConfig()` extension resets shared fields to empty defaults — called before saving new settings to prevent stale values from a previous transit system leaking through.
+
+The macOS actual has cold start defaults (TfL Shoreditch High Street, Platform 2) for a working out-of-box experience. The JVM actual defaults to empty values since CLI/desktop require explicit configuration.
 
 The macOS app uses SwiftUI for settings UI. The desktop app uses YAML configuration (`.arrivals.yml` in user home directory).
 

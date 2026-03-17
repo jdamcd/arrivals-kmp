@@ -5,7 +5,6 @@ import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
-import com.jdamcd.arrivals.SettingsConfig
 import com.jdamcd.arrivals.StopDetails
 import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.TflSearch
@@ -22,7 +21,7 @@ internal class TflArrivals(
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
-        val model = formatArrivals(api.fetchArrivals(settings.tflStopId))
+        val model = formatArrivals(api.fetchArrivals(settings.stopId))
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No arrivals found")
         }
@@ -54,12 +53,12 @@ internal class TflArrivals(
                 .asSequence()
                 .sortedBy { it.timeToStation }
                 .filter {
-                    settings.tflPlatform.isEmpty() ||
-                        matchesPlatformFilter(it.platformName, settings.tflPlatform)
+                    settings.platform.isEmpty() ||
+                        matchesPlatformFilter(it.platformName, settings.platform)
                 }
                 .filter { arrival ->
-                    settings.tflDirection == SettingsConfig.TFL_DIRECTION_DEFAULT ||
-                        arrival.direction.contains(settings.tflDirection)
+                    !hasDirectionFilter() ||
+                        arrival.direction.contains(settings.direction)
                 }.take(3)
                 .map {
                     Arrival(
@@ -77,14 +76,16 @@ internal class TflArrivals(
         )
     }
 
+    private fun hasDirectionFilter() = settings.direction.isNotEmpty() && settings.direction != "all"
+
     private fun stationInfo(name: String): String {
         val station = formatStation(name)
         return if (station.isEmpty()) {
             station
-        } else if (settings.tflPlatform.isNotEmpty()) {
-            "$station: Platform ${stripPlatform(settings.tflPlatform)}"
-        } else if (settings.tflDirection != SettingsConfig.TFL_DIRECTION_DEFAULT) {
-            "$station: ${formatDirection(settings.tflDirection)}"
+        } else if (settings.platform.isNotEmpty()) {
+            "$station: Platform ${stripPlatform(settings.platform)}"
+        } else if (hasDirectionFilter()) {
+            "$station: ${formatDirection(settings.direction)}"
         } else {
             station
         }

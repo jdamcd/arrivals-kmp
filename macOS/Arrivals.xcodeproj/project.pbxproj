@@ -26,6 +26,7 @@
 		49DFCAFC2D07881000CDBE29 /* TflSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */; };
 		49DFCB032D07A2C700CDBE29 /* CustomGtfsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCB022D07A2BF00CDBE29 /* CustomGtfsSettingsView.swift */; };
 		49DFCB0B2D0E059D00CDBE29 /* MtaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */; };
+		49A1B2C02F6789AB00AABB01 /* StopSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A1B2BF2F6789AB00AABB01 /* StopSearchViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TflSettingsView.swift; sourceTree = "<group>"; };
 		49DFCB022D07A2BF00CDBE29 /* CustomGtfsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomGtfsSettingsView.swift; sourceTree = "<group>"; };
 		49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MtaSettingsView.swift; sourceTree = "<group>"; };
+		49A1B2BF2F6789AB00AABB01 /* StopSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopSearchViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +143,7 @@
 				49BDE17C2F47B17E00F0A558 /* GtfsFeedSettingsView.swift */,
 				49CD44F62EEF47EC00B10269 /* SettingsCoordinator.swift */,
 				B240A866F863FB5CA7A509B6 /* SettingsState.swift */,
+				49A1B2BF2F6789AB00AABB01 /* StopSearchViewModel.swift */,
 				494945A729F7ABCD00D463D7 /* SettingsView.swift */,
 				49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */,
 				49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */,
@@ -292,6 +295,7 @@
 				4938625A297F4BE700C61AE3 /* ArrivalsApp.swift in Sources */,
 				49BB4D822ED6970900DE9C02 /* DarwinSettingsView.swift in Sources */,
 				499A881D2F5EED5A004D9765 /* BvgSettingsView.swift in Sources */,
+				49A1B2C02F6789AB00AABB01 /* StopSearchViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

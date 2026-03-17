@@ -64,9 +64,9 @@ class BvgArrivalsTest {
 
     @BeforeTest
     fun setup() {
-        settings.bvgStopId = "900100003"
-        settings.bvgLine = ""
-        settings.bvgPlatform = ""
+        settings.stopId = "900100003"
+        settings.line = ""
+        settings.platform = ""
     }
 
     @Test
@@ -126,7 +126,7 @@ class BvgArrivalsTest {
 
     @Test
     fun `applies line filter`() = runBlocking<Unit> {
-        settings.bvgLine = "U2"
+        settings.line = "U2"
         coEvery { api.fetchStop("900100003") } returns mockStop
         coEvery { api.fetchDepartures("900100003") } returns mockDepartures
 
@@ -139,7 +139,7 @@ class BvgArrivalsTest {
 
     @Test
     fun `line filter is case insensitive`() = runBlocking<Unit> {
-        settings.bvgLine = "s5"
+        settings.line = "s5"
         coEvery { api.fetchStop("900100003") } returns mockStop
         coEvery { api.fetchDepartures("900100003") } returns mockDepartures
 
@@ -151,7 +151,7 @@ class BvgArrivalsTest {
 
     @Test
     fun `formats station name with line filter`() = runBlocking<Unit> {
-        settings.bvgLine = "U2"
+        settings.line = "U2"
         coEvery { api.fetchStop("900100003") } returns mockStop
         coEvery { api.fetchDepartures("900100003") } returns mockDepartures
 
@@ -162,8 +162,8 @@ class BvgArrivalsTest {
 
     @Test
     fun `formats station name with line and platform filter`() = runBlocking<Unit> {
-        settings.bvgLine = "U2"
-        settings.bvgPlatform = "2"
+        settings.line = "U2"
+        settings.platform = "2"
         coEvery { api.fetchStop("900100003") } returns mockStop
         coEvery { api.fetchDepartures("900100003") } returns mockDepartures
 
@@ -174,7 +174,7 @@ class BvgArrivalsTest {
 
     @Test
     fun `applies platform filter`() = runBlocking<Unit> {
-        settings.bvgPlatform = "4"
+        settings.platform = "4"
         coEvery { api.fetchStop("900100003") } returns mockStop
         coEvery { api.fetchDepartures("900100003") } returns mockDepartures
 
@@ -186,7 +186,7 @@ class BvgArrivalsTest {
 
     @Test
     fun `formats station name with platform filter`() = runBlocking<Unit> {
-        settings.bvgPlatform = "4"
+        settings.platform = "4"
         coEvery { api.fetchStop("900100003") } returns mockStop
         coEvery { api.fetchDepartures("900100003") } returns mockDepartures
 
@@ -218,7 +218,7 @@ class BvgArrivalsTest {
 
     @Test
     fun `throws NoDataException when stop not configured`() = runBlocking<Unit> {
-        settings.bvgStopId = ""
+        settings.stopId = ""
 
         val e = assertFailsWith<NoDataException> {
             arrivals.latest()

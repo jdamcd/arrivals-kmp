@@ -59,7 +59,7 @@ internal class GtfsArrivals(
     }
 
     private fun formatArrivals(feedMessage: FeedMessage): ArrivalsInfo {
-        val stop = settings.gtfsStop
+        val stop = settings.stopId
         val arrivals = getNextArrivalsForStop(stop, feedMessage.entity)
         return ArrivalsInfo(stops.stopIdToName(stop) ?: stop, arrivals)
     }

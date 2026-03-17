@@ -50,9 +50,9 @@ private class Tfl :
 
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_TFL
-        station?.let { settings.tflStopId = it }
-        platform?.let { settings.tflPlatform = it }
-        direction?.let { settings.tflDirection = it }
+        station?.let { settings.stopId = it }
+        platform?.let { settings.platform = it }
+        direction?.let { settings.direction = it }
 
         fetchAndDisplay(arrivals)
     }
@@ -81,7 +81,7 @@ private class Gtfs :
 
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_GTFS
-        stop?.let { settings.gtfsStop = it }
+        stop?.let { settings.stopId = it }
         realtime?.let { settings.gtfsRealtime = it }
         schedule?.let { settings.gtfsSchedule = it }
         apiKey?.let { settings.gtfsApiKey = it }
@@ -105,8 +105,8 @@ private class Darwin :
 
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_DARWIN
-        station?.let { settings.darwinCrsCode = it }
-        platform?.let { settings.darwinPlatform = it }
+        station?.let { settings.stopId = it }
+        platform?.let { settings.platform = it }
 
         fetchAndDisplay(arrivals)
     }
@@ -129,9 +129,9 @@ private class Bvg :
 
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_BVG
-        station?.let { settings.bvgStopId = it }
-        line?.let { settings.bvgLine = it }
-        platform?.let { settings.bvgPlatform = it }
+        station?.let { settings.stopId = it }
+        line?.let { settings.line = it }
+        platform?.let { settings.platform = it }
 
         fetchAndDisplay(arrivals)
     }
