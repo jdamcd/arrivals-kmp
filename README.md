@@ -14,7 +14,6 @@ Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3
 | **SF Bay Area** | BART | 511.org GTFS |
 | **Berlin** | U-Bahn, S-Bahn, Tram | transport.rest |
 
-
 ... or any custom [GTFS-RT feed](https://mobilitydatabase.org)
 
 ## Run
@@ -25,10 +24,10 @@ The macOS toolbar app can be downloaded from [releases](https://github.com/jdamc
 
 ### Prerequisites
 
-1. Get API keys for authenticated data sources:
-   - **TfL**: [Transport for London API](https://api-portal.tfl.gov.uk) app key
-   - **UK National Rail**: [OpenLDBWS](https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Registration) access token
-   - **BART**: [511.org](https://511.org/open-data) API key
+1. Get API keys for any authenticated sources you plan to use:
+   - **TfL**: [Transport for London API](https://api-portal.tfl.gov.uk)
+   - **UK National Rail**: [OpenLDBWS](https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Registration)
+   - **BART**: [511.org](https://511.org/open-data)
 2. Create `shared/secret.properties` and add your keys:
    ```
    tfl_key=YOURKEY
@@ -86,13 +85,13 @@ Create a `.arrivals.yml` in the user home directory to configure:
 # Mode: "tfl", "darwin", "bvg", or "gtfs"
 mode: tfl
 
-# Shared fields (used by all modes)
-stop: 910GSHRDHST           # Station/stop ID
-platform: 2                 # Optional platform filter
-line:                       # Optional line filter (BVG only, e.g. U2, S5, M10)
-direction:                  # Direction filter (TfL only: "inbound" or "outbound")
+# Shared config fields
+stop: 910GSHRDHST           # Station/stop ID (all modes)
+platform: 2                 # Optional platform (all but GTFS)
+line:                       # Optional line (BVG only: U8, M10, etc.)
+direction:                  # Optional direction (TfL only: "inbound" or "outbound")
 
-# GTFS-specific fields (only needed for gtfs mode)
+# GTFS-specific config
 gtfs_realtime: https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g
 gtfs_schedule: http://web.mta.info/developers/data/nyct/subway/google_transit.zip
 # Optional for authenticated feeds
@@ -114,18 +113,6 @@ Command-line interface (JVM required). Run `./cli/install` to install the `arriv
 arrivals tfl --station 910GSHRDHST --platform 2
 ```
 
-#### Darwin (UK National Rail) example
-
-```bash
-arrivals darwin --station PMR --platform 2
-```
-
-#### BVG (Berlin) example
-
-```bash
-arrivals bvg --station 900013102 --line U8
-```
-
 #### GTFS example
 
 ```bash
@@ -136,10 +123,11 @@ arrivals gtfs --station G28S \
 
 ## Attribution
 
-* Powered by [TfL Open Data](https://api.tfl.gov.uk)
-  * OS data © Crown copyright and database rights 2016
-  * Geomni UK Map data © and database rights 2019
-* Powered by [Rail Data Marketplace](https://raildata.org.uk) via [Huxley2](https://github.com/jpsingleton/Huxley2)
-* Powered by [511 Open Data](https://511.org/open-data)
-* Powered by [transport.rest](https://transport.rest) — BVG data
+* Powered by:
+  * [TfL Open Data](https://api.tfl.gov.uk)
+    * OS data © Crown copyright and database rights 2016
+    * Geomni UK Map data © and database rights 2019
+  * [Rail Data Marketplace](https://raildata.org.uk) via [Huxley2](https://github.com/jpsingleton/Huxley2)
+  * [511 Open Data](https://511.org/open-data)
+  * [transport.rest](https://transport.rest)
 * Uses this [London Underground Dot Matrix Typeface](https://github.com/petykowski/London-Underground-Dot-Matrix-Typeface)
