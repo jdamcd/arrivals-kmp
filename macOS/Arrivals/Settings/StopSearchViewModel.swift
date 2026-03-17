@@ -7,10 +7,10 @@ class StopSearchViewModel: ObservableObject {
 
     let settings = MacDI().settings
 
-    private let searchFn: (String) async throws -> [StopResult]
+    private let searchStops: (String) async throws -> [StopResult]
 
     init(search: @escaping (String) async throws -> [StopResult]) {
-        searchFn = search
+        searchStops = search
     }
 
     func reset() {
@@ -21,7 +21,7 @@ class StopSearchViewModel: ObservableObject {
         state = .loading
         Task {
             do {
-                let result = try await searchFn(query)
+                let result = try await searchStops(query)
                 state = result.isEmpty ? .empty : .data(result)
             } catch {
                 state = .error
