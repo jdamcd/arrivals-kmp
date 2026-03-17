@@ -72,7 +72,8 @@ struct TflSettingsView: View {
                 .help("Platform number (e.g. 1, 2A, 10)")
                 .autocorrectionDisabled()
                 .onAppear {
-                    directionFilter = viewModel.settings.direction
+                    let saved = viewModel.settings.direction
+                    directionFilter = saved.isEmpty ? "all" : saved
                 }
         }
         .onAppear {
@@ -95,10 +96,11 @@ struct TflSettingsView: View {
 
 @MainActor
 private class TflSettingsViewModel: StopSearchViewModel {
-    private let tflSearch = MacDI().tflSearch
+    private let tflSearch: TflSearch
 
     init() {
         let search = MacDI().tflSearch
+        tflSearch = search
         super.init { query in try await search.searchStops(query: query) }
     }
 

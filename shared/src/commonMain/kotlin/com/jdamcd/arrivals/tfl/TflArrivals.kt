@@ -5,7 +5,6 @@ import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
-import com.jdamcd.arrivals.SettingsConfig
 import com.jdamcd.arrivals.StopDetails
 import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.TflSearch
@@ -58,7 +57,7 @@ internal class TflArrivals(
                         matchesPlatformFilter(it.platformName, settings.platform)
                 }
                 .filter { arrival ->
-                    settings.direction == SettingsConfig.DIRECTION_DEFAULT ||
+                    !hasDirectionFilter() ||
                         arrival.direction.contains(settings.direction)
                 }.take(3)
                 .map {
@@ -77,13 +76,15 @@ internal class TflArrivals(
         )
     }
 
+    private fun hasDirectionFilter() = settings.direction.isNotEmpty() && settings.direction != "all"
+
     private fun stationInfo(name: String): String {
         val station = formatStation(name)
         return if (station.isEmpty()) {
             station
         } else if (settings.platform.isNotEmpty()) {
             "$station: Platform ${stripPlatform(settings.platform)}"
-        } else if (settings.direction != SettingsConfig.DIRECTION_DEFAULT) {
+        } else if (hasDirectionFilter()) {
             "$station: ${formatDirection(settings.direction)}"
         } else {
             station

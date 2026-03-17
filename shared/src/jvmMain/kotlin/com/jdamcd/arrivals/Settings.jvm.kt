@@ -5,7 +5,7 @@ actual class Settings actual constructor() {
     actual var stopId = ""
     actual var platform = ""
     actual var line = ""
-    actual var direction = SettingsConfig.DIRECTION_DEFAULT
+    actual var direction = ""
     actual var gtfsStopsUpdated = 0L
     actual var gtfsRealtime = ""
     actual var gtfsSchedule = ""

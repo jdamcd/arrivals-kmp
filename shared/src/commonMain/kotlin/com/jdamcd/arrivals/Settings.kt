@@ -17,7 +17,7 @@ fun Settings.clearStopConfig() {
     stopId = ""
     platform = ""
     line = ""
-    direction = SettingsConfig.DIRECTION_DEFAULT
+    direction = ""
 }
 
 fun Settings.saveGtfsConfig(
@@ -50,7 +50,6 @@ object SettingsConfig {
     const val PLATFORM = "platform"
     const val LINE = "line"
     const val DIRECTION = "direction"
-    const val DIRECTION_DEFAULT = "all"
 
     const val GTFS_STOPS_UPDATED = "gtfs_stops_updated"
     const val GTFS_REALTIME = "gtfs_realtime"

@@ -29,7 +29,7 @@ class TflArrivalsTest {
     fun setup() {
         settings.stopId = "123"
         settings.platform = "2"
-        settings.direction = "all"
+        settings.direction = ""
     }
 
     @Test
@@ -53,7 +53,7 @@ class TflArrivalsTest {
     fun `formats station name with filters`() = runBlocking<Unit> {
         coEvery { api.fetchArrivals("123") } returns response
 
-        settings.direction = "all"
+        settings.direction = ""
         settings.platform = "2"
         arrivals.latest().station shouldBe "Test Stop: Platform 2"
 
@@ -61,7 +61,7 @@ class TflArrivalsTest {
         settings.platform = ""
         arrivals.latest().station shouldBe "Test Stop: Inbound"
 
-        settings.direction = "all"
+        settings.direction = ""
         settings.platform = ""
         arrivals.latest().station shouldBe "Test Stop"
     }

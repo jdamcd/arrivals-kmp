@@ -35,7 +35,7 @@ actual class Settings actual constructor() {
         }
 
     actual var direction: String
-        get() = defaults.stringForKey(SettingsConfig.DIRECTION) ?: SettingsConfig.DIRECTION_DEFAULT
+        get() = defaults.stringForKey(SettingsConfig.DIRECTION) ?: ""
         set(value) {
             defaults.setObject(value, SettingsConfig.DIRECTION)
         }

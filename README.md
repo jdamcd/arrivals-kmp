@@ -90,7 +90,7 @@ mode: tfl
 stop: 910GSHRDHST           # Station/stop ID
 platform: 2                 # Optional platform filter
 line:                       # Optional line filter (BVG only, e.g. U2, S5, M10)
-direction: all              # Direction filter (TfL only: "inbound", "outbound", or "all")
+direction:                  # Direction filter (TfL only: "inbound" or "outbound")
 
 # GTFS-specific fields (only needed for gtfs mode)
 gtfs_realtime: https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g
