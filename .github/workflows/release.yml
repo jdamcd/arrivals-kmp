@@ -78,9 +78,11 @@ jobs:
         run: |
           create-dmg \
             --volname "Arrivals" \
-            --window-size 640 480 \
-            --icon "Arrivals.app" 160 240 \
-            --app-drop-link 480 240 \
+            --window-size 540 360 \
+            --icon-size 128 \
+            --icon "Arrivals.app" 150 150 \
+            --app-drop-link 390 150 \
+            --hide-extension "Arrivals.app" \
             "Arrivals.dmg" \
             "macOS/target/Arrivals.app" \
             || test $? -eq 2
