@@ -5,6 +5,9 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build release
@@ -68,9 +71,21 @@ jobs:
           xcrun notarytool submit "arrivals-upload.zip" --keychain-profile "notarytool-profile" --wait
           xcrun stapler staple "$ARTIFACT_PATH"
           
-          ditto -c -k --keepParent "$ARTIFACT_PATH" "ArrivalsMac.zip"
+      - name: Install create-dmg
+        run: brew install create-dmg
 
-      - uses: actions/upload-artifact@v5
-        with:
-          name: Arrivals
-          path: ./ArrivalsMac.zip
+      - name: Create DMG
+        run: |
+          create-dmg \
+            --volname "Arrivals" \
+            --window-size 640 480 \
+            --icon "Arrivals.app" 160 240 \
+            --app-drop-link 480 240 \
+            "Arrivals.dmg" \
+            "macOS/target/Arrivals.app" \
+            || test $? -eq 2
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" Arrivals.dmg --title "macOS ${{ github.ref_name }}" --generate-notes --latest
