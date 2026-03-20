@@ -1,7 +1,7 @@
 @preconcurrency import ArrivalsLib
 import SwiftUI
 
-enum TransitSystem: CaseIterable {
+enum TransitSystem: String, CaseIterable {
     case tfl, mta, bart, bvg, darwin, customGtfs
 
     var displayName: String {
@@ -19,7 +19,7 @@ enum TransitSystem: CaseIterable {
 struct SettingsView: View {
     @StateObject private var coordinator = SettingsCoordinator()
 
-    @State private var selector: TransitSystem = .tfl
+    @AppStorage("settingsTransitSystem") private var selector: TransitSystem = .tfl
 
     var body: some View {
         VStack(spacing: 0) {

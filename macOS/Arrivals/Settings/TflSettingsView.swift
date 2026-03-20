@@ -64,17 +64,10 @@ struct TflSettingsView: View {
                 }
             }
             .pickerStyle(.automatic)
-            .onAppear {
-                platformFilter = viewModel.settings.platform
-            }
 
             TextField("Platform", text: $platformFilter)
                 .help("Platform number (e.g. 1, 2A, 10)")
                 .autocorrectionDisabled()
-                .onAppear {
-                    let saved = viewModel.settings.direction
-                    directionFilter = saved.isEmpty ? "all" : saved
-                }
         }
         .onAppear {
             coordinator.onSave = {

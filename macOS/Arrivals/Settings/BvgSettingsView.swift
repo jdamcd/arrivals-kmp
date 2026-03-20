@@ -49,16 +49,10 @@ struct BvgSettingsView: View {
             TextField("Line", text: $lineFilter)
                 .help("Line name (e.g. U2, S5, M10)")
                 .autocorrectionDisabled()
-                .onAppear {
-                    lineFilter = viewModel.settings.line
-                }
 
             TextField("Platform", text: $platformFilter)
                 .help("Platform number (e.g. 1, 2)")
                 .autocorrectionDisabled()
-                .onAppear {
-                    platformFilter = viewModel.settings.platform
-                }
         }
         .onAppear {
             coordinator.onSave = {
