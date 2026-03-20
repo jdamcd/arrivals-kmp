@@ -18,7 +18,7 @@ internal class BvgApi(client: HttpClient) :
         parameter("results", 10)
     }.body()
 
-    suspend fun fetchDepartures(stopId: String, duration: Int = 15): ApiBvgDepartureResponse = executeRequest("$BASE_URL/stops/$stopId/departures") {
+    suspend fun fetchDepartures(stopId: String, duration: Int = 60): ApiBvgDepartureResponse = executeRequest("$BASE_URL/stops/$stopId/departures") {
         parameter("duration", duration)
         parameter("suburban", true)
         parameter("subway", true)
