@@ -54,13 +54,11 @@ internal class GtfsArrivals(
 
     private fun hasFreshStops(): Boolean {
         val twoDaysInSeconds = 48 * 60 * 60
-        if (!api.hasStops()) return false
+        if (!api.hasStops() || api.stopsSource() != settings.gtfsSchedule) return false
         val updatedAt = if (settings.gtfsStopsUpdated > 0L) {
             settings.gtfsStopsUpdated
-        } else if (api.stopsSource() == settings.gtfsSchedule) {
-            api.stopsLastModifiedEpochSeconds()
         } else {
-            0L
+            api.stopsLastModifiedEpochSeconds()
         }
         return updatedAt + twoDaysInSeconds > clock.now().epochSeconds
     }

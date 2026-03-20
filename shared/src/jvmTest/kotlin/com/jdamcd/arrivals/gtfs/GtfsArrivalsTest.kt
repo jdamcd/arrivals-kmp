@@ -36,6 +36,7 @@ class GtfsArrivalsTest {
         settings.stopId = "G28S"
         settings.gtfsStopsUpdated = fetchTime - 1000
         every { api.hasStops() } returns true
+        every { api.stopsSource() } returns "schedule_url"
 
         feedMessage = TestHelper.resource("feed_message.bin").let {
             FeedMessage.ADAPTER.decode(it)
@@ -155,7 +156,6 @@ class GtfsArrivalsTest {
     fun `uses file modification time when settings timestamp is zero`() = runBlocking<Unit> {
         settings.gtfsStopsUpdated = 0L
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        every { api.stopsSource() } returns "schedule_url"
         every { api.stopsLastModifiedEpochSeconds() } returns fetchTime - 1000
         coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
         every { api.readStops() } returns Fixtures.STOPS_CSV_1
@@ -170,7 +170,6 @@ class GtfsArrivalsTest {
     fun `downloads stops when file modification time is stale and settings timestamp is zero`() = runBlocking<Unit> {
         settings.gtfsStopsUpdated = 0L
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        every { api.stopsSource() } returns "schedule_url"
         every { api.stopsLastModifiedEpochSeconds() } returns fetchTime - 172801
         coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
@@ -184,6 +183,20 @@ class GtfsArrivalsTest {
     @Test
     fun `downloads stops when cached source does not match schedule url`() = runBlocking<Unit> {
         settings.gtfsStopsUpdated = 0L
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        every { api.stopsSource() } returns "old_schedule_url"
+        coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+
+        val latest = arrivals.latest()
+
+        coVerify { api.downloadStops("schedule_url") }
+        latest.arrivals shouldHaveSize 3
+    }
+
+    @Test
+    fun `downloads stops when cached source does not match even with fresh timestamp`() = runBlocking<Unit> {
+        settings.gtfsStopsUpdated = fetchTime - 1000
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsSource() } returns "old_schedule_url"
         coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1

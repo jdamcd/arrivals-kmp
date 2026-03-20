@@ -60,7 +60,7 @@ internal class GtfsApi(private val client: HttpClient) {
                 write(zipContent)
             }
             unpackZip(tempZipFile, outputDir)
-            writeStopsSource(url)
+            writeStopsSource(url, outputDir)
             return readStops(outputDir)
         } finally {
             FileSystem.SYSTEM.delete(tempZipFile)
@@ -80,8 +80,8 @@ internal class GtfsApi(private val client: HttpClient) {
         null
     }
 
-    private fun writeStopsSource(url: String) {
-        FileSystem.SYSTEM.write(defaultDir.resolve(sourceFileName)) { writeUtf8(url) }
+    private fun writeStopsSource(url: String, dir: Path = defaultDir) {
+        FileSystem.SYSTEM.write(dir.resolve(sourceFileName)) { writeUtf8(url) }
     }
 
     fun readStops(dir: Path = defaultDir): String {
