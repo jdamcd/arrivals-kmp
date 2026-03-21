@@ -70,6 +70,7 @@ Smoke test changes to the shared module via the CLI to catch runtime issues, e.g
 ./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 2"
 ./gradlew :cli:run --args="darwin --station CLJ --platform 5"
 ./gradlew :cli:run --args="bvg --station 900013102 --line U8"
+./gradlew :cli:run --args="gtfs --station A42N --realtime https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace --schedule http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
 ```
 
 Swift code formatting:

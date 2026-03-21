@@ -28,6 +28,7 @@ fun Settings.clearStopConfig() {
     platform = ""
     line = ""
     direction = ""
+    gtfsStopsUpdated = 0
 }
 
 fun Settings.saveGtfsConfig(
@@ -43,7 +44,6 @@ fun Settings.saveGtfsConfig(
     gtfsSchedule = scheduleUrl
     gtfsApiKey = apiKey
     gtfsApiKeyParam = apiKeyParam
-    gtfsStopsUpdated = 0
     mode = SettingsConfig.MODE_GTFS
 }
 
