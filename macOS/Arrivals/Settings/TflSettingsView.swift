@@ -15,59 +15,49 @@ struct TflSettingsView: View {
     @State private var directionFilter: String = "all"
 
     private var isValid: Bool {
-        selectedResult != nil
+        guard let result = selectedResult else { return false }
+        return !result.isHub
     }
 
     var body: some View {
         Section {
-            HStack {
-                DebouncingTextField(label: "Station", value: $searchQuery) { value in
-                    if value.isEmpty {
-                        viewModel.reset()
-                    } else {
-                        viewModel.performSearch(value)
-                    }
+            if let selected = selectedResult, !selected.isHub {
+                SelectedStopRow(name: selected.name) {
+                    selectedResult = nil
                 }
-                .autocorrectionDisabled()
-                Image(systemName: "questionmark.app")
-                    .foregroundColor(Color.gray)
-                    .help("London Overground, Tube, DLR, and Tram stations. No arrival times at the end of the line.")
-            }
-            ResultsArea {
-                switch viewModel.state {
-                case let .data(results):
-                    List(results, id: \.self, selection: $selectedResult) { result in
-                        Text(result.name)
-                    }
-                    .onChange(of: selectedResult) { _, newValue in
-                        if let result = newValue, result.isHub {
-                            viewModel.disambiguate(stop: result)
-                            selectedResult = nil
+            } else {
+                HStack {
+                    DebouncingTextField(label: "Station", value: $searchQuery) { value in
+                        if value.isEmpty {
+                            viewModel.reset()
+                        } else {
+                            viewModel.performSearch(value)
                         }
                     }
-                    .listStyle(PlainListStyle())
-                case .idle:
-                    Text("Search for a station")
-                case .empty:
-                    Text("No results found")
-                case .error:
-                    Text("Search error")
-                case .loading:
-                    ProgressView()
-                        .scaleEffect(0.5)
+                    .autocorrectionDisabled()
+                    Image(systemName: "questionmark.app")
+                        .foregroundColor(Color.gray)
+                        .help("London Overground, Tube, DLR, and Tram stations. No arrival times at the end of the line.")
+                }
+                ResultsArea {
+                    switch viewModel.state {
+                    case let .data(results):
+                        List(results, id: \.self, selection: $selectedResult) { result in
+                            Text(result.name)
+                        }
+                        .listStyle(PlainListStyle())
+                    case .idle:
+                        Text("Search for a station")
+                    case .empty:
+                        Text("No results found")
+                    case .error:
+                        Text("Search error")
+                    case .loading:
+                        ProgressView()
+                            .scaleEffect(0.5)
+                    }
                 }
             }
-
-            Picker("Direction", selection: $directionFilter) {
-                ForEach(directions, id: \.self) { direction in
-                    Text(direction.capitalized).tag(direction)
-                }
-            }
-            .pickerStyle(.automatic)
-
-            TextField("Platform", text: $platformFilter)
-                .help("Platform number (e.g. 1, 2A, 10)")
-                .autocorrectionDisabled()
         }
         .onAppear {
             coordinator.onSave = {
@@ -81,8 +71,27 @@ struct TflSettingsView: View {
             }
             coordinator.canSave = isValid
         }
-        .onChange(of: selectedResult) { _, _ in
+        .onChange(of: selectedResult) { _, newValue in
+            if let result = newValue, result.isHub {
+                viewModel.disambiguate(stop: result)
+                selectedResult = nil
+            }
             coordinator.canSave = isValid
+        }
+
+        if isValid {
+            Section("Filters") {
+                Picker("Direction", selection: $directionFilter) {
+                    ForEach(directions, id: \.self) { direction in
+                        Text(direction.capitalized).tag(direction)
+                    }
+                }
+                .pickerStyle(.automatic)
+
+                TextField("Platform", text: $platformFilter)
+                    .help("Optional platform (e.g. 2, 5A)")
+                    .autocorrectionDisabled()
+            }
         }
     }
 }
@@ -90,6 +99,7 @@ struct TflSettingsView: View {
 @MainActor
 private class TflSettingsViewModel: StopSearchViewModel {
     private let tflSearch: TflSearch
+    private var disambiguateTask: Task<Void, Never>?
 
     init() {
         let search = MacDI().tflSearch
@@ -97,14 +107,23 @@ private class TflSettingsViewModel: StopSearchViewModel {
         super.init { query in try await search.searchStops(query: query) }
     }
 
+    deinit {
+        disambiguateTask?.cancel()
+    }
+
     func disambiguate(stop: StopResult) {
+        disambiguateTask?.cancel()
         state = .loading
-        Task {
+        disambiguateTask = Task {
             do {
                 let result = try await tflSearch.stopDetails(id: stop.id)
-                state = result.children.isEmpty ? .empty : .data(result.children)
+                if !Task.isCancelled {
+                    state = result.children.isEmpty ? .empty : .data(result.children)
+                }
             } catch {
-                state = .error
+                if !Task.isCancelled {
+                    state = .error
+                }
             }
         }
     }

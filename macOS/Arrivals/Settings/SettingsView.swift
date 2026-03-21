@@ -29,8 +29,8 @@ struct SettingsView: View {
                         ForEach(TransitSystem.allCases, id: \.self) {
                             Text($0.displayName)
                         }
-                        .pickerStyle(.menu)
                     }
+                    .pickerStyle(.menu)
                 }
             }
             .formStyle(.grouped)
@@ -38,38 +38,36 @@ struct SettingsView: View {
 
             Divider()
 
-            ScrollView {
-                Form {
-                    switch selector {
-                    case .tfl:
-                        TflSettingsView()
-                    case .mta:
-                        MtaSettingsView()
-                    case .bart:
-                        GtfsFeedSettingsView(
-                            fetcher: MacDI().bartSearch,
-                            feedUrl: Bart().REALTIME,
-                            save: { stopId in
-                                MacDI().settings.saveGtfsConfig(
-                                    stopId: stopId,
-                                    realtimeUrl: Bart().REALTIME,
-                                    scheduleUrl: Bart().SCHEDULE,
-                                    apiKey: Bart().API_KEY,
-                                    apiKeyParam: ""
-                                )
-                            }
-                        )
-                    case .bvg:
-                        BvgSettingsView()
-                    case .darwin:
-                        DarwinSettingsView()
-                    case .customGtfs:
-                        CustomGtfsSettingsView()
-                    }
+            Form {
+                switch selector {
+                case .tfl:
+                    TflSettingsView()
+                case .mta:
+                    MtaSettingsView()
+                case .bart:
+                    let bart = Bart()
+                    GtfsFeedSettingsView(
+                        fetcher: MacDI().bartSearch,
+                        feedUrl: bart.REALTIME,
+                        save: { stopId in
+                            MacDI().settings.saveGtfsConfig(
+                                stopId: stopId,
+                                realtimeUrl: bart.REALTIME,
+                                scheduleUrl: bart.SCHEDULE,
+                                apiKey: bart.API_KEY,
+                                apiKeyParam: ""
+                            )
+                        }
+                    )
+                case .bvg:
+                    BvgSettingsView()
+                case .darwin:
+                    DarwinSettingsView()
+                case .customGtfs:
+                    CustomGtfsSettingsView()
                 }
-                .formStyle(.grouped)
             }
-            .frame(maxHeight: .infinity)
+            .formStyle(.grouped)
 
             Divider()
 

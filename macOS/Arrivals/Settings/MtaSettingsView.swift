@@ -9,14 +9,14 @@ struct MtaSettingsView: View {
     @State private var selectedLine: String?
     @State private var selectedStop: StopResult?
 
-    private var lines = Mta().realtime
+    private let lines: [String: String]
 
     private var isValid: Bool {
         selectedLine != nil && selectedStop != nil
     }
 
     init() {
-        selectedLine = lines.keys.sorted().first!
+        lines = Mta().realtime
     }
 
     var body: some View {
@@ -26,39 +26,46 @@ struct MtaSettingsView: View {
                 ForEach(lines.keys.sorted(), id: \.self) { line in
                     Text(line).tag(String?.some(line))
                 }
-                .pickerStyle(.menu)
-                .onChange(of: selectedLine ?? "") { _, newValue in
-                    selectedStop = nil
-                    if newValue.isNotEmpty {
-                        viewModel.getStops(feedUrl: lines[newValue]!)
-                    } else {
-                        viewModel.reset()
-                    }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: selectedLine) { _, newValue in
+                selectedStop = nil
+                if let line = newValue, let feedUrl = lines[line] {
+                    viewModel.getStops(feedUrl: feedUrl)
+                } else {
+                    viewModel.reset()
                 }
             }
-            ResultsArea {
-                switch viewModel.state {
-                case let .data(results):
-                    List(results, id: \.self, selection: $selectedStop) { result in
-                        Text(result.name)
+
+            if let selected = selectedStop {
+                SelectedStopRow(label: "Stop", name: selected.name) {
+                    selectedStop = nil
+                }
+            } else {
+                ResultsArea {
+                    switch viewModel.state {
+                    case let .data(results):
+                        List(results, id: \.self, selection: $selectedStop) { result in
+                            Text(result.name)
+                        }
+                        .listStyle(PlainListStyle())
+                    case .idle:
+                        Text("Select a line")
+                    case .empty:
+                        Text("No stops found")
+                    case .error:
+                        Text("Failed to load stops")
+                    case .loading:
+                        ProgressView()
+                            .scaleEffect(0.5)
                     }
-                    .listStyle(PlainListStyle())
-                case .idle:
-                    Text("Select a line")
-                case .empty:
-                    Text("No stops found")
-                case .error:
-                    Text("Failed to load stops")
-                case .loading:
-                    ProgressView()
-                        .scaleEffect(0.5)
                 }
             }
         }
         .onAppear {
             coordinator.onSave = {
-                if let selectedLine, let selectedStop {
-                    viewModel.save(lineUrl: lines[selectedLine]!, stopId: selectedStop.id)
+                if let selectedLine, let feedUrl = lines[selectedLine], let selectedStop {
+                    viewModel.save(lineUrl: feedUrl, stopId: selectedStop.id)
                 }
             }
             coordinator.canSave = isValid

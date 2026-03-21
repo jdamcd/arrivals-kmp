@@ -22,22 +22,28 @@ struct GtfsFeedSettingsView: View {
 
     var body: some View {
         Section {
-            ResultsArea {
-                switch viewModel.state {
-                case let .data(results):
-                    List(results, id: \.self, selection: $selectedStop) { result in
-                        Text(result.name)
+            if let selected = selectedStop {
+                SelectedStopRow(label: "Stop", name: selected.name) {
+                    selectedStop = nil
+                }
+            } else {
+                ResultsArea {
+                    switch viewModel.state {
+                    case let .data(results):
+                        List(results, id: \.self, selection: $selectedStop) { result in
+                            Text(result.name)
+                        }
+                        .listStyle(PlainListStyle())
+                    case .idle:
+                        Text("Loading stops...")
+                    case .empty:
+                        Text("No stops found")
+                    case .error:
+                        Text("Failed to load stops")
+                    case .loading:
+                        ProgressView()
+                            .scaleEffect(0.5)
                     }
-                    .listStyle(PlainListStyle())
-                case .idle:
-                    Text("Loading stops...")
-                case .empty:
-                    Text("No stops found")
-                case .error:
-                    Text("Failed to load stops")
-                case .loading:
-                    ProgressView()
-                        .scaleEffect(0.5)
                 }
             }
         }
@@ -63,6 +69,7 @@ private class GtfsFeedSettingsViewModel: ObservableObject {
     private let fetcher: GtfsSearch
     private let feedUrl: String
     private let onSave: (String) -> Void
+    private var loadTask: Task<Void, Never>?
 
     init(fetcher: GtfsSearch, feedUrl: String, save: @escaping (String) -> Void) {
         self.fetcher = fetcher
@@ -70,15 +77,23 @@ private class GtfsFeedSettingsViewModel: ObservableObject {
         onSave = save
     }
 
+    deinit {
+        loadTask?.cancel()
+    }
+
     func getStops() {
         if state != .loading {
             state = .loading
-            Task {
+            loadTask = Task {
                 do {
                     let result = try await fetcher.getStops(feedUrl: feedUrl)
-                    state = .data(result)
+                    if !Task.isCancelled {
+                        state = .data(result)
+                    }
                 } catch {
-                    state = .error
+                    if !Task.isCancelled {
+                        state = .error
+                    }
                 }
             }
         }

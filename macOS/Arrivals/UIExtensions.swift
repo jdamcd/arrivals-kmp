@@ -9,7 +9,7 @@ struct ResultsArea<Content: View>: View {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(minHeight: 70, alignment: .center)
+        .frame(minHeight: 70, maxHeight: .infinity, alignment: .center)
     }
 }
 
@@ -86,6 +86,25 @@ extension View {
                 self.modifier(BlinkViewModifier(duration: duration))
             } else {
                 self
+            }
+        }
+    }
+}
+
+struct SelectedStopRow: View {
+    var label: String = "Station"
+    let name: String
+    let onClear: () -> Void
+
+    var body: some View {
+        LabeledContent(label) {
+            HStack(spacing: 6) {
+                Text(name)
+                    .lineLimit(1)
+                Button("Change") {
+                    onClear()
+                }
+                .controlSize(.small)
             }
         }
     }

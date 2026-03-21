@@ -18,41 +18,39 @@ struct BvgSettingsView: View {
 
     var body: some View {
         Section {
-            DebouncingTextField(label: "Station", value: $searchQuery) { value in
-                if value.isEmpty {
-                    viewModel.reset()
-                } else {
-                    viewModel.performSearch(value)
+            if let selected = selectedResult {
+                SelectedStopRow(name: selected.name) {
+                    selectedResult = nil
                 }
-            }
-            .autocorrectionDisabled()
-
-            ResultsArea {
-                switch viewModel.state {
-                case let .data(results):
-                    List(results, id: \.self, selection: $selectedResult) { result in
-                        Text(result.name)
+            } else {
+                DebouncingTextField(label: "Station", value: $searchQuery) { value in
+                    if value.isEmpty {
+                        viewModel.reset()
+                    } else {
+                        viewModel.performSearch(value)
                     }
-                    .listStyle(PlainListStyle())
-                case .idle:
-                    Text("Search for a station")
-                case .empty:
-                    Text("No results found")
-                case .error:
-                    Text("Search error")
-                case .loading:
-                    ProgressView()
-                        .scaleEffect(0.5)
+                }
+                .autocorrectionDisabled()
+
+                ResultsArea {
+                    switch viewModel.state {
+                    case let .data(results):
+                        List(results, id: \.self, selection: $selectedResult) { result in
+                            Text(result.name)
+                        }
+                        .listStyle(PlainListStyle())
+                    case .idle:
+                        Text("Search for a station")
+                    case .empty:
+                        Text("No results found")
+                    case .error:
+                        Text("Search error")
+                    case .loading:
+                        ProgressView()
+                            .scaleEffect(0.5)
+                    }
                 }
             }
-
-            TextField("Line", text: $lineFilter)
-                .help("Line name (e.g. U2, S5, M10)")
-                .autocorrectionDisabled()
-
-            TextField("Platform", text: $platformFilter)
-                .help("Platform number (e.g. 1, 2)")
-                .autocorrectionDisabled()
         }
         .onAppear {
             coordinator.onSave = {
@@ -68,6 +66,18 @@ struct BvgSettingsView: View {
         }
         .onChange(of: selectedResult) { _, _ in
             coordinator.canSave = isValid
+        }
+
+        if isValid {
+            Section("Filters") {
+                TextField("Line", text: $lineFilter)
+                    .help("Optional line (e.g. U8, S41)")
+                    .autocorrectionDisabled()
+
+                TextField("Platform", text: $platformFilter)
+                    .help("Optional platform (e.g. 1, 2)")
+                    .autocorrectionDisabled()
+            }
         }
     }
 }
