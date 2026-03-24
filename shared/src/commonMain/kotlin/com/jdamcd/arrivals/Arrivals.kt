@@ -50,7 +50,7 @@ fun commonModule() = module {
     single { TflApi(get()) }
     single { GtfsApi(get()) }
     single { DarwinApi(get()) }
-    single { TflArrivals(get(), get()) }
+    single { TflArrivals(get(), get(), get()) }
     single { GtfsArrivals(get(), get(), get()) }
     single { DarwinArrivals(get(), get(), get()) }
     single { BvgApi(get()) }
@@ -129,7 +129,8 @@ data class Arrival(
     val id: Int,
     val destination: String,
     val time: String,
-    val secondsToStop: Int
+    val secondsToStop: Int,
+    val realtime: Boolean = true
 )
 
 data class StopResult(

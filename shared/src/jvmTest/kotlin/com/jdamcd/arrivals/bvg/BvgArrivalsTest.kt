@@ -93,8 +93,8 @@ class BvgArrivalsTest {
     }
 
     @Test
-    fun `filters cancelled departures`() = runBlocking<Unit> {
-        val withCancelled = ApiBvgDepartureResponse(
+    fun `falls back to planned time when realtime is unavailable`() = runBlocking<Unit> {
+        val mixed = ApiBvgDepartureResponse(
             departures = listOf(
                 ApiBvgDeparture(
                     tripId = "trip1",
@@ -104,7 +104,6 @@ class BvgArrivalsTest {
                     plannedWhen = "2026-03-07T12:05:00+00:00",
                     delay = 0,
                     platform = "4"
-
                 ),
                 ApiBvgDeparture(
                     tripId = "trip2",
@@ -116,12 +115,16 @@ class BvgArrivalsTest {
             )
         )
         coEvery { api.fetchStop("900100003") } returns mockStop
-        coEvery { api.fetchDepartures("900100003") } returns withCancelled
+        coEvery { api.fetchDepartures("900100003") } returns mixed
 
         val latest = arrivals.latest()
 
-        latest.arrivals shouldHaveSize 1
+        latest.arrivals shouldHaveSize 2
+        latest.arrivals[0].realtime shouldBe true
         latest.arrivals[0].destination shouldContain "S5"
+        latest.arrivals[1].realtime shouldBe false
+        latest.arrivals[1].time shouldContain "*"
+        latest.arrivals[1].destination shouldContain "U2"
     }
 
     @Test

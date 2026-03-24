@@ -5,7 +5,6 @@ import com.jdamcd.arrivals.JsonApiClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.parameter
-import io.ktor.serialization.JsonConvertException
 import kotlinx.serialization.Serializable
 
 internal class TflApi(client: HttpClient) :
@@ -14,14 +13,9 @@ internal class TflApi(client: HttpClient) :
         apiName = "TfL API"
     ) {
 
-    suspend fun fetchArrivals(station: String): List<ApiArrival> = try {
-        executeRequest("$BASE_URL/StopPoint/$station/Arrivals") {
-            parameter("app_key", BuildKonfig.TFL_KEY)
-        }.body()
-    } catch (_: JsonConvertException) {
-        // API returns empty body for terminal stations
-        emptyList()
-    }
+    suspend fun fetchArrivals(station: String): List<ApiArrival> = executeRequest("$BASE_URL/StopPoint/$station/Arrivals") {
+        parameter("app_key", BuildKonfig.TFL_KEY)
+    }.body()
 
     suspend fun searchStations(query: String): ApiSearchResult = executeRequest("$BASE_URL/StopPoint/Search") {
         parameter("app_key", BuildKonfig.TFL_KEY)
@@ -33,6 +27,10 @@ internal class TflApi(client: HttpClient) :
     suspend fun stopDetails(id: String): ApiStopPoint = executeRequest("$BASE_URL/StopPoint/$id") {
         parameter("app_key", BuildKonfig.TFL_KEY)
     }.body()
+
+    suspend fun fetchTimetable(lineId: String, stopId: String): ApiTimetableResponse = executeRequest("$BASE_URL/Line/$lineId/Timetable/$stopId") {
+        parameter("app_key", BuildKonfig.TFL_KEY)
+    }.body()
 }
 
 @Serializable
@@ -40,9 +38,10 @@ internal data class ApiArrival(
     val id: Int,
     val stationName: String,
     val platformName: String,
-    val direction: String,
+    val direction: String? = null, // null for terminal station arrivals
     val destinationName: String,
-    val timeToStation: Int
+    val timeToStation: Int,
+    val lineId: String = ""
 )
 
 @Serializable
@@ -62,6 +61,54 @@ internal data class ApiStopPoint(
     val naptanId: String,
     val stopType: String,
     val children: List<ApiStopPoint>
+)
+
+@Serializable
+internal data class ApiTimetableResponse(
+    val stops: List<ApiTimetableStation> = emptyList(),
+    val timetable: ApiTimetable
+)
+
+@Serializable
+internal data class ApiTimetableStation(
+    val id: String,
+    val name: String
+)
+
+@Serializable
+internal data class ApiTimetable(
+    val routes: List<ApiTimetableRoute> = emptyList()
+)
+
+@Serializable
+internal data class ApiTimetableRoute(
+    val stationIntervals: List<ApiStationInterval> = emptyList(),
+    val schedules: List<ApiTimetableSchedule> = emptyList()
+)
+
+@Serializable
+internal data class ApiStationInterval(
+    val id: String,
+    val intervals: List<ApiStopInterval> = emptyList()
+)
+
+@Serializable
+internal data class ApiStopInterval(
+    val stopId: String,
+    val timeToArrival: Double
+)
+
+@Serializable
+internal data class ApiTimetableSchedule(
+    val name: String,
+    val knownJourneys: List<ApiKnownJourney> = emptyList()
+)
+
+@Serializable
+internal data class ApiKnownJourney(
+    val hour: String,
+    val minute: String,
+    val intervalId: Int
 )
 
 private const val BASE_URL = "https://api.tfl.gov.uk"
