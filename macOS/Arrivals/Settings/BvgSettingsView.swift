@@ -23,14 +23,19 @@ struct BvgSettingsView: View {
                     selectedResult = nil
                 }
             } else {
-                DebouncingTextField(label: "Station", value: $searchQuery) { value in
-                    if value.isEmpty {
-                        viewModel.reset()
-                    } else {
-                        viewModel.performSearch(value)
+                HStack {
+                    DebouncingTextField(label: "Station", value: $searchQuery) { value in
+                        if value.isEmpty {
+                            viewModel.reset()
+                        } else {
+                            viewModel.performSearch(value)
+                        }
                     }
+                    .autocorrectionDisabled()
+                    Image(systemName: "questionmark.app")
+                        .foregroundColor(Color.gray)
+                        .help("S-Bahn, U-Bahn, and Tram stations.")
                 }
-                .autocorrectionDisabled()
 
                 ResultsArea {
                     switch viewModel.state {

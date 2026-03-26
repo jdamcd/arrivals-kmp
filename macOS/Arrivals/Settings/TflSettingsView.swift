@@ -37,7 +37,7 @@ struct TflSettingsView: View {
                     .autocorrectionDisabled()
                     Image(systemName: "questionmark.app")
                         .foregroundColor(Color.gray)
-                        .help("London Overground, Tube, DLR, and Tram stations. No arrival times at the end of the line.")
+                        .help("London Overground, Tube, DLR, and Tram stations. Scheduled times at terminal stations.")
                 }
                 ResultsArea {
                     switch viewModel.state {

@@ -11,12 +11,19 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 class TflArrivalsTest {
 
     private val api = mockk<TflApi>()
     private val settings = Settings()
-    private val arrivals = TflArrivals(api, settings)
+
+    // 2026-03-07T12:00:00Z = Saturday
+    private val fixedClock = object : Clock {
+        override fun now(): Instant = Instant.fromEpochSeconds(1772884800)
+    }
+    private val arrivals = TflArrivals(api, settings, fixedClock)
 
     private val response = listOf(
         ApiArrival(123, "Test Stop", "Platform 2", "outbound", "New Cross", 456),
@@ -118,6 +125,85 @@ class TflArrivalsTest {
     }
 
     @Test
+    fun `filters self-referencing arrivals at terminal stations`() = runBlocking<Unit> {
+        settings.platform = ""
+        val terminalResponse = listOf(
+            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60),
+            ApiArrival(2, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 120),
+            ApiArrival(3, "Brixton Underground Station", "Platform 1", "outbound", "Walthamstow Central Underground Station", 180)
+        )
+        coEvery { api.fetchArrivals("123") } returns terminalResponse
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldBe "Walthamstow Central"
+    }
+
+    @Test
+    fun `falls back to timetable when all arrivals are self-referencing`() = runBlocking<Unit> {
+        settings.platform = ""
+        val terminalResponse = listOf(
+            ApiArrival(
+                1,
+                "Brixton Underground Station",
+                "Platform 1",
+                null,
+                "Brixton Underground Station",
+                60,
+                lineId = "victoria"
+            ),
+            ApiArrival(
+                2,
+                "Brixton Underground Station",
+                "Platform 1",
+                null,
+                "Brixton Underground Station",
+                120,
+                lineId = "victoria"
+            )
+        )
+        coEvery { api.fetchArrivals("123") } returns terminalResponse
+        coEvery { api.fetchTimetable("victoria", "123") } returns timetableResponse()
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 2
+        latest.arrivals[0].destination shouldBe "Walthamstow Central"
+        latest.arrivals[0].time shouldBe "10 min*"
+        latest.arrivals[0].realtime shouldBe false
+        latest.arrivals[1].destination shouldBe "Walthamstow Central"
+        latest.arrivals[1].time shouldBe "20 min*"
+        latest.arrivals[1].realtime shouldBe false
+    }
+
+    @Test
+    fun `throws NoDataException when timetable has no upcoming departures`() = runBlocking<Unit> {
+        settings.platform = ""
+        val terminalResponse = listOf(
+            ApiArrival(
+                1,
+                "Brixton Underground Station",
+                "Platform 1",
+                null,
+                "Brixton Underground Station",
+                60,
+                lineId = "victoria"
+            )
+        )
+        val emptyTimetable = ApiTimetableResponse(
+            stops = emptyList(),
+            timetable = ApiTimetable(routes = emptyList())
+        )
+        coEvery { api.fetchArrivals("123") } returns terminalResponse
+        coEvery { api.fetchTimetable("victoria", "123") } returns emptyTimetable
+
+        assertFailsWith<NoDataException> {
+            arrivals.latest()
+        }
+    }
+
+    @Test
     fun `platform filter matches number with letter suffix`() = runBlocking<Unit> {
         val response = listOf(
             ApiArrival(1, "Test Stop", "Platform 2", "all", "Dest A", 100),
@@ -135,4 +221,38 @@ class TflArrivalsTest {
         latest.arrivals[1].destination shouldBe "Dest B"
         latest.arrivals[2].destination shouldBe "Dest C"
     }
+
+    // Fixed clock is Saturday 12:00 UTC = 12:00 GMT (March, no DST)
+    private fun timetableResponse() = ApiTimetableResponse(
+        stops = listOf(
+            ApiTimetableStation("940GZZLUBXN", "Brixton Underground Station"),
+            ApiTimetableStation("940GZZLUSKW", "Stockwell Underground Station"),
+            ApiTimetableStation("940GZZLUWWL", "Walthamstow Central Underground Station")
+        ),
+        timetable = ApiTimetable(
+            routes = listOf(
+                ApiTimetableRoute(
+                    stationIntervals = listOf(
+                        ApiStationInterval(
+                            id = "0",
+                            intervals = listOf(
+                                ApiStopInterval("940GZZLUSKW", 2.0),
+                                ApiStopInterval("940GZZLUWWL", 30.0)
+                            )
+                        )
+                    ),
+                    schedules = listOf(
+                        ApiTimetableSchedule(
+                            name = "Saturday",
+                            knownJourneys = listOf(
+                                ApiKnownJourney("12", "10", 0),
+                                ApiKnownJourney("12", "20", 0),
+                                ApiKnownJourney("11", "50", 0) // In the past
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
 }

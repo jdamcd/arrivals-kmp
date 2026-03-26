@@ -11,17 +11,38 @@ import com.jdamcd.arrivals.TflSearch
 import com.jdamcd.arrivals.formatTime
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+private val LONDON = TimeZone.of("Europe/London")
+
+@OptIn(ExperimentalTime::class)
 internal class TflArrivals(
     private val api: TflApi,
-    private val settings: Settings
+    private val settings: Settings,
+    private val clock: Clock
 ) : Arrivals,
     TflSearch {
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
-        val model = formatArrivals(api.fetchArrivals(settings.stopId))
+        val apiArrivals = api.fetchArrivals(settings.stopId)
+        val station = stationInfo(apiArrivals.firstOrNull()?.stationName ?: "")
+
+        if (isTerminalStation(apiArrivals)) {
+            val lineIds = apiArrivals.map { it.lineId }.filter { it.isNotEmpty() }.toSet()
+            if (lineIds.isNotEmpty()) {
+                val scheduled = scheduledDepartures(lineIds, station)
+                if (scheduled.arrivals.isNotEmpty()) return scheduled
+            }
+        }
+
+        val model = formatArrivals(apiArrivals, station)
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No arrivals found")
         }
@@ -46,19 +67,27 @@ internal class TflArrivals(
         )
     }
 
-    private fun formatArrivals(apiArrivals: List<ApiArrival>): ArrivalsInfo {
-        val station = stationInfo(apiArrivals.firstOrNull()?.stationName ?: "")
+    private fun isTerminalStation(apiArrivals: List<ApiArrival>): Boolean {
+        if (apiArrivals.isEmpty()) return false
+        val selfReferencing = apiArrivals.count {
+            formatStation(it.destinationName) == formatStation(it.stationName)
+        }
+        return selfReferencing > apiArrivals.size / 2
+    }
+
+    private fun formatArrivals(apiArrivals: List<ApiArrival>, station: String): ArrivalsInfo {
         val arrivals =
             apiArrivals
                 .asSequence()
                 .sortedBy { it.timeToStation }
+                .filter { formatStation(it.destinationName) != formatStation(it.stationName) }
                 .filter {
                     settings.platform.isEmpty() ||
                         matchesPlatformFilter(it.platformName, settings.platform)
                 }
                 .filter { arrival ->
                     !hasDirectionFilter() ||
-                        arrival.direction.contains(settings.direction)
+                        (arrival.direction?.contains(settings.direction) == true)
                 }.take(3)
                 .map {
                     Arrival(
@@ -76,6 +105,53 @@ internal class TflArrivals(
         )
     }
 
+    private suspend fun scheduledDepartures(
+        lineIds: Set<String>,
+        station: String
+    ): ArrivalsInfo {
+        val now = kotlinx.datetime.Instant.fromEpochSeconds(clock.now().epochSeconds)
+            .toLocalDateTime(LONDON)
+
+        val departures = lineIds.flatMap { lineId ->
+            try {
+                val response = api.fetchTimetable(lineId, settings.stopId)
+                val destinations = resolveDestinations(response)
+
+                response.timetable.routes.flatMap { route ->
+                    val schedule = findScheduleForDay(route.schedules, now.dayOfWeek)
+                        ?: return@flatMap emptyList()
+                    schedule.knownJourneys
+                        .mapNotNull { journey -> toArrival(journey, destinations, now) }
+                        .sortedBy { it.secondsToStop }
+                        .take(3)
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                emptyList()
+            }
+        }.sortedBy { it.secondsToStop }.take(3)
+
+        return ArrivalsInfo(station = station, arrivals = departures)
+    }
+
+    private fun toArrival(
+        journey: ApiKnownJourney,
+        destinations: Map<Int, String>,
+        now: LocalDateTime
+    ): Arrival? {
+        val seconds = secondsUntilDeparture(journey, now)
+        if (seconds < 0) return null
+        val destination = destinations[journey.intervalId] ?: return null
+        return Arrival(
+            id = journey.hashCode(),
+            destination = destination,
+            time = formatTime(seconds, realtime = false),
+            secondsToStop = seconds,
+            realtime = false
+        )
+    }
+
     private fun hasDirectionFilter() = settings.direction.isNotEmpty() && settings.direction != "all"
 
     private fun stationInfo(name: String): String {
@@ -90,6 +166,46 @@ internal class TflArrivals(
             station
         }
     }
+}
+
+internal fun findScheduleForDay(
+    schedules: List<ApiTimetableSchedule>,
+    dayOfWeek: DayOfWeek
+): ApiTimetableSchedule? {
+    val dayName = dayOfWeek.name.lowercase()
+    // Try exact day name match (handles "Saturday", "Sunday", "Friday")
+    schedules.firstOrNull { it.name.lowercase().contains(dayName) }?.let { return it }
+    // For weekdays without exact match (e.g. Tuesday in "Monday - Thursday"), try range patterns
+    if (dayOfWeek <= DayOfWeek.FRIDAY) {
+        schedules.firstOrNull {
+            val lower = it.name.lowercase()
+            lower.contains("weekday") ||
+                (lower.contains("monday") && (lower.contains("friday") || lower.contains("thursday")))
+        }?.let { return it }
+        // Catch "Mondays" as weekday default (e.g. Piccadilly uses "Mondays" for Mon-Thu)
+        schedules.firstOrNull { it.name.lowercase().contains("monday") }?.let { return it }
+    }
+    // Fall back to first schedule
+    return schedules.firstOrNull()
+}
+
+internal fun resolveDestinations(response: ApiTimetableResponse): Map<Int, String> {
+    val stationNames = response.stops.associate { it.id to formatStation(it.name) }
+    return response.timetable.routes.flatMap { route ->
+        route.stationIntervals.mapNotNull { interval ->
+            val lastStop = interval.intervals.lastOrNull() ?: return@mapNotNull null
+            val name = stationNames[lastStop.stopId] ?: return@mapNotNull null
+            interval.id.toIntOrNull()?.let { it to name }
+        }
+    }.toMap()
+}
+
+private fun secondsUntilDeparture(journey: ApiKnownJourney, now: LocalDateTime): Int {
+    val hour = journey.hour.toIntOrNull() ?: return -1
+    val minute = journey.minute.toIntOrNull() ?: return -1
+    val departureMinutes = hour * 60 + minute
+    val nowMinutes = now.hour * 60 + now.minute
+    return (departureMinutes - nowMinutes) * 60 - now.second
 }
 
 private fun formatStation(name: String) = name

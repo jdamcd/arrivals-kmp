@@ -87,7 +87,8 @@ internal class BvgArrivals(
     }
 
     private fun createArrival(departure: ApiBvgDeparture, nowSeconds: Long): Arrival? {
-        val departureTime = departure.departureTime ?: return null
+        val realtime = departure.departureTime != null
+        val departureTime = departure.departureTime ?: departure.plannedWhen
         val destination = "${departure.line.name} ${departure.direction}"
         val departureSeconds = Instant.parse(departureTime).epochSeconds
         val seconds = (departureSeconds - nowSeconds).toInt()
@@ -95,8 +96,9 @@ internal class BvgArrivals(
         return Arrival(
             id = departure.tripId.hashCode(),
             destination = destination,
-            time = formatTime(seconds),
-            secondsToStop = seconds
+            time = formatTime(seconds, realtime),
+            secondsToStop = seconds,
+            realtime = realtime
         )
     }
 }

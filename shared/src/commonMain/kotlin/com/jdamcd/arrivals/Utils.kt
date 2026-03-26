@@ -4,10 +4,9 @@ import kotlin.math.roundToInt
 
 internal const val MAX_SECONDS_AHEAD = 7200 // 2 hours
 
-fun formatTime(seconds: Int) = if (seconds < 60) {
-    "Due"
-} else {
-    "${(seconds / 60f).roundToInt()} min"
+fun formatTime(seconds: Int, realtime: Boolean = true): String {
+    val base = if (seconds < 60) "Due" else "${(seconds / 60f).roundToInt()} min"
+    return if (realtime) base else "$base*"
 }
 
 fun stripPlatform(input: String): String = if (input.startsWith("Platform ", ignoreCase = true)) {

@@ -4,6 +4,7 @@ import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -158,7 +159,8 @@ class DarwinArrivalsTest {
 
         val latest = arrivals.latest()
 
-        latest.arrivals.any { it.destination.contains("Waterloo") } shouldBe true
+        val onTime = latest.arrivals.first { it.destination.contains("Waterloo") }
+        onTime.realtime shouldBe true
     }
 
     @Test
