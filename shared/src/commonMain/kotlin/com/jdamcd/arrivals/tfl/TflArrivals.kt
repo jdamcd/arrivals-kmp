@@ -3,6 +3,7 @@ package com.jdamcd.arrivals.tfl
 import com.jdamcd.arrivals.Arrival
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
+import com.jdamcd.arrivals.MAX_SECONDS_AHEAD
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.StopDetails
@@ -34,15 +35,20 @@ internal class TflArrivals(
         val apiArrivals = api.fetchArrivals(settings.stopId)
         val station = stationInfo(apiArrivals.firstOrNull()?.stationName ?: "")
 
-        if (isTerminalStation(apiArrivals)) {
+        val terminalPlatforms = terminalPlatforms(apiArrivals)
+        val filtered = apiArrivals.filter { it.platformName !in terminalPlatforms }
+
+        if (terminalPlatforms.isNotEmpty() && filtered.isEmpty()) {
+            // Real-time data at terminals shows arrivals, not departures — use schedule
             val lineIds = apiArrivals.map { it.lineId }.filter { it.isNotEmpty() }.toSet()
             if (lineIds.isNotEmpty()) {
                 val scheduled = scheduledDepartures(lineIds, station)
                 if (scheduled.arrivals.isNotEmpty()) return scheduled
             }
+            throw NoDataException("No arrivals found")
         }
 
-        val model = formatArrivals(apiArrivals, station)
+        val model = formatArrivals(filtered, station)
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No arrivals found")
         }
@@ -67,20 +73,23 @@ internal class TflArrivals(
         )
     }
 
-    private fun isTerminalStation(apiArrivals: List<ApiArrival>): Boolean {
-        if (apiArrivals.isEmpty()) return false
-        val selfReferencing = apiArrivals.count {
-            formatStation(it.destinationName) == formatStation(it.stationName)
+    private fun terminalPlatforms(apiArrivals: List<ApiArrival>): Set<String> = apiArrivals
+        .filter {
+            val dest = formatStation(it.destinationName)
+            dest.isEmpty() || dest == formatStation(it.stationName)
         }
-        return selfReferencing > apiArrivals.size / 2
-    }
+        .map { it.platformName }
+        .toSet()
 
     private fun formatArrivals(apiArrivals: List<ApiArrival>, station: String): ArrivalsInfo {
         val arrivals =
             apiArrivals
                 .asSequence()
                 .sortedBy { it.timeToStation }
-                .filter { formatStation(it.destinationName) != formatStation(it.stationName) }
+                .filter {
+                    val dest = formatStation(it.destinationName)
+                    dest.isNotEmpty() && dest != formatStation(it.stationName)
+                }
                 .filter {
                     settings.platform.isEmpty() ||
                         matchesPlatformFilter(it.platformName, settings.platform)
@@ -122,6 +131,7 @@ internal class TflArrivals(
                         ?: return@flatMap emptyList()
                     schedule.knownJourneys
                         .mapNotNull { journey -> toArrival(journey, destinations, now) }
+                        .filter { it.secondsToStop < MAX_SECONDS_AHEAD }
                         .sortedBy { it.secondsToStop }
                         .take(3)
                 }

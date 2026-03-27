@@ -253,6 +253,148 @@ class BvgArrivalsTest {
     }
 
     @Test
+    fun `past departures are filtered out`() = runBlocking<Unit> {
+        val withPast = ApiBvgDepartureResponse(
+            departures = listOf(
+                ApiBvgDeparture(
+                    tripId = "trip1",
+                    direction = "Westkreuz",
+                    line = ApiBvgLine(name = "S5", product = "suburban"),
+                    departureTime = "2026-03-07T11:55:00+00:00", // 5 min in the past
+                    plannedWhen = "2026-03-07T11:55:00+00:00",
+                    delay = 0,
+                    platform = "4"
+                ),
+                ApiBvgDeparture(
+                    tripId = "trip2",
+                    direction = "Pankow",
+                    line = ApiBvgLine(name = "U2", product = "subway"),
+                    departureTime = "2026-03-07T12:10:00+00:00",
+                    plannedWhen = "2026-03-07T12:10:00+00:00",
+                    delay = 0,
+                    platform = "2"
+                )
+            )
+        )
+        coEvery { api.fetchStop("900100003") } returns mockStop
+        coEvery { api.fetchDepartures("900100003") } returns withPast
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldContain "U2"
+    }
+
+    @Test
+    fun `departures more than 2 hours in the future are filtered out`() = runBlocking<Unit> {
+        val farFuture = ApiBvgDepartureResponse(
+            departures = listOf(
+                ApiBvgDeparture(
+                    tripId = "trip1",
+                    direction = "Westkreuz",
+                    line = ApiBvgLine(name = "S5", product = "suburban"),
+                    departureTime = "2026-03-07T14:05:00+00:00", // 2h 5min away
+                    plannedWhen = "2026-03-07T14:05:00+00:00",
+                    delay = 0,
+                    platform = "4"
+                ),
+                ApiBvgDeparture(
+                    tripId = "trip2",
+                    direction = "Pankow",
+                    line = ApiBvgLine(name = "U2", product = "subway"),
+                    departureTime = "2026-03-07T12:10:00+00:00",
+                    plannedWhen = "2026-03-07T12:10:00+00:00",
+                    delay = 0,
+                    platform = "2"
+                )
+            )
+        )
+        coEvery { api.fetchStop("900100003") } returns mockStop
+        coEvery { api.fetchDepartures("900100003") } returns farFuture
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldContain "U2"
+    }
+
+    @Test
+    fun `mixed realtime and planned departures are sorted by time`() = runBlocking<Unit> {
+        val mixed = ApiBvgDepartureResponse(
+            departures = listOf(
+                ApiBvgDeparture(
+                    tripId = "trip1",
+                    direction = "Westkreuz",
+                    line = ApiBvgLine(name = "S5", product = "suburban"),
+                    departureTime = "2026-03-07T12:10:00+00:00",
+                    plannedWhen = "2026-03-07T12:10:00+00:00",
+                    delay = 0,
+                    platform = "4"
+                ),
+                ApiBvgDeparture(
+                    tripId = "trip2",
+                    direction = "Pankow",
+                    line = ApiBvgLine(name = "U2", product = "subway"),
+                    plannedWhen = "2026-03-07T12:05:00+00:00",
+                    platform = "2"
+                ),
+                ApiBvgDeparture(
+                    tripId = "trip3",
+                    direction = "Spandau",
+                    line = ApiBvgLine(name = "U7", product = "subway"),
+                    departureTime = "2026-03-07T12:02:00+00:00",
+                    plannedWhen = "2026-03-07T12:02:00+00:00",
+                    delay = 0,
+                    platform = "1"
+                )
+            )
+        )
+        coEvery { api.fetchStop("900100003") } returns mockStop
+        coEvery { api.fetchDepartures("900100003") } returns mixed
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 3
+        latest.arrivals[0].destination shouldContain "U7" // 2 min
+        latest.arrivals[0].realtime shouldBe true
+        latest.arrivals[1].destination shouldContain "U2" // 5 min (planned)
+        latest.arrivals[1].realtime shouldBe false
+        latest.arrivals[2].destination shouldContain "S5" // 10 min
+        latest.arrivals[2].realtime shouldBe true
+    }
+
+    @Test
+    fun `malformed timestamp is skipped`() = runBlocking<Unit> {
+        val withBad = ApiBvgDepartureResponse(
+            departures = listOf(
+                ApiBvgDeparture(
+                    tripId = "trip1",
+                    direction = "Westkreuz",
+                    line = ApiBvgLine(name = "S5", product = "suburban"),
+                    plannedWhen = "not-a-valid-time",
+                    platform = "4"
+                ),
+                ApiBvgDeparture(
+                    tripId = "trip2",
+                    direction = "Pankow",
+                    line = ApiBvgLine(name = "U2", product = "subway"),
+                    departureTime = "2026-03-07T12:10:00+00:00",
+                    plannedWhen = "2026-03-07T12:10:00+00:00",
+                    delay = 0,
+                    platform = "2"
+                )
+            )
+        )
+        coEvery { api.fetchStop("900100003") } returns mockStop
+        coEvery { api.fetchDepartures("900100003") } returns withBad
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldContain "U2"
+    }
+
+    @Test
     fun `searches stops and filters to stop type`() = runBlocking<Unit> {
         coEvery { api.searchStops("Alex") } returns listOf(
             ApiBvgLocation(type = "stop", id = "900100003", name = "S+U Alexanderplatz Bhf (Berlin)"),

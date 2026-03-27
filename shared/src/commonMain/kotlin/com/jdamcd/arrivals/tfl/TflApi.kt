@@ -39,7 +39,7 @@ internal data class ApiArrival(
     val stationName: String,
     val platformName: String,
     val direction: String? = null, // null for terminal station arrivals
-    val destinationName: String,
+    val destinationName: String = "",
     val timeToStation: Int,
     val lineId: String = ""
 )

@@ -79,6 +79,16 @@ class UtilsTest {
     }
 
     @Test
+    fun `formatTime scheduled appends asterisk`() {
+        formatTime(300, realtime = false) shouldBe "5 min*"
+    }
+
+    @Test
+    fun `formatTime scheduled and Due appends asterisk`() {
+        formatTime(30, realtime = false) shouldBe "Due*"
+    }
+
+    @Test
     fun `filterLedChars keeps supported characters`() {
         filterLedChars("ABCxyz") shouldBe "ABCxyz"
         filterLedChars("123") shouldBe "123"

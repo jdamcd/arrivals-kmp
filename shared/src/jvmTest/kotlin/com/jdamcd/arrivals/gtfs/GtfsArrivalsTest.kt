@@ -56,6 +56,7 @@ class GtfsArrivalsTest {
         first.destination shouldBe "G - Church Av"
         first.time shouldBe "Due"
         first.secondsToStop shouldBe 30
+        first.realtime shouldBe true
         val second = latest.arrivals[1]
         second.destination shouldBe "G - Church Av"
         second.time shouldBe "8 min"

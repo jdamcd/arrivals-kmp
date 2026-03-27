@@ -5,6 +5,7 @@ import com.jdamcd.arrivals.Settings
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -92,6 +93,10 @@ class DarwinArrivalsTest {
         latest.station shouldBe "Clapham Junction"
         latest.arrivals shouldHaveSize 2
         latest.arrivals[0].destination shouldBe "London Victoria"
+        latest.arrivals.forEach {
+            it.realtime shouldBe true
+            it.time shouldNotContain "*"
+        }
     }
 
     @Test
