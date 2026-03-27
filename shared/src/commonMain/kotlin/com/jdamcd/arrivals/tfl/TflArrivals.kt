@@ -222,6 +222,7 @@ private fun formatStation(name: String) = name
     .replace("Rail Station", "")
     .replace("Underground Station", "")
     .replace("DLR Station", "")
+    .replace("(London)", "")
     .trim()
 
 private fun formatDirection(direction: String) = direction.replaceFirstChar {
