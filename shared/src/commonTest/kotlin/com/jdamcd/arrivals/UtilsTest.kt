@@ -74,6 +74,23 @@ class UtilsTest {
     }
 
     @Test
+    fun `matchesPlatformFilter exact match for letter-only platform`() {
+        matchesPlatformFilter("A", "A") shouldBe true
+        matchesPlatformFilter("Platform D", "D") shouldBe true
+    }
+
+    @Test
+    fun `matchesPlatformFilter rejects letter suffix for letter-only filter`() {
+        matchesPlatformFilter("AB", "A") shouldBe false
+        matchesPlatformFilter("Platform AB", "A") shouldBe false
+    }
+
+    @Test
+    fun `matchesPlatformFilter rejects digit suffix for letter-only filter`() {
+        matchesPlatformFilter("A1", "A") shouldBe false
+    }
+
+    @Test
     fun `matchesPlatformFilter strips filter input`() {
         matchesPlatformFilter("2", "Platform 2") shouldBe true
     }

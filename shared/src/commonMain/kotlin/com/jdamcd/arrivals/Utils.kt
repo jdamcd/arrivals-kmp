@@ -27,6 +27,10 @@ fun matchesPlatformFilter(platform: String, filter: String): Boolean {
         return true // Exact match
     }
 
+    if (filterNumber.last().isLetter()) {
+        return false // Letter-ending filter must be exact (e.g. "A" doesn't match "AB")
+    }
+
     val nextChar = platformNumber[filterNumber.length]
     return !nextChar.isDigit() // Allow "2A" but not "21" when filter is "2"
 }
