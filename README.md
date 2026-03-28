@@ -2,7 +2,7 @@
 
 Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3 targets: a macOS toolbar app, a CLI, and a desktop app (tailored for Raspberry Pi kiosk displays). 
 
-![Screenshot: Arrivals app in the MacOS status bar](screenshot.png)
+![Screenshot: Arrivals app in the MacOS status bar](readme-img/screenshot.png)
 
 ### Supported transit systems
 
@@ -105,7 +105,7 @@ gtfs_api_key:               # API key
 
 Command-line interface (JVM required). Run `./cli/install` to install the `arrivals` command on macOS, or run it via Gradle with `./gradlew :cli:run`.
 
-![Screenshot: arrivals CLI command](cli.png)
+![Screenshot: arrivals CLI command](readme-img/cli.png)
 
 #### TfL example
 
