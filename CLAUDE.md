@@ -22,7 +22,7 @@ Supported data sources:
 
 ### Prerequisites
 
-API keys are required in `shared/secret.properties`:
+API keys are required in `shared/secret.properties` (gitignored):
 ```
 tfl_key=YOURKEY
 darwin_key=YOURTOKEN
@@ -32,6 +32,8 @@ org_511_key=YOURKEY
 - TfL API key: Get from https://api.tfl.gov.uk
 - Darwin access token: Register at https://raildata.org.uk and subscribe to Darwin data feeds (free tier)
 - 511.org API key: Register at https://511.org/open-data (used for BART feeds)
+
+Keys are generated as `BuildConfig` constants via BuildKonfig (configured in `shared/build.gradle.kts`).
 
 ### Run Targets
 
@@ -47,16 +49,6 @@ org_511_key=YOURKEY
 **CLI**:
 ```bash
 ./gradlew :cli:run --args="--help"
-./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 2"
-./gradlew :cli:run --args="darwin --station CLJ --platform 5"
-./gradlew :cli:run --args="bvg --station 900013102 --line U8"
-./gradlew :cli:run --args="gtfs --station A42N"
-
-# Search to get station IDs
-./gradlew :cli:run --args="search tfl shoreditch"
-./gradlew :cli:run --args="search darwin clapham"
-./gradlew :cli:run --args="search bvg alexanderplatz"
-./gradlew :cli:run --args="list-stops --realtime <feed-url> --schedule <schedule-url>"
 ```
 
 ### Testing & Quality
@@ -69,160 +61,48 @@ org_511_key=YOURKEY
 ./check                   # Convenience script: swiftformat + gradlew clean spotlessApply assemble allTests
 ```
 
-When reviewing code for commit, run `./check` to verify everything passes.
+**Always run `./check` before committing** — it runs formatting, build, and all tests in one go. This is what CI checks, so if it passes locally, CI will pass.
 
-Smoke test changes to the shared module via the CLI to catch runtime issues, e.g.:
+Smoke test changes to the shared module via the CLI to catch runtime issues. Use search commands to find station IDs, then verify arrivals work end-to-end:
 ```bash
+# Find station IDs
+./gradlew :cli:run --args="search tfl shoreditch"
+./gradlew :cli:run --args="search darwin clapham"
+./gradlew :cli:run --args="search bvg alexanderplatz"
+./gradlew :cli:run --args="list-stops --realtime <feed-url> --schedule <schedule-url>"
+
+# Fetch arrivals
 ./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 2"
 ./gradlew :cli:run --args="darwin --station CLJ --platform 5"
 ./gradlew :cli:run --args="bvg --station 900013102 --line U8"
 ./gradlew :cli:run --args="gtfs --station A42N --realtime https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace --schedule http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
 ```
 
-Swift code formatting:
-```bash
-swiftformat .
-```
+If API responses look suspicious, call the APIs directly (e.g. via `curl`) to rule out upstream issues.
 
 ## Architecture
 
-### Module Structure
-
-```
-shared/          - Kotlin Multiplatform shared logic
-  src/commonMain  - Shared code (Ktor, serialization, coroutines)
-  src/jvmMain     - JVM-specific implementations (desktop & CLI)
-  src/macosMain   - macOS-specific implementations (Swift interop)
-  src/commonTest  - Shared tests
-  src/jvmTest     - JVM-specific tests
-cli/            - JVM CLI application (Clikt)
-desktop/        - Compose Multiplatform desktop UI
-macOS/          - SwiftUI macOS app (consumes ArrivalsLib framework)
-```
-
-### Shared Module (Kotlin Multiplatform)
-
-The `shared/` module produces:
-- JVM artifact for `cli` and `desktop` targets
-- Native framework `ArrivalsLib` for macOS (arm64 + x64)
-
-Key dependencies:
-- Ktor (HTTP client, different engines per platform)
-- Kotlinx Serialization (JSON)
-- Wire (Protocol Buffers for GTFS-RT)
-- Koin (dependency injection)
-
 ### Dependency Injection
 
-The shared module uses Koin for DI. The main module is defined in `shared/src/commonMain/kotlin/com/jdamcd/arrivals/Arrivals.kt`:
-
-- `initKoin()` - Initialize Koin (called from platform code)
-- `MacDI` - Helper class for Swift to access dependencies
-- `ArrivalsSwitcher` - Routes to TfL, GTFS, Darwin, or BVG based on `Settings.mode`
-
-Core interfaces:
-- `Arrivals` - Main entry point for fetching arrival data
-- `TflSearch` - Search TfL stops
-- `GtfsSearch` - Search GTFS stops
-- `StopSearch` - Search stops (used by Darwin and BVG with named Koin qualifiers)
-
-### Data Sources
-
-**TfL**: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/tfl/`
-- `TflApi.kt` - HTTP client for TfL API
-- `TflArrivals.kt` - Business logic for TfL arrivals + stop search
-
-**GTFS**: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/gtfs/`
-- `GtfsApi.kt` - HTTP client for GTFS feeds
-- `GtfsArrivals.kt` - Business logic for GTFS-RT arrivals
-- `GtfsStops.kt` - GTFS schedule parsing for stop information
-- `GtfsStopSearch.kt` - Generic GTFS stop search (used by MTA, BART)
-- `GtfsApi.kt` also defines `ApiAuth` sealed class for flexible API authentication (query param or header)
-- `system/` - Transit system constants (Mta, Bart)
-- Protocol Buffer schemas in `shared/src/commonMain/proto/`
-
-**Darwin**: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/darwin/`
-- `DarwinApi.kt` - HTTP client for Huxley2 JSON proxy (converts Darwin SOAP to REST/JSON)
-- `DarwinArrivals.kt` - Business logic for UK National Rail departures + station search
-- Uses CRS codes (3-character station identifiers) like "CLJ" for Clapham Junction
-
-**BVG**: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/bvg/`
-- `BvgApi.kt` - HTTP client for v6.bvg.transport.rest (public REST API, no key required)
-- `BvgArrivals.kt` - Business logic for Berlin departures + stop search
-- Filters by line name and platform; requests S-Bahn, U-Bahn, and Tram (excludes bus/ferry/regional)
-- Uses kotlinx-datetime for departure time parsing
+The shared module uses Koin for DI, defined in `Arrivals.kt`. Key patterns:
+- `initKoin()` initializes Koin (called from platform code)
+- `MacDI` is a helper class for Swift to access Koin dependencies
+- `ArrivalsSwitcher` routes to the correct data source based on `Settings.mode`
+- Darwin and BVG share the `StopSearch` interface with named Koin qualifiers
+- `GtfsSearch` has named factories for MTA/BART (with pre-configured auth/schedule) and an unqualified factory that reads from Settings
 
 ### Settings
 
-`Settings` is an expect/actual class:
-- Expect declaration: `shared/src/commonMain/kotlin/com/jdamcd/arrivals/Settings.kt`
-- JVM actual: `shared/src/jvmMain/kotlin/com/jdamcd/arrivals/Settings.jvm.kt`
-- macOS actual: `shared/src/macosMain/kotlin/com/jdamcd/arrivals/Settings.kt`
-
-Settings uses shared fields across all transit systems (only one system is active at a time):
-- `mode` - Active transit system (`tfl`, `darwin`, `bvg`, `gtfs`)
-- `stopId` - Station/stop identifier (shared across all modes)
-- `platform` - Platform filter (shared across all modes)
-- `line` - Line filter (used by BVG)
-- `direction` - Direction filter (used by TfL: `inbound`, `outbound`, `all`)
-- GTFS-specific fields: `gtfsRealtime`, `gtfsSchedule`, `gtfsApiKey`, `gtfsApiKeyParam`, `gtfsStopsUpdated`
-
-`clearStopConfig()` extension resets shared fields to empty defaults — called before saving new settings to prevent stale values from a previous transit system leaking through.
+`Settings` is an expect/actual class. Settings fields are shared across all transit systems (only one system is active at a time). `clearStopConfig()` resets shared fields to empty defaults — called before saving new settings to prevent stale values from a previous transit system leaking through.
 
 The macOS actual has cold start defaults (TfL Shoreditch High Street, Platform 2) for a working out-of-box experience. The JVM actual defaults to empty values since CLI/desktop require explicit configuration.
 
-The macOS app uses SwiftUI for settings UI. The desktop app uses YAML configuration (`.arrivals.yml` in user home directory).
+The desktop app uses YAML configuration (`.arrivals.yml` in user home directory).
 
-### Platform-Specific Code
+### Key Implementation Details
 
-**macOS** (`macOS/Arrivals/`):
-- `ArrivalsApp.swift` - App entry point, menu bar setup
-- `ArrivalsViewModel.swift` - SwiftUI ViewModel wrapping Kotlin code
-- `ArrivalsView.swift` - Main SwiftUI view
-- `Settings/` - Settings UI and UserDefaults persistence
-
-**Desktop** (`desktop/src/main/kotlin/`):
-- Compose UI with Material 3
-- YAML config parser (SnakeYAML)
-- Fullscreen mode for kiosk displays
-
-**CLI** (`cli/src/main/kotlin/`):
-- Clikt library for command-line parsing
-- Subcommands for TfL, GTFS, Darwin, and BVG
-
-### Secret Management
-
-API keys are managed via BuildKonfig:
-- Keys stored in `shared/secret.properties` (gitignored)
-- Generated as `BuildConfig.TFL_KEY`, `BuildConfig.DARWIN_KEY`, and `BuildConfig.ORG_511_KEY` constants
-- Config in `shared/build.gradle.kts` lines 60-80
-
-## Key Implementation Details
-
-### Protocol Buffers (Wire)
-
-GTFS-RT uses Protocol Buffers. Wire plugin configuration in `shared/build.gradle.kts`:
-- Proto files: `shared/src/commonMain/proto/`
-- Generated code is in build directory
-- Wire plugin generates Kotlin code for all platforms
-
-### HTTP Client Platform Specifics
-
-Ktor uses different engines:
-- JVM: `ktor-client-jvm` (Apache HttpClient)
-- macOS: `ktor-client-darwin` (NSURLSession)
-
-Configured in `shared/src/commonMain/kotlin/com/jdamcd/arrivals/Arrivals.kt` with 10s default timeout (60s for GTFS schedule downloads).
-
-### Testing
-
-- Common tests: Kotest assertions
-- JVM tests: MockK for mocking, coroutines-test, Ktor mock engine for API tests
-- Test resources: `shared/src/jvmTest/resources/`
-- `TestClient.kt` - Shared Ktor mock client helper for API tests
-
-## Code Formatting
-
-- Kotlin: Spotless with ktlint (version defined in `libs.versions.toml`)
-- Swift: swiftformat
-- Both enforced in CI (`.github/workflows/push.yml`)
+- GTFS-RT uses Protocol Buffers via Wire (proto files in `shared/src/commonMain/proto/`, generated code in build directory)
+- Ktor HTTP client uses different engines per platform: Apache on JVM, NSURLSession on macOS
+- Default request timeout is 10s (60s for GTFS schedule downloads)
+- Station ID formats vary by system: TfL uses NAPTAN codes (e.g. `910GSHRDHST`), Darwin uses 3-character CRS codes (e.g. `CLJ`), BVG uses numeric stop IDs (e.g. `900013102`), GTFS uses feed-specific stop IDs (e.g. `A42N` for MTA)
+- BVG API filters to S-Bahn, U-Bahn, and Tram only (excludes bus/ferry/regional)
