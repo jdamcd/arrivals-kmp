@@ -42,6 +42,7 @@ struct DebouncingTextField: View {
             .onChange(of: viewModel.text) { _, newValue in
                 value = newValue
             }
+            .accessibilityIdentifier("searchField")
     }
 }
 
@@ -101,10 +102,12 @@ struct SelectedStopRow: View {
             HStack(spacing: 6) {
                 Text(name)
                     .lineLimit(1)
+                    .accessibilityIdentifier("selectedStopName")
                 Button("Change") {
                     onClear()
                 }
                 .controlSize(.small)
+                .accessibilityIdentifier("changeStopButton")
             }
         }
     }

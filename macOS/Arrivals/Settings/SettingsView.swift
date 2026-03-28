@@ -31,6 +31,7 @@ struct SettingsView: View {
                         }
                     }
                     .pickerStyle(.menu)
+                    .accessibilityIdentifier("transitSystemPicker")
                 }
             }
             .formStyle(.grouped)
@@ -78,14 +79,17 @@ struct SettingsView: View {
                 }
                 .keyboardShortcut(.cancelAction)
                 .buttonStyle(.bordered)
+                .accessibilityIdentifier("cancelButton")
 
                 Button("Save") {
                     coordinator.onSave?()
+                    NotificationCenter.default.post(name: .settingsSaved, object: nil)
                     NSApp.keyWindow?.close()
                 }
                 .keyboardShortcut(.defaultAction)
                 .disabled(!coordinator.canSave)
                 .buttonStyle(.borderedProminent)
+                .accessibilityIdentifier("saveButton")
             }
             .padding()
         }

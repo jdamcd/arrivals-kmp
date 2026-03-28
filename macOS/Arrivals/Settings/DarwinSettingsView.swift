@@ -38,6 +38,7 @@ struct DarwinSettingsView: View {
                             Text(result.name)
                         }
                         .listStyle(PlainListStyle())
+                        .accessibilityIdentifier("searchResultsList")
                     case .idle:
                         Text("Search for a station")
                     case .empty:

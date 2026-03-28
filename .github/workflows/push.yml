@@ -87,4 +87,5 @@ jobs:
         xcodebuild test \
           -project macOS/Arrivals.xcodeproj \
           -scheme Arrivals \
-          -destination 'platform=macOS'
+          -destination 'platform=macOS' \
+          -skip-testing:ArrivalsUITests

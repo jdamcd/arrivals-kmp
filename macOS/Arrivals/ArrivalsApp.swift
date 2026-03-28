@@ -81,6 +81,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let menuButton = statusItem?.button {
             menuButton.image = NSImage(systemSymbolName: "tram.fill", accessibilityDescription: nil)
             menuButton.action = #selector(menuButtonToggle)
+            menuButton.setAccessibilityIdentifier("statusBarButton")
+        }
+
+        // Used by UI tests to auto-open the popover (since XCUITest can't click the status bar item)
+        if CommandLine.arguments.contains("--show-popover") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showPopover()
+            }
+            NotificationCenter.default.addObserver(
+                forName: .settingsSaved, object: nil, queue: .main
+            ) { [weak self] _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self?.showPopover()
+                }
+            }
         }
     }
 
@@ -88,10 +103,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if popover.isShown {
             popover.performClose(sender)
         } else {
-            if let menuButton = statusItem?.button {
-                popover.show(relativeTo: menuButton.bounds, of: menuButton, preferredEdge: NSRectEdge.minY)
-                popover.contentViewController?.view.window?.makeKey()
-            }
+            showPopover()
+        }
+    }
+
+    private func showPopover() {
+        if let menuButton = statusItem?.button {
+            popover.show(relativeTo: menuButton.bounds, of: menuButton, preferredEdge: NSRectEdge.minY)
+            popover.contentViewController?.view.window?.makeKey()
         }
     }
 }
@@ -108,6 +127,10 @@ class PopoverDelegate: NSObject, NSPopoverDelegate {
     func popoverDidClose(_: Notification) {
         onClose?()
     }
+}
+
+extension Notification.Name {
+    static let settingsSaved = Notification.Name("settingsSaved")
 }
 
 extension NSApplication {

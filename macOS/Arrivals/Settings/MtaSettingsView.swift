@@ -28,6 +28,7 @@ struct MtaSettingsView: View {
                 }
             }
             .pickerStyle(.menu)
+            .accessibilityIdentifier("linePicker")
             .onChange(of: selectedLine) { _, newValue in
                 selectedStop = nil
                 if let line = newValue, let feedUrl = lines[line] {
@@ -49,6 +50,7 @@ struct MtaSettingsView: View {
                             Text(result.name)
                         }
                         .listStyle(PlainListStyle())
+                        .accessibilityIdentifier("searchResultsList")
                     case .idle:
                         Text("Select a line")
                     case .empty:

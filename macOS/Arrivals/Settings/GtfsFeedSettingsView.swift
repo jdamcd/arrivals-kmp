@@ -34,6 +34,7 @@ struct GtfsFeedSettingsView: View {
                             Text(result.name)
                         }
                         .listStyle(PlainListStyle())
+                        .accessibilityIdentifier("searchResultsList")
                     case .idle:
                         Text("Loading stops...")
                     case .empty:

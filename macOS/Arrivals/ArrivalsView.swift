@@ -26,6 +26,7 @@ struct ArrivalsView: View {
             case let .error(message):
                 MainDisplay(content: {
                     DotMatrixRow(leading: message, trailing: nil)
+                        .accessibilityIdentifier("errorMessage")
                 }, footer: {
                     ControlFooter(text: nil,
                                   refresh: refresh,
@@ -105,6 +106,7 @@ private struct ControlFooter: View {
                     .font(.footnote)
                     .foregroundColor(Color.yellow)
                     .padding(.leading, 2)
+                    .accessibilityIdentifier("stationName")
             }
             Spacer()
             SettingsLink {
@@ -113,18 +115,21 @@ private struct ControlFooter: View {
             } preAction: {
                 onOpenSettings()
             } postAction: {}
+                .accessibilityIdentifier("settingsButton")
             Button {
                 refresh.onRefresh()
             } label: {
                 Image(systemName: "arrow.clockwise.circle.fill")
                     .foregroundColor(refresh.isLoading ? Color.gray : Color.yellow)
             }.disabled(refresh.isLoading)
+                .accessibilityIdentifier("refreshButton")
             Button {
                 onQuit()
             } label: {
                 Image(systemName: "x.circle.fill")
                     .foregroundColor(Color.yellow)
             }
+            .accessibilityIdentifier("quitButton")
         }
         .buttonStyle(PlainButtonStyle())
         .padding(.bottom, 2)

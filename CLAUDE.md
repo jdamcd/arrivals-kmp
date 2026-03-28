@@ -80,6 +80,24 @@ Smoke test changes to the shared module via the CLI to catch runtime issues. Use
 
 If API responses look suspicious, call the APIs directly (e.g. via `curl`) to rule out upstream issues.
 
+### macOS UI Tests
+
+XCUITest-based UI tests exercise the macOS app's key flows (popover display, settings configuration, live data). They hit live APIs.
+
+```bash
+# Run UI tests
+xcodebuild test -project macOS/Arrivals.xcodeproj -scheme Arrivals \
+  -destination 'platform=macOS' -only-testing:ArrivalsUITests
+
+# Extract screenshots from the test results
+./macOS/extract-screenshots.sh
+
+# View screenshots to verify UI (saved as PNGs in /tmp/ui-test-screenshots/)
+# Use the Read tool on any file, e.g. /tmp/ui-test-screenshots/1-popover-arrivals.png
+```
+
+After making changes to macOS UI code, run the UI tests and visually verify the screenshots to check for regressions. The tests capture screenshots at key points: popover with arrivals, settings with station selected, and popover after saving new settings.
+
 ## Architecture
 
 ### Dependency Injection

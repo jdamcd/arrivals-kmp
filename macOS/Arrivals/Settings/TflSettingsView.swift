@@ -46,6 +46,7 @@ struct TflSettingsView: View {
                             Text(result.name)
                         }
                         .listStyle(PlainListStyle())
+                        .accessibilityIdentifier("searchResultsList")
                     case .idle:
                         Text("Search for a station")
                     case .empty:
@@ -91,6 +92,7 @@ struct TflSettingsView: View {
                 TextField("Platform", text: $platformFilter)
                     .help("Optional platform (e.g. 2, 5A)")
                     .autocorrectionDisabled()
+                    .accessibilityIdentifier("platformField")
             }
         }
     }
