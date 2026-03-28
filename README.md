@@ -121,6 +121,12 @@ arrivals gtfs --station G28S \
   --schedule http://web.mta.info/developers/data/nyct/subway/google_transit.zip
 ```
 
+#### Search for stations
+
+```bash
+arrivals search tfl "shoreditch high street" # or use list-stops for GTFS
+```
+
 ## Attribution
 
 * Powered by:

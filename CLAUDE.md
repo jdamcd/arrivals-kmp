@@ -51,6 +51,12 @@ org_511_key=YOURKEY
 ./gradlew :cli:run --args="darwin --station CLJ --platform 5"
 ./gradlew :cli:run --args="bvg --station 900013102 --line U8"
 ./gradlew :cli:run --args="gtfs --station A42N"
+
+# Search to get station IDs
+./gradlew :cli:run --args="search tfl shoreditch"
+./gradlew :cli:run --args="search darwin clapham"
+./gradlew :cli:run --args="search bvg alexanderplatz"
+./gradlew :cli:run --args="list-stops --realtime <feed-url> --schedule <schedule-url>"
 ```
 
 ### Testing & Quality

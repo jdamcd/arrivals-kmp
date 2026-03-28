@@ -59,6 +59,10 @@ fun commonModule() = module {
     single<TflSearch> { get<TflArrivals>() }
     factory<GtfsSearch>(named("mta")) { GtfsStopSearch(get(), Mta.SCHEDULE, "mta") }
     factory<GtfsSearch>(named("bart")) { GtfsStopSearch(get(), Bart.SCHEDULE, "bart", ApiAuth.QueryParam("api_key", Bart.API_KEY)) }
+    factory<GtfsSearch> {
+        val settings: Settings = get()
+        GtfsStopSearch(get(), settings.gtfsSchedule, "gtfs", ApiAuth.parse(settings.gtfsApiKey, settings.gtfsApiKeyParam))
+    }
     single<StopSearch>(named("darwin")) { get<DarwinArrivals>() }
     single<StopSearch>(named("bvg")) { get<BvgArrivals>() }
     single {
