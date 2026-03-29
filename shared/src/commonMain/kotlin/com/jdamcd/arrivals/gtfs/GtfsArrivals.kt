@@ -9,6 +9,7 @@ import com.jdamcd.arrivals.ArrivalsInfo
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.formatTime
+import com.jdamcd.arrivals.gtfs.system.Mta
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 
@@ -30,7 +31,7 @@ internal class GtfsArrivals(
         val model: ArrivalsInfo
         try {
             model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime, auth))
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             throw NoDataException("No connection")
         }
         if (model.arrivals.isEmpty()) {
@@ -47,7 +48,7 @@ internal class GtfsArrivals(
             } else if (!::stops.isInitialized) {
                 stops = GtfsStops(api.readStops())
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             throw NoDataException("Failed to load stops")
         }
     }
@@ -89,15 +90,25 @@ internal class GtfsArrivals(
         tripUpdate: TripUpdate,
         stopTimeUpdate: TripUpdate.StopTimeUpdate
     ): Arrival {
+        val routeId = tripUpdate.trip.route_id
+        val style = routeStyles()[routeId]
         val destinationId = tripUpdate.stop_time_update.last().stop_id!!
         val destinationName = stops.stopIdToName(destinationId) ?: destinationId
         val seconds = secondsToStop(stopTimeUpdate.arrival?.time ?: stopTimeUpdate.departure?.time)
         return Arrival(
             stopTimeUpdate.hashCode(),
-            "${tripUpdate.trip.route_id} - $destinationName",
+            destinationName,
             formatTime(seconds),
-            seconds
+            seconds,
+            line = style?.label ?: routeId,
+            lineColor = style?.color
         )
+    }
+
+    private fun routeStyles(): Map<String, RouteStyle> {
+        val url = settings.gtfsRealtime
+        if (url.startsWith(Mta.REALTIME_BASE)) return Mta.routeStyles
+        return emptyMap()
     }
 
     private fun secondsToStop(time: Long?): Int {
@@ -109,3 +120,8 @@ internal class GtfsArrivals(
         }
     }
 }
+
+data class RouteStyle(
+    val color: String,
+    val label: String? = null
+)

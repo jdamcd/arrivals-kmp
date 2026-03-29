@@ -145,7 +145,7 @@ fun ArrivalRow(arrival: Arrival, textSize: TextUnit) {
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
-        LedText(arrival.destination, textSize, modifier = Modifier.weight(1f))
+        LedText(arrival.displayName, textSize, modifier = Modifier.weight(1f))
         if (arrival.secondsToStop < 60) {
             FlashingLedText(arrival.time, textSize)
         } else {

@@ -37,7 +37,7 @@ struct ArrivalsView: View {
                 MainDisplay(content: {
                     VStack(spacing: 6) {
                         ForEach(arrivalsInfo.arrivals, id: \.id) { arrival in
-                            DotMatrixRow(leading: arrival.destination, trailing: arrival.time,
+                            DotMatrixRow(leading: arrival.displayName, trailing: arrival.time,
                                          animateTrailing: arrival.secondsToStop < 60)
                         }
                     }

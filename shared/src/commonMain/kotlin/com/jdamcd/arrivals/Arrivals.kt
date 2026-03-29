@@ -134,8 +134,13 @@ data class Arrival(
     val destination: String,
     val time: String,
     val secondsToStop: Int,
-    val realtime: Boolean = true
-)
+    val realtime: Boolean = true,
+    val line: String? = null,
+    val lineColor: String? = null
+) {
+    val displayName: String
+        get() = listOfNotNull(line, destination).joinToString(" - ")
+}
 
 data class StopResult(
     val id: String,

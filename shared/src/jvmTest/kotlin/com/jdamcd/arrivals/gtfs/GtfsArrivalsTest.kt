@@ -26,12 +26,13 @@ class GtfsArrivalsTest {
     private val settings = Settings()
     private val arrivals = GtfsArrivals(api, clock, settings)
 
+    private val realtimeUrl = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g"
     private val fetchTime = 1734717694L
     private lateinit var feedMessage: FeedMessage
 
     @BeforeTest
     fun setup() {
-        settings.gtfsRealtime = "realtime_url"
+        settings.gtfsRealtime = realtimeUrl
         settings.gtfsSchedule = "schedule_url"
         settings.stopId = "G28S"
         settings.gtfsStopsUpdated = fetchTime - 1000
@@ -45,7 +46,7 @@ class GtfsArrivalsTest {
 
     @Test
     fun `fetches latest arrivals`() = runBlocking<Unit> {
-        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.readStops() } returns Fixtures.STOPS_CSV_1
 
@@ -53,23 +54,39 @@ class GtfsArrivalsTest {
 
         latest.arrivals shouldHaveSize 3
         val first = latest.arrivals[0]
-        first.destination shouldBe "G - Church Av"
+        first.destination shouldBe "Church Av"
+        first.line shouldBe "G"
+        first.lineColor shouldBe "6CBE45"
         first.time shouldBe "Due"
         first.secondsToStop shouldBe 30
         first.realtime shouldBe true
         val second = latest.arrivals[1]
-        second.destination shouldBe "G - Church Av"
+        second.displayName shouldBe "G - Church Av"
         second.time shouldBe "8 min"
         second.secondsToStop shouldBe 506
         val third = latest.arrivals[2]
-        third.destination shouldBe "G - Church Av"
+        third.displayName shouldBe "G - Church Av"
         third.time shouldBe "16 min"
         third.secondsToStop shouldBe 956
     }
 
     @Test
+    fun `non-MTA feed uses route ID without colour`() = runBlocking<Unit> {
+        settings.gtfsRealtime = "https://other-feed.example.com/gtfs"
+        coEvery { api.fetchFeedMessage("https://other-feed.example.com/gtfs") } returns feedMessage
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
+
+        val latest = arrivals.latest()
+
+        val first = latest.arrivals[0]
+        first.line shouldBe "G"
+        first.lineColor shouldBe null
+    }
+
+    @Test
     fun `fetches latest arrivals with station`() = runBlocking<Unit> {
-        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.readStops() } returns Fixtures.STOPS_CSV_1
 
@@ -81,7 +98,7 @@ class GtfsArrivalsTest {
     @Test
     fun `throws NoDataException if no arrivals match stop`() = runBlocking<Unit> {
         settings.stopId = "1234"
-        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.readStops() } returns Fixtures.STOPS_CSV_1
 
@@ -95,7 +112,7 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
-        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
 
@@ -110,12 +127,12 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         coEvery { api.downloadStops("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
-        coEvery { api.fetchFeedMessage("realtime_url", expectedAuth) } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl, expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
 
         coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
-        coVerify { api.fetchFeedMessage("realtime_url", expectedAuth) }
+        coVerify { api.fetchFeedMessage(realtimeUrl, expectedAuth) }
         latest.arrivals shouldHaveSize 3
     }
 
@@ -127,12 +144,12 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         coEvery { api.downloadStops("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
-        coEvery { api.fetchFeedMessage("realtime_url", expectedAuth) } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl, expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
 
         coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
-        coVerify { api.fetchFeedMessage("realtime_url", expectedAuth) }
+        coVerify { api.fetchFeedMessage(realtimeUrl, expectedAuth) }
         latest.arrivals shouldHaveSize 3
     }
 
@@ -144,12 +161,12 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         coEvery { api.downloadStops("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
-        coEvery { api.fetchFeedMessage("realtime_url", expectedAuth) } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl, expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
 
         coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
-        coVerify { api.fetchFeedMessage("realtime_url", expectedAuth) }
+        coVerify { api.fetchFeedMessage(realtimeUrl, expectedAuth) }
         latest.arrivals shouldHaveSize 3
     }
 
@@ -158,7 +175,7 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = 0L
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsLastModifiedEpochSeconds() } returns fetchTime - 1000
-        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
         every { api.readStops() } returns Fixtures.STOPS_CSV_1
 
         val latest = arrivals.latest()
@@ -173,7 +190,7 @@ class GtfsArrivalsTest {
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsLastModifiedEpochSeconds() } returns fetchTime - 172801
         coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
-        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
 
@@ -187,7 +204,7 @@ class GtfsArrivalsTest {
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsSource() } returns "old_schedule_url"
         coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
-        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
 
@@ -201,7 +218,7 @@ class GtfsArrivalsTest {
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsSource() } returns "old_schedule_url"
         coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
-        coEvery { api.fetchFeedMessage("realtime_url") } returns feedMessage
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
 
