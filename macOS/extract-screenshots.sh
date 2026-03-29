@@ -6,7 +6,8 @@
 set -euo pipefail
 
 DERIVED_DATA="$HOME/Library/Developer/Xcode/DerivedData"
-OUTPUT_DIR="${1:-/tmp/ui-test-screenshots}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+OUTPUT_DIR="${1:-$SCRIPT_DIR/../screenshots}"
 
 # Find the latest Arrivals xcresult
 RESULT=$(find "$DERIVED_DATA" -path "*/Arrivals-*/Logs/Test/*.xcresult" -type d | sort | tail -1)

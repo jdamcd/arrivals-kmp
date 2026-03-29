@@ -92,8 +92,8 @@ xcodebuild test -project macOS/Arrivals.xcodeproj -scheme Arrivals \
 # Extract screenshots from the test results
 ./macOS/extract-screenshots.sh
 
-# View screenshots to verify UI (saved as PNGs in /tmp/ui-test-screenshots/)
-# Use the Read tool on any file, e.g. /tmp/ui-test-screenshots/1-popover-arrivals.png
+# View screenshots to verify UI (saved as PNGs in screenshots/)
+# Use the Read tool on any file, e.g. screenshots/1-popover-arrivals.png
 ```
 
 After making changes to macOS UI code, run the UI tests and visually verify the screenshots to check for regressions. The tests capture screenshots at key points: popover with arrivals, settings with station selected, and popover after saving new settings.
