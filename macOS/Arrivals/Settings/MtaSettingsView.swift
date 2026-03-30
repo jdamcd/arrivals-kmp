@@ -105,7 +105,7 @@ private class MtaSettingsViewModel: ObservableObject {
             do {
                 let result = try await fetcher.getStops(feedUrl: feedUrl)
                 if !Task.isCancelled {
-                    state = .data(result)
+                    state = result.isEmpty ? .empty : .data(result)
                 }
             } catch {
                 if !Task.isCancelled {
