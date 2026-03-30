@@ -271,7 +271,7 @@ class DarwinArrivalsTest {
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
-        latest.arrivals[0].time shouldBe "15 min"
+        latest.arrivals[0].displayTime shouldBe "15 min"
     }
 
     @Test
