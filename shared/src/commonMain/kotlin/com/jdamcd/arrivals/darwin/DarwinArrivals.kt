@@ -11,8 +11,12 @@ import com.jdamcd.arrivals.StopSearch
 import com.jdamcd.arrivals.formatTime
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
+
+private val LONDON = TimeZone.of("Europe/London")
 
 @OptIn(kotlin.time.ExperimentalTime::class)
 internal class DarwinArrivals(
@@ -115,14 +119,9 @@ internal class DarwinArrivals(
     }
 
     private fun parseGeneratedAt(timestamp: String): Long = try {
-        val isoPattern = """(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})""".toRegex()
-        val match = isoPattern.find(timestamp)
-        if (match != null) {
-            val (_, _, _, hours, minutes, seconds) = match.destructured
-            ((hours.toInt() * 3600) + (minutes.toInt() * 60) + seconds.toInt()).toLong()
-        } else {
-            clock.now().epochSeconds
-        }
+        val instant = kotlinx.datetime.Instant.parse(timestamp)
+        val local = instant.toLocalDateTime(LONDON)
+        ((local.hour * 3600) + (local.minute * 60) + local.second).toLong()
     } catch (_: Exception) {
         clock.now().epochSeconds
     }
