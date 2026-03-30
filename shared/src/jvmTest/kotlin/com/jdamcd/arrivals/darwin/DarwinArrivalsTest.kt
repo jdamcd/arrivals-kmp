@@ -249,6 +249,32 @@ class DarwinArrivalsTest {
     }
 
     @Test
+    fun `handles BST offset in generatedAt timestamp`() = runBlocking<Unit> {
+        // 09:00 UTC = 10:00 BST, departure at 10:15 BST should be 15 min away
+        val bstBoard = mockBoard.copy(
+            generatedAt = "2025-03-30T09:00:00Z",
+            trainServices = listOf(
+                ApiTrainService(
+                    serviceIdUrlSafe = "bst1",
+                    std = "10:15",
+                    etd = "10:15",
+                    platform = "1",
+                    operator = "Op",
+                    operatorCode = "O",
+                    isCancelled = false,
+                    destination = listOf(ApiCallingPoint("BST Dest", "BD"))
+                )
+            )
+        )
+        coEvery { api.fetchDepartures("CLJ", any()) } returns bstBoard
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].time shouldBe "15 min"
+    }
+
+    @Test
     fun `excludes departures more than 2 hours away`() = runBlocking<Unit> {
         // generatedAt is 10:00, so 12:01 is more than 2 hours
         val board = mockBoard.copy(
