@@ -49,11 +49,11 @@ class TflArrivalsTest {
         assertEquals(2, latest.arrivals.size)
         val first = latest.arrivals[0]
         first.destination shouldBe "Crystal Palace"
-        first.time shouldBe "Due"
+        first.displayTime shouldBe "Due"
         first.secondsToStop shouldBe 10
         val second = latest.arrivals[1]
         second.destination shouldBe "New Cross"
-        second.time shouldBe "8 min"
+        second.displayTime shouldBe "8 min"
         second.secondsToStop shouldBe 456
     }
 
@@ -170,10 +170,10 @@ class TflArrivalsTest {
 
         latest.arrivals shouldHaveSize 2
         latest.arrivals[0].destination shouldBe "Walthamstow Central"
-        latest.arrivals[0].time shouldBe "10 min*"
+        latest.arrivals[0].displayTime shouldBe "10 min*"
         latest.arrivals[0].realtime shouldBe false
         latest.arrivals[1].destination shouldBe "Walthamstow Central"
-        latest.arrivals[1].time shouldBe "20 min*"
+        latest.arrivals[1].displayTime shouldBe "20 min*"
         latest.arrivals[1].realtime shouldBe false
     }
 
@@ -343,11 +343,11 @@ class TflArrivalsTest {
         latest.arrivals shouldHaveSize 3
         // Sorted by secondsToStop: northern 5 min, victoria 10 min, northern 15 min
         latest.arrivals[0].destination shouldBe "Morden"
-        latest.arrivals[0].time shouldBe "5 min*"
+        latest.arrivals[0].displayTime shouldBe "5 min*"
         latest.arrivals[1].destination shouldBe "Walthamstow Central"
-        latest.arrivals[1].time shouldBe "10 min*"
+        latest.arrivals[1].displayTime shouldBe "10 min*"
         latest.arrivals[2].destination shouldBe "Morden"
-        latest.arrivals[2].time shouldBe "15 min*"
+        latest.arrivals[2].displayTime shouldBe "15 min*"
     }
 
     @Test
@@ -446,7 +446,7 @@ class TflArrivalsTest {
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
-        latest.arrivals[0].time shouldBe "10 min*"
+        latest.arrivals[0].displayTime shouldBe "10 min*"
     }
 
     @Test

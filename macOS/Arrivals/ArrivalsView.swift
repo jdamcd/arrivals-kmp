@@ -192,11 +192,11 @@ private struct DisplayMetrics {
 // MARK: - Previews
 
 private let previewArrivals = [
-    Arrival(id: 1, destination: "Church Av", time: "Due", secondsToStop: 30,
+    Arrival(id: 1, destination: "Church Av", secondsToStop: 30,
             realtime: true, line: "G", lineColor: "6CBE45"),
-    Arrival(id: 2, destination: "Court Sq", time: "5 min", secondsToStop: 300,
+    Arrival(id: 2, destination: "Court Sq", secondsToStop: 300,
             realtime: true, line: "G", lineColor: "6CBE45"),
-    Arrival(id: 3, destination: "Church Av", time: "12 min", secondsToStop: 720,
+    Arrival(id: 3, destination: "Church Av", secondsToStop: 720,
             realtime: true, line: "G", lineColor: "6CBE45"),
 ]
 

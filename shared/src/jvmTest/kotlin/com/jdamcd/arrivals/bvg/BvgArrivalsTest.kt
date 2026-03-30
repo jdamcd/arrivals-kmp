@@ -123,7 +123,7 @@ class BvgArrivalsTest {
         latest.arrivals[0].realtime shouldBe true
         latest.arrivals[0].destination shouldContain "S5"
         latest.arrivals[1].realtime shouldBe false
-        latest.arrivals[1].time shouldContain "*"
+        latest.arrivals[1].displayTime shouldContain "*"
         latest.arrivals[1].destination shouldContain "U2"
     }
 

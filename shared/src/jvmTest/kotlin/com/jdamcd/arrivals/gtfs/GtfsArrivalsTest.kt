@@ -57,16 +57,16 @@ class GtfsArrivalsTest {
         first.destination shouldBe "Church Av"
         first.line shouldBe "G"
         first.lineColor shouldBe "6CBE45"
-        first.time shouldBe "Due"
+        first.displayTime shouldBe "Due"
         first.secondsToStop shouldBe 30
         first.realtime shouldBe true
         val second = latest.arrivals[1]
         second.displayName shouldBe "G - Church Av"
-        second.time shouldBe "8 min"
+        second.displayTime shouldBe "8 min"
         second.secondsToStop shouldBe 506
         val third = latest.arrivals[2]
         third.displayName shouldBe "G - Church Av"
-        third.time shouldBe "16 min"
+        third.displayTime shouldBe "16 min"
         third.secondsToStop shouldBe 956
     }
 

@@ -8,7 +8,6 @@ import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
-import com.jdamcd.arrivals.formatTime
 import com.jdamcd.arrivals.gtfs.system.Mta
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
@@ -96,10 +95,9 @@ internal class GtfsArrivals(
         val destinationName = stops.stopIdToName(destinationId) ?: destinationId
         val seconds = secondsToStop(stopTimeUpdate.arrival?.time ?: stopTimeUpdate.departure?.time)
         return Arrival(
-            stopTimeUpdate.hashCode(),
-            destinationName,
-            formatTime(seconds),
-            seconds,
+            id = stopTimeUpdate.hashCode(),
+            destination = destinationName,
+            secondsToStop = seconds,
             line = style?.label ?: routeId,
             lineColor = style?.color
         )

@@ -8,7 +8,6 @@ import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.StopSearch
-import com.jdamcd.arrivals.formatTime
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
 import kotlin.coroutines.cancellation.CancellationException
@@ -78,7 +77,6 @@ internal class DarwinArrivals(
         return Arrival(
             id = service.serviceIdUrlSafe.hashCode(),
             destination = destination,
-            time = formatTime(seconds),
             secondsToStop = seconds
         )
     }

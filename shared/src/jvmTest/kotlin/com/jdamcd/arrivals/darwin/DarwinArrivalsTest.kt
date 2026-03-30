@@ -95,7 +95,7 @@ class DarwinArrivalsTest {
         latest.arrivals[0].destination shouldBe "London Victoria"
         latest.arrivals.forEach {
             it.realtime shouldBe true
-            it.time shouldNotContain "*"
+            it.displayTime shouldNotContain "*"
         }
     }
 

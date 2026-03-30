@@ -9,7 +9,6 @@ import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.StopDetails
 import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.TflSearch
-import com.jdamcd.arrivals.formatTime
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
 import kotlinx.datetime.DayOfWeek
@@ -101,10 +100,9 @@ internal class TflArrivals(
                 .map {
                     Arrival(
                         // DLR arrivals all have the same ID, so use hash
-                        it.hashCode(),
-                        formatStation(it.destinationName),
-                        formatTime(it.timeToStation),
-                        it.timeToStation
+                        id = it.hashCode(),
+                        destination = formatStation(it.destinationName),
+                        secondsToStop = it.timeToStation
                     )
                 }
                 .toList()
@@ -156,7 +154,6 @@ internal class TflArrivals(
         return Arrival(
             id = journey.hashCode(),
             destination = destination,
-            time = formatTime(seconds, realtime = false),
             secondsToStop = seconds,
             realtime = false
         )

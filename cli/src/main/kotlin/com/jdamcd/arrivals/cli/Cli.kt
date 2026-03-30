@@ -268,7 +268,7 @@ private suspend fun SuspendingCliktCommand.fetchAndDisplay(arrivals: Arrivals) {
                 column(1) { align = TextAlign.RIGHT }
                 body {
                     result.arrivals.forEach {
-                        row(yellow(it.displayName.take(24)), yellow(it.time))
+                        row(yellow(it.displayName.take(24)), yellow(it.displayTime))
                     }
                 }
             }

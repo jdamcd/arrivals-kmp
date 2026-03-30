@@ -173,17 +173,12 @@ private struct MinutesDisplay: View {
 
     var body: some View {
         VStack(spacing: -2) {
-            Text(minutesText)
+            Text("\(arrival.minutesToStop)")
                 .font(.custom("HelveticaNeue-Medium", size: 17))
                 .foregroundColor(arrival.isDue ? .lcdRow : .white)
             Text("MIN")
                 .font(.custom("HelveticaNeue-Medium", size: 6))
                 .foregroundColor(arrival.isDue ? .lcdRow.opacity(0.6) : .white.opacity(0.6))
         }
-    }
-
-    // TODO: move to minutesToStop in Arrivals.kt
-    private var minutesText: String {
-        "\(max(0, arrival.secondsToStop / 60))"
     }
 }

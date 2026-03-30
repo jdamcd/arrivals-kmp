@@ -7,7 +7,7 @@ struct LedContent: View {
     var body: some View {
         VStack(spacing: 6) {
             ForEach(arrivals, id: \.id) { arrival in
-                DotMatrixRow(leading: arrival.displayName, trailing: arrival.time,
+                DotMatrixRow(leading: arrival.displayName, trailing: arrival.displayTime,
                              animateTrailing: arrival.isDue)
             }
         }

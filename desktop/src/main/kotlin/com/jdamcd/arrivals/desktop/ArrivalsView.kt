@@ -146,10 +146,10 @@ fun ArrivalRow(arrival: Arrival, textSize: TextUnit) {
         modifier = Modifier.fillMaxWidth()
     ) {
         LedText(arrival.displayName, textSize, modifier = Modifier.weight(1f))
-        if (arrival.secondsToStop < 60) {
-            FlashingLedText(arrival.time, textSize)
+        if (arrival.isDue) {
+            FlashingLedText(arrival.displayTime, textSize)
         } else {
-            LedText(arrival.time, textSize)
+            LedText(arrival.displayTime, textSize)
         }
     }
 }

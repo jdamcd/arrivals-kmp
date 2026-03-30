@@ -132,7 +132,6 @@ data class ArrivalsInfo(
 data class Arrival(
     val id: Int,
     val destination: String,
-    val time: String, // TODO: replace with displayTime and use formatTime internally
     val secondsToStop: Int,
     val realtime: Boolean = true,
     val line: String? = null,
@@ -140,6 +139,12 @@ data class Arrival(
 ) {
     val displayName: String
         get() = listOfNotNull(line, destination).joinToString(" - ")
+
+    val displayTime: String
+        get() = formatTime(secondsToStop, realtime)
+
+    val minutesToStop: Int
+        get() = maxOf(0, secondsToStop / 60)
 
     val isDue: Boolean
         get() = secondsToStop < 60
