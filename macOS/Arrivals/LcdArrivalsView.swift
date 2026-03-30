@@ -115,7 +115,7 @@ private struct LcdArrivalRow: View {
                 .foregroundColor(.white.opacity(0.5))
                 .frame(width: 18, alignment: .center)
 
-            HStack(spacing: 4) {
+            HStack(spacing: 6) {
                 if let line = arrival.line {
                     LineBadge(line: line, colorHex: arrival.lineColor)
                 }
