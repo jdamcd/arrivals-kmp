@@ -3,6 +3,12 @@ package com.jdamcd.arrivals.gtfs
 import com.jdamcd.arrivals.GtfsSearch
 import com.jdamcd.arrivals.StopResult
 
+internal val naturalSortKey: (String) -> String = { input ->
+    Regex("\\d+").replace(input) { match ->
+        match.value.padStart(10, '0')
+    }
+}
+
 internal class GtfsStopSearch(
     private val api: GtfsApi,
     private val scheduleUrl: String,
@@ -31,6 +37,6 @@ internal class GtfsStopSearch(
             .filter { stops.stopIdToName(it) != null }
             .map { StopResult(it, "${stops.stopIdToName(it)!!} ($it)", false) }
             .toList()
-            .sortedBy { it.name }
+            .sortedBy { naturalSortKey(it.name) }
     }
 }

@@ -39,6 +39,13 @@ class GtfsStopSearchTest {
     }
 
     @Test
+    fun `natural sort key orders numbers numerically`() {
+        val names = listOf("104 St", "7 Av", "Canal St", "14 St", "2 Av")
+        val sorted = names.sortedBy { naturalSortKey(it) }
+        sorted shouldBe listOf("2 Av", "7 Av", "14 St", "104 St", "Canal St")
+    }
+
+    @Test
     fun `passes auth to api calls`() = runBlocking<Unit> {
         val auth = ApiAuth.QueryParam("api_key", "test_key")
         val searchWithKey = GtfsStopSearch(api, "https://example.com/schedule", "test_folder", auth)
