@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		490DFB872D0124D300DED8B2 /* UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490DFB862D0124D300DED8B2 /* UIExtensions.swift */; };
 		492052792F6F523A00C40B15 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 492052782F6F523A00C40B15 /* AppIcon.icon */; };
+		492052892F7A616C00C40B15 /* DisplayStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492052882F7A616C00C40B15 /* DisplayStyle.swift */; };
 		4938625A297F4BE700C61AE3 /* ArrivalsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49386259297F4BE700C61AE3 /* ArrivalsApp.swift */; };
 		4938625C297F4BE700C61AE3 /* ArrivalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4938625B297F4BE700C61AE3 /* ArrivalsView.swift */; };
 		4938625E297F4BE900C61AE3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4938625D297F4BE900C61AE3 /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 		499A881D2F5EED5A004D9765 /* BvgSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 499A881C2F5EED5A004D9765 /* BvgSettingsView.swift */; };
 		499D198E2B22721D0023FFD2 /* LUR.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49386287298348A100C61AE3 /* LUR.ttf */; };
 		49A1B2C02F6789AB00AABB01 /* StopSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A1B2BF2F6789AB00AABB01 /* StopSearchViewModel.swift */; };
+		49A1C0082F70A00100000008 /* ArrivalsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A1C0012F70A00100000001 /* ArrivalsUITests.swift */; };
 		49BB4D7E2ED3E5D700DE9C02 /* DebouncingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */; };
 		49BB4D802ED3E5D700DE9C02 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */; };
 		49BB4D822ED6970900DE9C02 /* DarwinSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */; };
@@ -27,8 +29,9 @@
 		49DFCAFC2D07881000CDBE29 /* TflSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */; };
 		49DFCB032D07A2C700CDBE29 /* CustomGtfsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCB022D07A2BF00CDBE29 /* CustomGtfsSettingsView.swift */; };
 		49DFCB0B2D0E059D00CDBE29 /* MtaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */; };
+		49LCD0012F80000100000001 /* LcdArrivalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49LCD0002F80000100000000 /* LcdArrivalsView.swift */; };
+		49LED0012F80000200000001 /* LedArrivalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49LED0002F80000200000000 /* LedArrivalsView.swift */; };
 		CC1DCB94557920A526E61763 /* SettingsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B240A866F863FB5CA7A509B6 /* SettingsState.swift */; };
-		49A1C0082F70A00100000008 /* ArrivalsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A1C0012F70A00100000001 /* ArrivalsUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,7 @@
 /* Begin PBXFileReference section */
 		490DFB862D0124D300DED8B2 /* UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtensions.swift; sourceTree = "<group>"; };
 		492052782F6F523A00C40B15 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		492052882F7A616C00C40B15 /* DisplayStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayStyle.swift; sourceTree = "<group>"; };
 		49386256297F4BE700C61AE3 /* Arrivals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Arrivals.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49386259297F4BE700C61AE3 /* ArrivalsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsApp.swift; sourceTree = "<group>"; };
 		4938625B297F4BE700C61AE3 /* ArrivalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsView.swift; sourceTree = "<group>"; };
@@ -64,6 +68,8 @@
 		498B00EA298474E7001E83C4 /* ArrivalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsViewModel.swift; sourceTree = "<group>"; };
 		499A881C2F5EED5A004D9765 /* BvgSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BvgSettingsView.swift; sourceTree = "<group>"; };
 		49A1B2BF2F6789AB00AABB01 /* StopSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopSearchViewModel.swift; sourceTree = "<group>"; };
+		49A1C0012F70A00100000001 /* ArrivalsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsUITests.swift; sourceTree = "<group>"; };
+		49A1C0022F70A00100000002 /* ArrivalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArrivalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebouncingTests.swift; sourceTree = "<group>"; };
 		49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
 		49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinSettingsView.swift; sourceTree = "<group>"; };
@@ -72,9 +78,9 @@
 		49DFCAFB2D0787F700CDBE29 /* TflSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TflSettingsView.swift; sourceTree = "<group>"; };
 		49DFCB022D07A2BF00CDBE29 /* CustomGtfsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomGtfsSettingsView.swift; sourceTree = "<group>"; };
 		49DFCB0A2D0E059D00CDBE29 /* MtaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MtaSettingsView.swift; sourceTree = "<group>"; };
+		49LCD0002F80000100000000 /* LcdArrivalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LcdArrivalsView.swift; sourceTree = "<group>"; };
+		49LED0002F80000200000000 /* LedArrivalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LedArrivalsView.swift; sourceTree = "<group>"; };
 		B240A866F863FB5CA7A509B6 /* SettingsState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsState.swift; sourceTree = "<group>"; };
-		49A1C0012F70A00100000001 /* ArrivalsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalsUITests.swift; sourceTree = "<group>"; };
-		49A1C0022F70A00100000002 /* ArrivalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArrivalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +137,9 @@
 				49386259297F4BE700C61AE3 /* ArrivalsApp.swift */,
 				4938625B297F4BE700C61AE3 /* ArrivalsView.swift */,
 				498B00EA298474E7001E83C4 /* ArrivalsViewModel.swift */,
+				492052882F7A616C00C40B15 /* DisplayStyle.swift */,
+				49LCD0002F80000100000000 /* LcdArrivalsView.swift */,
+				49LED0002F80000200000000 /* LedArrivalsView.swift */,
 				49DFCAFA2D0786BC00CDBE29 /* Settings */,
 				490DFB862D0124D300DED8B2 /* UIExtensions.swift */,
 				4938625D297F4BE900C61AE3 /* Assets.xcassets */,
@@ -149,6 +158,14 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		49A1C0032F70A00100000003 /* ArrivalsUITests */ = {
+			isa = PBXGroup;
+			children = (
+				49A1C0012F70A00100000001 /* ArrivalsUITests.swift */,
+			);
+			path = ArrivalsUITests;
+			sourceTree = "<group>";
+		};
 		49BB4D7D2ED3E5D700DE9C02 /* ArrivalsTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,14 +173,6 @@
 				49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */,
 			);
 			path = ArrivalsTests;
-			sourceTree = "<group>";
-		};
-		49A1C0032F70A00100000003 /* ArrivalsUITests */ = {
-			isa = PBXGroup;
-			children = (
-				49A1C0012F70A00100000001 /* ArrivalsUITests.swift */,
-			);
-			path = ArrivalsUITests;
 			sourceTree = "<group>";
 		};
 		49DFCAFA2D0786BC00CDBE29 /* Settings */ = {
@@ -354,7 +363,10 @@
 				CC1DCB94557920A526E61763 /* SettingsState.swift in Sources */,
 				494945A829F7ABCD00D463D7 /* SettingsView.swift in Sources */,
 				490DFB872D0124D300DED8B2 /* UIExtensions.swift in Sources */,
+				49LCD0012F80000100000001 /* LcdArrivalsView.swift in Sources */,
+				49LED0012F80000200000001 /* LedArrivalsView.swift in Sources */,
 				4938625A297F4BE700C61AE3 /* ArrivalsApp.swift in Sources */,
+				492052892F7A616C00C40B15 /* DisplayStyle.swift in Sources */,
 				49BB4D822ED6970900DE9C02 /* DarwinSettingsView.swift in Sources */,
 				499A881D2F5EED5A004D9765 /* BvgSettingsView.swift in Sources */,
 				49A1B2C02F6789AB00AABB01 /* StopSearchViewModel.swift in Sources */,

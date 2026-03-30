@@ -20,6 +20,7 @@ struct SettingsView: View {
     @StateObject private var coordinator = SettingsCoordinator()
 
     @AppStorage("settingsTransitSystem") private var selector: TransitSystem = .tfl
+    @AppStorage("displayStyle") private var displayStyle: DisplayStyle = .london
 
     var body: some View {
         VStack(spacing: 0) {
@@ -32,6 +33,14 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .accessibilityIdentifier("transitSystemPicker")
+
+                    Picker("Display style", selection: $displayStyle) {
+                        ForEach(DisplayStyle.allCases, id: \.self) {
+                            Text($0.name)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .accessibilityIdentifier("displayStylePicker")
                 }
             }
             .formStyle(.grouped)

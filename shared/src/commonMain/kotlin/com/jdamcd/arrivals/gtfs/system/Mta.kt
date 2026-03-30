@@ -42,6 +42,12 @@ object Mta {
         "R" to RouteStyle(color = "FCCC0A"),
         "W" to RouteStyle(color = "FCCC0A"),
         "S" to RouteStyle(color = "808183"),
+        "GS" to RouteStyle(label = "S", color = "808183"),
+        "FS" to RouteStyle(label = "S", color = "808183"),
+        "H" to RouteStyle(label = "S", color = "808183"),
+        "FX" to RouteStyle(label = "F", color = "FF6319"),
+        "6X" to RouteStyle(label = "6", color = "00933C"),
+        "7X" to RouteStyle(label = "7", color = "B933AD"),
         "SI" to RouteStyle(label = "SIR", color = "08179C")
     )
 }

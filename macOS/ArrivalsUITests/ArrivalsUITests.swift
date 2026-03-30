@@ -4,14 +4,16 @@ import XCTest
 final class ArrivalsUITests: XCTestCase {
     let app = XCUIApplication()
 
-    override func setUp() {
+    override func setUp() async throws {
         continueAfterFailure = false
         app.launchArguments = ["--show-popover"]
         app.launch()
     }
 
-    override func tearDown() {
-        app.terminate()
+    override func tearDown() async throws {
+        await MainActor.run {
+            app.terminate()
+        }
     }
 
     func test1_PopoverShowsArrivals() {
@@ -25,7 +27,7 @@ final class ArrivalsUITests: XCTestCase {
     }
 
     func test2_ConfigureTflStation() {
-        openSettings(transitSystem: "London (TfL)")
+        openSettings(transitSystem: "London (TfL)", displayStyle: "Dot Matrix")
 
         let searchField = app.textFields["searchField"]
         XCTAssertTrue(searchField.waitForExistence(timeout: 5))
@@ -55,7 +57,7 @@ final class ArrivalsUITests: XCTestCase {
     }
 
     func test3_ConfigureMtaStation() {
-        openSettings(transitSystem: "NYC (MTA)")
+        openSettings(transitSystem: "NYC (MTA)", displayStyle: "Dot Matrix")
 
         let linePicker = app.popUpButtons["linePicker"]
         XCTAssertTrue(linePicker.waitForExistence(timeout: 5))
@@ -82,17 +84,45 @@ final class ArrivalsUITests: XCTestCase {
         takeScreenshot(name: "3b-mta-popover-updated")
     }
 
-    private func openSettings(transitSystem: String) {
+    func test4_SwitchToLcdDisplay() {
+        openSettings(transitSystem: "London (TfL)", displayStyle: "LCD")
+
+        let searchField = app.textFields["searchField"]
+        XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+        searchField.click()
+        searchField.typeText("shoreditch")
+
+        let resultsList = app.outlines["searchResultsList"].firstMatch
+        XCTAssertTrue(resultsList.waitForExistence(timeout: 15), "Search results should appear")
+
+        let shoreditch = resultsList.staticTexts.matching(
+            NSPredicate(format: "value CONTAINS 'Shoreditch High Street'")
+        ).firstMatch
+        XCTAssertTrue(shoreditch.waitForExistence(timeout: 5))
+        shoreditch.click()
+
+        takeScreenshot(name: "4a-lcd-settings")
+
+        saveAndVerifyPopoverUpdate()
+        takeScreenshot(name: "4b-lcd-popover")
+    }
+
+    private func openSettings(transitSystem: String, displayStyle: String) {
         let popover = app.popovers.firstMatch
         XCTAssertTrue(popover.waitForExistence(timeout: 10))
 
         popover.buttons["settingsButton"].click()
         XCTAssertTrue(app.buttons["saveButton"].waitForExistence(timeout: 5), "Settings window should open")
 
-        let picker = app.popUpButtons["transitSystemPicker"]
-        XCTAssertTrue(picker.waitForExistence(timeout: 5))
-        picker.click()
+        let transitPicker = app.popUpButtons["transitSystemPicker"]
+        XCTAssertTrue(transitPicker.waitForExistence(timeout: 5))
+        transitPicker.click()
         app.menuItems[transitSystem].click()
+
+        let stylePicker = app.popUpButtons["displayStylePicker"]
+        XCTAssertTrue(stylePicker.waitForExistence(timeout: 5))
+        stylePicker.click()
+        app.menuItems[displayStyle].click()
     }
 
     private func saveAndVerifyPopoverUpdate() {
