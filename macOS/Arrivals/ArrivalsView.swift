@@ -201,6 +201,7 @@ private let previewArrivals = [
 ]
 
 private let previewMetrics = DisplayMetrics.current
+private let legacyMetrics = DisplayMetrics(framePadding: 8, frameHeight: 110, cornerRadius: 4)
 
 #Preview("LED") {
     ContentDisplay(theme: .led, metrics: previewMetrics, content: {
@@ -226,4 +227,30 @@ private let previewMetrics = DisplayMetrics.current
     .padding(.horizontal, previewMetrics.framePadding)
     .padding(.top, previewMetrics.framePadding)
     .frame(width: 350, height: previewMetrics.frameHeight)
+}
+
+#Preview("LED Legacy") {
+    ContentDisplay(theme: .led, metrics: legacyMetrics, content: {
+        LedContent(arrivals: previewArrivals)
+    }, footer: {
+        ControlFooter(tint: DisplayTheme.led.tint, text: "Nassau Av",
+                      refresh: RefreshBehaviour(isLoading: false) {},
+                      onOpenSettings: {}, onQuit: {})
+    })
+    .padding(.horizontal, legacyMetrics.framePadding)
+    .padding(.top, legacyMetrics.framePadding)
+    .frame(width: 350, height: legacyMetrics.frameHeight)
+}
+
+#Preview("LCD Legacy") {
+    ContentDisplay(theme: .lcd, metrics: legacyMetrics, content: {
+        LcdContent(arrivals: previewArrivals)
+    }, footer: {
+        ControlFooter(tint: DisplayTheme.lcd.tint, text: "Nassau Av",
+                      refresh: RefreshBehaviour(isLoading: false) {},
+                      onOpenSettings: {}, onQuit: {})
+    })
+    .padding(.horizontal, legacyMetrics.framePadding)
+    .padding(.top, legacyMetrics.framePadding)
+    .frame(width: 350, height: legacyMetrics.frameHeight)
 }
