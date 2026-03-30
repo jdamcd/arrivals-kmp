@@ -11,10 +11,10 @@ import com.jdamcd.arrivals.StopSearch
 import com.jdamcd.arrivals.formatTime
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
-import kotlin.coroutines.cancellation.CancellationException
-import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Clock
 
 private val LONDON = TimeZone.of("Europe/London")
 
