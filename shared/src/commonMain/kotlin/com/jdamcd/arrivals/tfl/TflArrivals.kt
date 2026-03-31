@@ -116,8 +116,7 @@ internal class TflArrivals(
         lineIds: Set<String>,
         station: String
     ): ArrivalsInfo {
-        val now = kotlinx.datetime.Instant.fromEpochSeconds(clock.now().epochSeconds)
-            .toLocalDateTime(LONDON)
+        val now = clock.now().toLocalDateTime(LONDON)
 
         val departures = lineIds.flatMap { lineId ->
             try {
