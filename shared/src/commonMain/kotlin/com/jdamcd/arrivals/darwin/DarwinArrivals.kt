@@ -14,6 +14,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 private val LONDON = TimeZone.of("Europe/London")
 
@@ -117,7 +118,7 @@ internal class DarwinArrivals(
     }
 
     private fun parseGeneratedAt(timestamp: String): Long = try {
-        val instant = kotlinx.datetime.Instant.parse(timestamp)
+        val instant = Instant.parse(timestamp)
         val local = instant.toLocalDateTime(LONDON)
         ((local.hour * 3600) + (local.minute * 60) + local.second).toLong()
     } catch (_: Exception) {
