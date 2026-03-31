@@ -102,7 +102,8 @@ internal class TflArrivals(
                         // DLR arrivals all have the same ID, so use hash
                         id = it.hashCode(),
                         destination = formatStation(it.destinationName),
-                        secondsToStop = it.timeToStation
+                        secondsToStop = it.timeToStation,
+                        lineBadge = TflLines.badgeFor(it.lineId)
                     )
                 }
                 .toList()
@@ -127,7 +128,7 @@ internal class TflArrivals(
                     val schedule = findScheduleForDay(route.schedules, now.dayOfWeek)
                         ?: return@flatMap emptyList()
                     schedule.knownJourneys
-                        .mapNotNull { journey -> toArrival(journey, destinations, now) }
+                        .mapNotNull { journey -> toArrival(journey, destinations, now, lineId) }
                         .filter { it.secondsToStop < MAX_SECONDS_AHEAD }
                         .sortedBy { it.secondsToStop }
                         .take(3)
@@ -145,7 +146,8 @@ internal class TflArrivals(
     private fun toArrival(
         journey: ApiKnownJourney,
         destinations: Map<Int, String>,
-        now: LocalDateTime
+        now: LocalDateTime,
+        lineId: String
     ): Arrival? {
         val seconds = secondsUntilDeparture(journey, now)
         if (seconds < 0) return null
@@ -154,7 +156,8 @@ internal class TflArrivals(
             id = journey.hashCode(),
             destination = destination,
             secondsToStop = seconds,
-            realtime = false
+            realtime = false,
+            lineBadge = TflLines.badgeFor(lineId)
         )
     }
 

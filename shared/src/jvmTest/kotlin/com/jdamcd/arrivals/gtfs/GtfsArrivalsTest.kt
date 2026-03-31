@@ -58,6 +58,7 @@ class GtfsArrivalsTest {
         latest.arrivals shouldHaveSize 3
         val first = latest.arrivals[0]
         first.destination shouldBe "Church Av"
+        first.line shouldBe "G"
         first.lineBadge?.label shouldBe "G"
         first.lineBadge?.color shouldBe "6CBE45"
         first.displayTime shouldBe "Due"

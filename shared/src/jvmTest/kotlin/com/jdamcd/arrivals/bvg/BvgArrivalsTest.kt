@@ -78,18 +78,22 @@ class BvgArrivalsTest {
 
         latest.station shouldBe "S+U Alexanderplatz"
         latest.arrivals shouldHaveSize 3
-        latest.arrivals[0].destination shouldBe "S5 S Westkreuz (Berlin)"
+        latest.arrivals[0].destination shouldBe "S Westkreuz (Berlin)"
+        latest.arrivals[0].line shouldBe "S5"
+        latest.arrivals[0].displayName shouldBe "S5 - S Westkreuz (Berlin)"
     }
 
     @Test
-    fun `includes line name in destination`() = runBlocking<Unit> {
+    fun `sets line badge with color`() = runBlocking<Unit> {
         coEvery { api.fetchStop("900100003") } returns mockStop
         coEvery { api.fetchDepartures("900100003") } returns mockDepartures
 
         val latest = arrivals.latest()
 
-        latest.arrivals[0].destination shouldContain "S5"
-        latest.arrivals[1].destination shouldContain "U2"
+        latest.arrivals[0].lineBadge?.label shouldBe "S5"
+        latest.arrivals[0].lineBadge?.color shouldBe "EB7405"
+        latest.arrivals[1].lineBadge?.label shouldBe "U2"
+        latest.arrivals[1].lineBadge?.color shouldBe "DA421E"
     }
 
     @Test
@@ -121,10 +125,10 @@ class BvgArrivalsTest {
 
         latest.arrivals shouldHaveSize 2
         latest.arrivals[0].realtime shouldBe true
-        latest.arrivals[0].destination shouldContain "S5"
+        latest.arrivals[0].line shouldBe "S5"
         latest.arrivals[1].realtime shouldBe false
         latest.arrivals[1].displayTime shouldContain "*"
-        latest.arrivals[1].destination shouldContain "U2"
+        latest.arrivals[1].line shouldBe "U2"
     }
 
     @Test
@@ -136,8 +140,8 @@ class BvgArrivalsTest {
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
-        latest.arrivals[0].destination shouldContain "U2"
-        latest.arrivals[0].destination shouldContain "Pankow"
+        latest.arrivals[0].line shouldBe "U2"
+        latest.arrivals[0].destination shouldBe "Pankow"
     }
 
     @Test
@@ -149,7 +153,7 @@ class BvgArrivalsTest {
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
-        latest.arrivals[0].destination shouldContain "S5"
+        latest.arrivals[0].line shouldBe "S5"
     }
 
     @Test
@@ -184,7 +188,7 @@ class BvgArrivalsTest {
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
-        latest.arrivals[0].destination shouldContain "S5"
+        latest.arrivals[0].line shouldBe "S5"
     }
 
     @Test
@@ -282,7 +286,7 @@ class BvgArrivalsTest {
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
-        latest.arrivals[0].destination shouldContain "U2"
+        latest.arrivals[0].line shouldBe "U2"
     }
 
     @Test
@@ -315,7 +319,7 @@ class BvgArrivalsTest {
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
-        latest.arrivals[0].destination shouldContain "U2"
+        latest.arrivals[0].line shouldBe "U2"
     }
 
     @Test
@@ -355,11 +359,11 @@ class BvgArrivalsTest {
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 3
-        latest.arrivals[0].destination shouldContain "U7" // 2 min
+        latest.arrivals[0].line shouldBe "U7" // 2 min
         latest.arrivals[0].realtime shouldBe true
-        latest.arrivals[1].destination shouldContain "U2" // 5 min (planned)
+        latest.arrivals[1].line shouldBe "U2" // 5 min (planned)
         latest.arrivals[1].realtime shouldBe false
-        latest.arrivals[2].destination shouldContain "S5" // 10 min
+        latest.arrivals[2].line shouldBe "S5" // 10 min
         latest.arrivals[2].realtime shouldBe true
     }
 
@@ -391,7 +395,7 @@ class BvgArrivalsTest {
         val latest = arrivals.latest()
 
         latest.arrivals shouldHaveSize 1
-        latest.arrivals[0].destination shouldContain "U2"
+        latest.arrivals[0].line shouldBe "U2"
     }
 
     @Test

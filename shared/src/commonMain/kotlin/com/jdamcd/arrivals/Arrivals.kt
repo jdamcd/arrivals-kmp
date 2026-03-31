@@ -134,10 +134,11 @@ data class Arrival(
     val destination: String,
     val secondsToStop: Int,
     val realtime: Boolean = true,
+    val line: String? = null,
     val lineBadge: LineBadge? = null
 ) {
     val displayName: String
-        get() = listOfNotNull(lineBadge?.label, destination).joinToString(" - ")
+        get() = listOfNotNull(line, destination).joinToString(" - ")
 
     val displayTime: String
         get() = formatTime(secondsToStop, realtime)

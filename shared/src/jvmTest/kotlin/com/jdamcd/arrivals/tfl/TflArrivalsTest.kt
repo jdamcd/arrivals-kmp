@@ -27,10 +27,10 @@ class TflArrivalsTest {
     private val arrivals = TflArrivals(api, settings, fixedClock)
 
     private val response = listOf(
-        ApiArrival(123, "Test Stop", "Platform 2", "outbound", "New Cross", 456),
-        ApiArrival(124, "Test Stop", "Platform 2", "outbound", "Crystal Palace Rail Station", 10),
-        ApiArrival(125, "Test Stop", "Platform 1", "inbound", "Dalston Junction", 10),
-        ApiArrival(126, "Test Stop", "Platform 1", "inbound", "Highbury & Islington Underground Station", 456)
+        ApiArrival(123, "Test Stop", "Platform 2", "outbound", "New Cross", 456, "windrush"),
+        ApiArrival(124, "Test Stop", "Platform 2", "outbound", "Crystal Palace Rail Station", 10, "windrush"),
+        ApiArrival(125, "Test Stop", "Platform 1", "inbound", "Dalston Junction", 10, "mildmay"),
+        ApiArrival(126, "Test Stop", "Platform 1", "inbound", "Highbury & Islington Underground Station", 456, "mildmay")
     )
 
     @BeforeTest
@@ -51,6 +51,10 @@ class TflArrivalsTest {
         first.destination shouldBe "Crystal Palace"
         first.displayTime shouldBe "Due"
         first.secondsToStop shouldBe 10
+        first.line shouldBe null
+        first.displayName shouldBe "Crystal Palace"
+        first.lineBadge?.label shouldBe "O"
+        first.lineBadge?.color shouldBe "D22730"
         val second = latest.arrivals[1]
         second.destination shouldBe "New Cross"
         second.displayTime shouldBe "8 min"

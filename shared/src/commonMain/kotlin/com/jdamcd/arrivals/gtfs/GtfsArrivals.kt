@@ -99,18 +99,22 @@ internal class GtfsArrivals(
         val destinationId = tripUpdate.stop_time_update.last().stop_id!!
         val destinationName = stops.stopIdToName(destinationId) ?: destinationId
         val seconds = secondsToStop(stopTimeUpdate.arrival?.time ?: stopTimeUpdate.departure?.time)
-        val lineBadge = style?.let {
+        val lineLabel = style?.let { it.label ?: routeId }
+        val lineBadge = if (lineLabel != null && style != null) {
             LineBadge(
-                label = it.label ?: routeId ?: return@let null,
-                color = it.color,
-                textColor = it.textColor,
+                label = lineLabel,
+                color = style.color,
+                textColor = style.textColor,
                 express = routes.isExpress(routeId)
             )
+        } else {
+            null
         }
         return Arrival(
             id = stopTimeUpdate.hashCode(),
             destination = destinationName,
             secondsToStop = seconds,
+            line = lineLabel,
             lineBadge = lineBadge
         )
     }
