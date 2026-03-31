@@ -44,7 +44,8 @@ internal class GtfsArrivals(
     private suspend fun updateSchedule() {
         try {
             if (!hasFreshSchedule()) {
-                stops = GtfsStops(api.downloadSchedule(settings.gtfsSchedule, auth = auth))
+                api.downloadSchedule(settings.gtfsSchedule, auth = auth)
+                stops = GtfsStops(api.readStops())
                 routes = loadRoutes()
                 settings.gtfsStopsUpdated = clock.now().epochSeconds
             } else if (!::stops.isInitialized) {
@@ -114,13 +115,10 @@ internal class GtfsArrivals(
         )
     }
 
-    private fun loadRoutes(): GtfsRoutes {
-        val isMta = settings.gtfsRealtime.startsWith(Mta.REALTIME_BASE)
-        return GtfsRoutes(
-            routes = api.readRoutes(),
-            expressOverrides = if (isMta) Mta.expressOverrides else emptyMap()
-        )
-    }
+    private fun loadRoutes(): GtfsRoutes = GtfsRoutes(
+        routes = api.readRoutes() ?: "",
+        agencyExpressOverrides = mapOf(Mta.AGENCY_ID to Mta.expressOverrides)
+    )
 
     private fun secondsToStop(time: Long?): Int {
         if (time == null) {

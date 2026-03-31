@@ -35,7 +35,6 @@ internal sealed class ApiAuth {
 internal class GtfsApi(private val client: HttpClient) {
 
     private val baseDir = getFilesDir()
-    private val defaultDir = "$baseDir/gtfs".toPath()
     private val stopsFileName = "stops.txt"
     private val routesFileName = "routes.txt"
     private val sourceFileName = "stops.source"
@@ -47,9 +46,8 @@ internal class GtfsApi(private val client: HttpClient) {
         return FeedMessage.ADAPTER.decode(bodyBytes)
     }
 
-    suspend fun downloadSchedule(url: String, folder: String = "gtfs", auth: ApiAuth? = null): String {
+    suspend fun downloadSchedule(url: String, folder: String = "gtfs", auth: ApiAuth? = null) {
         val tempZipFile = "$baseDir/gtfs.zip".toPath()
-        val outputDir = "$baseDir/$folder".toPath()
         try {
             val zipContent = client.get(url) {
                 auth.applyTo(this)
@@ -60,42 +58,42 @@ internal class GtfsApi(private val client: HttpClient) {
             FileSystem.SYSTEM.write(tempZipFile) {
                 write(zipContent)
             }
-            unpackZip(tempZipFile, outputDir)
-            writeStopsSource(url, outputDir)
-            return readStops(outputDir)
+            unpackZip(tempZipFile, dirPath(folder))
+            writeStopsSource(url, folder)
         } finally {
             FileSystem.SYSTEM.delete(tempZipFile)
         }
     }
 
-    fun hasStops(): Boolean = FileSystem.SYSTEM.exists(defaultDir.resolve(stopsFileName))
+    private fun dirPath(folder: String = "gtfs") = "$baseDir/$folder".toPath()
+
+    fun hasStops(): Boolean = FileSystem.SYSTEM.exists(dirPath().resolve(stopsFileName))
 
     fun stopsLastModifiedEpochSeconds(): Long {
-        val metadata = FileSystem.SYSTEM.metadata(defaultDir.resolve(stopsFileName))
+        val metadata = FileSystem.SYSTEM.metadata(dirPath().resolve(stopsFileName))
         return metadata.lastModifiedAtMillis?.div(1000) ?: 0L
     }
 
     fun stopsSource(): String? = try {
-        FileSystem.SYSTEM.read(defaultDir.resolve(sourceFileName)) { readUtf8() }.trim()
+        FileSystem.SYSTEM.read(dirPath().resolve(sourceFileName)) { readUtf8() }.trim()
     } catch (_: Exception) {
         null
     }
 
-    private fun writeStopsSource(url: String, dir: Path = defaultDir) {
-        FileSystem.SYSTEM.write(dir.resolve(sourceFileName)) { writeUtf8(url) }
+    private fun writeStopsSource(url: String, folder: String = "gtfs") {
+        FileSystem.SYSTEM.write(dirPath(folder).resolve(sourceFileName)) { writeUtf8(url) }
     }
 
-    fun readStops(dir: Path = defaultDir): String {
-        val stopsPath = dir.resolve(stopsFileName)
-        return FileSystem.SYSTEM.read(stopsPath) { readUtf8() }
+    fun readStops(folder: String = "gtfs"): String {
+        return FileSystem.SYSTEM.read(dirPath(folder).resolve(stopsFileName)) { readUtf8() }
     }
 
-    fun readRoutes(dir: Path = defaultDir): String {
-        val routesPath = dir.resolve(routesFileName)
+    fun readRoutes(folder: String = "gtfs"): String? {
+        val routesPath = dirPath(folder).resolve(routesFileName)
         return if (FileSystem.SYSTEM.exists(routesPath)) {
             FileSystem.SYSTEM.read(routesPath) { readUtf8() }
         } else {
-            ""
+            null // Optional file in GTFS spec
         }
     }
 

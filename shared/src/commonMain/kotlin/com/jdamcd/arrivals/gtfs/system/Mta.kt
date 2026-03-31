@@ -16,6 +16,8 @@ object Mta {
         "SIR" to "${REALTIME_BASE}/nyct%2Fgtfs-si"
     )
 
+    const val AGENCY_ID = "MTA NYCT"
+
     val expressOverrides = mapOf(
         "FX" to "F",
         "6X" to "6",

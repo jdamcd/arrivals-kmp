@@ -32,7 +32,8 @@ class GtfsRoutesTest {
 
     @Test
     fun `express override changes label and marks as express`() {
-        val routes = GtfsRoutes(Fixtures.ROUTES_CSV, expressOverrides = mapOf("6X" to "6"))
+        val overrides = mapOf("MTA NYCT" to mapOf("6X" to "6"))
+        val routes = GtfsRoutes(Fixtures.ROUTES_CSV, agencyExpressOverrides = overrides)
 
         routes.styleFor("6X") shouldBe RouteStyle(color = "00933C", label = "6")
         routes.isExpress("6X") shouldBe true
@@ -41,10 +42,20 @@ class GtfsRoutesTest {
 
     @Test
     fun `express override resolves style from base route when not in schedule`() {
-        val routes = GtfsRoutes(Fixtures.ROUTES_CSV, expressOverrides = mapOf("SS" to "SI"))
+        val overrides = mapOf("MTA NYCT" to mapOf("SS" to "SI"))
+        val routes = GtfsRoutes(Fixtures.ROUTES_CSV, agencyExpressOverrides = overrides)
 
         routes.styleFor("SS") shouldBe RouteStyle(color = "08179C", label = "SIR", textColor = "FFFFFF")
         routes.isExpress("SS") shouldBe true
+    }
+
+    @Test
+    fun `express override not applied for non-matching agency`() {
+        val overrides = mapOf("Other Agency" to mapOf("6X" to "6"))
+        val routes = GtfsRoutes(Fixtures.ROUTES_CSV, agencyExpressOverrides = overrides)
+
+        routes.styleFor("6X") shouldBe RouteStyle(color = "00933C", label = "6X")
+        routes.isExpress("6X") shouldBe false
     }
 
     @Test

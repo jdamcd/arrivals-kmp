@@ -7,9 +7,11 @@ import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.TestHelper
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlin.test.BeforeTest
@@ -126,7 +128,8 @@ class GtfsArrivalsTest {
     fun `updates stops when stale`() = runBlocking<Unit> {
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadSchedule("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url") } just Runs
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
@@ -141,7 +144,8 @@ class GtfsArrivalsTest {
         settings.gtfsApiKey = "test_key"
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadSchedule("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url", auth = expectedAuth) } just Runs
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl, expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
@@ -158,7 +162,8 @@ class GtfsArrivalsTest {
         settings.gtfsApiKeyParam = "header:Authorization"
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadSchedule("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url", auth = expectedAuth) } just Runs
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl, expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
@@ -175,7 +180,8 @@ class GtfsArrivalsTest {
         settings.gtfsApiKeyParam = "app_id"
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadSchedule("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url", auth = expectedAuth) } just Runs
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl, expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
@@ -204,7 +210,8 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = 0L
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsLastModifiedEpochSeconds() } returns fetchTime - 172801
-        coEvery { api.downloadSchedule("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url") } just Runs
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
@@ -218,7 +225,8 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = 0L
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsSource() } returns "old_schedule_url"
-        coEvery { api.downloadSchedule("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url") } just Runs
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
@@ -232,7 +240,8 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = fetchTime - 1000
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsSource() } returns "old_schedule_url"
-        coEvery { api.downloadSchedule("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url") } just Runs
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
