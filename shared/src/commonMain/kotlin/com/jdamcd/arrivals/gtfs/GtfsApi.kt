@@ -84,9 +84,7 @@ internal class GtfsApi(private val client: HttpClient) {
         FileSystem.SYSTEM.write(dirPath(folder).resolve(sourceFileName)) { writeUtf8(url) }
     }
 
-    fun readStops(folder: String = "gtfs"): String {
-        return FileSystem.SYSTEM.read(dirPath(folder).resolve(stopsFileName)) { readUtf8() }
-    }
+    fun readStops(folder: String = "gtfs"): String = FileSystem.SYSTEM.read(dirPath(folder).resolve(stopsFileName)) { readUtf8() }
 
     fun readRoutes(folder: String = "gtfs"): String? {
         val routesPath = dirPath(folder).resolve(routesFileName)

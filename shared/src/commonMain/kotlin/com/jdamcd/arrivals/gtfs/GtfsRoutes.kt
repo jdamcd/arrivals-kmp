@@ -1,5 +1,7 @@
 package com.jdamcd.arrivals.gtfs
 
+import com.jdamcd.arrivals.gtfs.csv.parseCsvRows
+
 internal class GtfsRoutes(
     routes: String,
     agencyExpressOverrides: Map<String, Map<String, String>> = emptyMap()
@@ -11,8 +13,7 @@ internal class GtfsRoutes(
 
     init {
         val (header, rows) = parseCsvRows(routes)
-        val parsed = parseRoutes(header, rows)
-        val agencies = parseAgencies(header, rows)
+        val (parsed, agencies) = parseRoutes(header, rows)
         val expressOverrides = agencies.firstNotNullOfOrNull { agencyExpressOverrides[it] } ?: emptyMap()
         expressRoutes = expressOverrides.keys
         styles = buildMap {
@@ -30,32 +31,36 @@ internal class GtfsRoutes(
     fun isExpress(routeId: String?): Boolean = routeId in expressRoutes
 }
 
-private fun parseAgencies(header: List<String>, rows: List<List<String>>): Set<String> {
-    val agencyIndex = header.indexOf("agency_id")
-    if (agencyIndex < 0) return emptySet()
-    return rows.mapNotNullTo(mutableSetOf()) { parts ->
-        parts.getOrNull(agencyIndex)?.takeIf { it.isNotBlank() }
-    }
-}
-
-private fun parseRoutes(header: List<String>, rows: List<List<String>>): Map<String, RouteStyle> {
+private fun parseRoutes(
+    header: List<String>,
+    rows: List<List<String>>
+): Pair<Map<String, RouteStyle>, Set<String>> {
     val idIndex = header.indexOf("route_id")
     val shortNameIndex = header.indexOf("route_short_name")
     val colorIndex = header.indexOf("route_color")
     val textColorIndex = header.indexOf("route_text_color")
-    if (idIndex < 0 || colorIndex < 0) return emptyMap()
-    return rows.mapNotNull { parts ->
-        val id = parts.getOrNull(idIndex)?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
-        val color = parts.getOrNull(colorIndex)?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
-        val shortName = if (shortNameIndex >= 0) parts.getOrNull(shortNameIndex) else null
-        val label = shortName?.takeIf { it.isNotBlank() }?.let {
-            if (it.length > 3) it.first().toString() else it
+    val agencyIndex = header.indexOf("agency_id")
+    if (idIndex < 0 || colorIndex < 0) return emptyMap<String, RouteStyle>() to emptySet()
+    val styles = mutableMapOf<String, RouteStyle>()
+    val agencies = mutableSetOf<String>()
+    for (parts in rows) {
+        if (agencyIndex >= 0) {
+            parts.getOrNull(agencyIndex)?.takeIf { it.isNotBlank() }?.let { agencies.add(it) }
         }
+        val id = parts.getOrNull(idIndex)?.takeIf { it.isNotBlank() } ?: continue
+        val color = parts.getOrNull(colorIndex)?.takeIf { it.isNotBlank() } ?: continue
+        val shortName = if (shortNameIndex >= 0) parts.getOrNull(shortNameIndex) else null
+        val label = formatLabel(shortName)
         val textColor = if (textColorIndex >= 0) {
             parts.getOrNull(textColorIndex)?.takeIf { it.isNotBlank() }
         } else {
             null
         }
-        id to RouteStyle(color = color, label = label, textColor = textColor)
-    }.toMap()
+        styles[id] = RouteStyle(color = color, label = label, textColor = textColor)
+    }
+    return styles to agencies
+}
+
+private fun formatLabel(shortName: String?): String? = shortName?.takeIf { it.isNotBlank() }?.let {
+    if (it.length > 3) it.first().toString() else it
 }
