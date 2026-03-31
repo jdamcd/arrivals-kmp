@@ -191,13 +191,15 @@ private struct DisplayMetrics {
 
 // MARK: - Previews
 
+private let previewBadge = LineBadge(label: "G", color: "6CBE45", textColor: "FFFFFF", express: false)
+
 private let previewArrivals = [
     Arrival(id: 1, destination: "Church Av", secondsToStop: 30,
-            realtime: true, line: "G", lineColor: "6CBE45"),
+            realtime: true, lineBadge: previewBadge),
     Arrival(id: 2, destination: "Court Sq", secondsToStop: 300,
-            realtime: true, line: "G", lineColor: "6CBE45"),
+            realtime: true, lineBadge: previewBadge),
     Arrival(id: 3, destination: "Church Av", secondsToStop: 720,
-            realtime: true, line: "G", lineColor: "6CBE45"),
+            realtime: true, lineBadge: previewBadge),
 ]
 
 private let previewMetrics = DisplayMetrics.current

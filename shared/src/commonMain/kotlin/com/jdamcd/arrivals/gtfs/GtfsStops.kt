@@ -26,12 +26,14 @@ internal class GtfsStops(stops: String) {
     fun stopIdToName(stopId: String) = stopIdToName[stopId]
 }
 
-private fun parseCsvLine(line: String): List<String> {
+internal fun parseCsvLine(line: String): List<String> {
     val fields = mutableListOf<String>()
     val current = StringBuilder()
     var inQuotes = false
     for (char in line) {
         when (char) {
+            '\r' -> {}
+
             '"' -> inQuotes = !inQuotes
 
             ',' if !inQuotes -> {

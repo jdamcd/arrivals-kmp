@@ -6,6 +6,7 @@ import com.google.transit.realtime.TripUpdate
 import com.jdamcd.arrivals.Arrival
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
+import com.jdamcd.arrivals.LineBadge
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.gtfs.system.Mta
@@ -20,13 +21,14 @@ internal class GtfsArrivals(
 ) : Arrivals {
 
     private lateinit var stops: GtfsStops
+    private lateinit var routes: GtfsRoutes
 
     private val auth: ApiAuth?
         get() = ApiAuth.parse(settings.gtfsApiKey, settings.gtfsApiKeyParam)
 
     @Throws(NoDataException::class, CancellationException::class)
     override suspend fun latest(): ArrivalsInfo {
-        updateStops()
+        updateSchedule()
         val model: ArrivalsInfo
         try {
             model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime, auth))
@@ -39,20 +41,22 @@ internal class GtfsArrivals(
         return model
     }
 
-    private suspend fun updateStops() {
+    private suspend fun updateSchedule() {
         try {
-            if (!hasFreshStops()) {
-                stops = GtfsStops(api.downloadStops(settings.gtfsSchedule, auth = auth))
+            if (!hasFreshSchedule()) {
+                stops = GtfsStops(api.downloadSchedule(settings.gtfsSchedule, auth = auth))
+                routes = loadRoutes()
                 settings.gtfsStopsUpdated = clock.now().epochSeconds
             } else if (!::stops.isInitialized) {
                 stops = GtfsStops(api.readStops())
+                routes = loadRoutes()
             }
         } catch (_: Exception) {
             throw NoDataException("Failed to load stops")
         }
     }
 
-    private fun hasFreshStops(): Boolean {
+    private fun hasFreshSchedule(): Boolean {
         val twoDaysInSeconds = 48 * 60 * 60
         if (!api.hasStops() || api.stopsSource() != settings.gtfsSchedule) return false
         val updatedAt = if (settings.gtfsStopsUpdated > 0L) {
@@ -90,23 +94,32 @@ internal class GtfsArrivals(
         stopTimeUpdate: TripUpdate.StopTimeUpdate
     ): Arrival {
         val routeId = tripUpdate.trip.route_id
-        val style = routeStyles()[routeId]
+        val style = routes.styleFor(routeId)
         val destinationId = tripUpdate.stop_time_update.last().stop_id!!
         val destinationName = stops.stopIdToName(destinationId) ?: destinationId
         val seconds = secondsToStop(stopTimeUpdate.arrival?.time ?: stopTimeUpdate.departure?.time)
+        val lineBadge = style?.let {
+            LineBadge(
+                label = it.label ?: routeId ?: return@let null,
+                color = it.color,
+                textColor = it.textColor,
+                express = routes.isExpress(routeId)
+            )
+        }
         return Arrival(
             id = stopTimeUpdate.hashCode(),
             destination = destinationName,
             secondsToStop = seconds,
-            line = style?.label ?: routeId,
-            lineColor = style?.color
+            lineBadge = lineBadge
         )
     }
 
-    private fun routeStyles(): Map<String, RouteStyle> {
-        val url = settings.gtfsRealtime
-        if (url.startsWith(Mta.REALTIME_BASE)) return Mta.routeStyles
-        return emptyMap()
+    private fun loadRoutes(): GtfsRoutes {
+        val isMta = settings.gtfsRealtime.startsWith(Mta.REALTIME_BASE)
+        return GtfsRoutes(
+            routes = api.readRoutes(),
+            expressOverrides = if (isMta) Mta.expressOverrides else emptyMap()
+        )
     }
 
     private fun secondsToStop(time: Long?): Int {
@@ -119,7 +132,8 @@ internal class GtfsArrivals(
     }
 }
 
-data class RouteStyle(
+internal data class RouteStyle(
     val color: String,
-    val label: String? = null
+    val label: String? = null,
+    val textColor: String? = null
 )

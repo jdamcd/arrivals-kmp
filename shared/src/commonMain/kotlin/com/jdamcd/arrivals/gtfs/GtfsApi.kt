@@ -37,6 +37,7 @@ internal class GtfsApi(private val client: HttpClient) {
     private val baseDir = getFilesDir()
     private val defaultDir = "$baseDir/gtfs".toPath()
     private val stopsFileName = "stops.txt"
+    private val routesFileName = "routes.txt"
     private val sourceFileName = "stops.source"
 
     suspend fun fetchFeedMessage(url: String, auth: ApiAuth? = null): FeedMessage {
@@ -46,7 +47,7 @@ internal class GtfsApi(private val client: HttpClient) {
         return FeedMessage.ADAPTER.decode(bodyBytes)
     }
 
-    suspend fun downloadStops(url: String, folder: String = "gtfs", auth: ApiAuth? = null): String {
+    suspend fun downloadSchedule(url: String, folder: String = "gtfs", auth: ApiAuth? = null): String {
         val tempZipFile = "$baseDir/gtfs.zip".toPath()
         val outputDir = "$baseDir/$folder".toPath()
         try {
@@ -87,6 +88,15 @@ internal class GtfsApi(private val client: HttpClient) {
     fun readStops(dir: Path = defaultDir): String {
         val stopsPath = dir.resolve(stopsFileName)
         return FileSystem.SYSTEM.read(stopsPath) { readUtf8() }
+    }
+
+    fun readRoutes(dir: Path = defaultDir): String {
+        val routesPath = dir.resolve(routesFileName)
+        return if (FileSystem.SYSTEM.exists(routesPath)) {
+            FileSystem.SYSTEM.read(routesPath) { readUtf8() }
+        } else {
+            ""
+        }
     }
 
     private fun unpackZip(source: Path, destination: Path) {

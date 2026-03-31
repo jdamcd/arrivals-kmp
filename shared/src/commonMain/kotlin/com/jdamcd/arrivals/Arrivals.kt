@@ -134,11 +134,10 @@ data class Arrival(
     val destination: String,
     val secondsToStop: Int,
     val realtime: Boolean = true,
-    val line: String? = null,
-    val lineColor: String? = null
+    val lineBadge: LineBadge? = null
 ) {
     val displayName: String
-        get() = listOfNotNull(line, destination).joinToString(" - ")
+        get() = listOfNotNull(lineBadge?.label, destination).joinToString(" - ")
 
     val displayTime: String
         get() = formatTime(secondsToStop, realtime)
@@ -149,6 +148,13 @@ data class Arrival(
     val isDue: Boolean
         get() = secondsToStop < 60
 }
+
+data class LineBadge(
+    val label: String,
+    val color: String,
+    val textColor: String?,
+    val express: Boolean = false
+)
 
 data class StopResult(
     val id: String,

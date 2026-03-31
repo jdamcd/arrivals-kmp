@@ -4,7 +4,7 @@ import SwiftUI
 extension Color {
     static let lcdBackground = Color(red: 0.04, green: 0.07, blue: 0.10)
     static let lcdRow = Color(red: 0.11, green: 0.19, blue: 0.27)
-    static let lcdBadgeFallback = Color(red: 0.50, green: 0.51, blue: 0.51)
+    static let lcdBadgeFallback = Color(red: 0.49, green: 0.52, blue: 0.55)
 }
 
 struct LcdContent: View {
@@ -116,8 +116,8 @@ private struct LcdArrivalRow: View {
                 .frame(width: 18, alignment: .center)
 
             HStack(spacing: 6) {
-                if let line = arrival.line {
-                    LineBadge(line: line, colorHex: arrival.lineColor)
+                if let badge = arrival.lineBadge {
+                    LineBadge(line: badge.label, colorHex: badge.color, textColorHex: badge.textColor, express: badge.express)
                 }
 
                 Text(arrival.destination)
@@ -151,11 +151,20 @@ struct LcdErrorContent: View {
 private struct LineBadge: View {
     var line: String
     var colorHex: String?
+    var textColorHex: String?
+    var express: Bool = false
 
     var body: some View {
         ZStack {
-            Circle()
-                .fill(colorHex.map { Color(hex: $0) } ?? .lcdBadgeFallback)
+            if express {
+                Rectangle()
+                    .fill(fillColor)
+                    .frame(width: 20, height: 20)
+                    .rotationEffect(.degrees(45))
+            } else {
+                Circle()
+                    .fill(fillColor)
+            }
             Text(line)
                 .font(.custom("HelveticaNeue-Medium", size: line.count > 1 ? 10 : 18))
                 .foregroundColor(textColor)
@@ -163,8 +172,12 @@ private struct LineBadge: View {
         .frame(width: 26, height: 26)
     }
 
+    private var fillColor: Color {
+        colorHex.map { Color(hex: $0) } ?? .lcdBadgeFallback
+    }
+
     private var textColor: Color {
-        colorHex.map { Color.contrastingTextColor(forHex: $0) } ?? .white
+        textColorHex.map { Color(hex: $0) } ?? .white
     }
 }
 

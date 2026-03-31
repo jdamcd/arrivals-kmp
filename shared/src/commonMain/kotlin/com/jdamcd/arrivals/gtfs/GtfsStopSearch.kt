@@ -20,7 +20,7 @@ internal class GtfsStopSearch(
 
     private suspend fun updateStops() {
         if (!::stops.isInitialized) {
-            stops = GtfsStops(api.downloadStops(scheduleUrl, cacheFolder, auth))
+            stops = GtfsStops(api.downloadSchedule(scheduleUrl, cacheFolder, auth))
         }
     }
 

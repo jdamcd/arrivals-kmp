@@ -38,6 +38,7 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = fetchTime - 1000
         every { api.hasStops() } returns true
         every { api.stopsSource() } returns "schedule_url"
+        every { api.readRoutes() } returns Fixtures.ROUTES_CSV
 
         feedMessage = TestHelper.resource("feed_message.bin").let {
             FeedMessage.ADAPTER.decode(it)
@@ -55,8 +56,8 @@ class GtfsArrivalsTest {
         latest.arrivals shouldHaveSize 3
         val first = latest.arrivals[0]
         first.destination shouldBe "Church Av"
-        first.line shouldBe "G"
-        first.lineColor shouldBe "6CBE45"
+        first.lineBadge?.label shouldBe "G"
+        first.lineBadge?.color shouldBe "6CBE45"
         first.displayTime shouldBe "Due"
         first.secondsToStop shouldBe 30
         first.realtime shouldBe true
@@ -71,7 +72,7 @@ class GtfsArrivalsTest {
     }
 
     @Test
-    fun `non-MTA feed uses route ID without colour`() = runBlocking<Unit> {
+    fun `gets line badge from routes data`() = runBlocking<Unit> {
         settings.gtfsRealtime = "https://other-feed.example.com/gtfs"
         coEvery { api.fetchFeedMessage("https://other-feed.example.com/gtfs") } returns feedMessage
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
@@ -80,8 +81,22 @@ class GtfsArrivalsTest {
         val latest = arrivals.latest()
 
         val first = latest.arrivals[0]
-        first.line shouldBe "G"
-        first.lineColor shouldBe null
+        first.lineBadge?.label shouldBe "G"
+        first.lineBadge?.color shouldBe "6CBE45"
+    }
+
+    @Test
+    fun `feed without routes data has no line badges`() = runBlocking<Unit> {
+        settings.gtfsRealtime = "https://other-feed.example.com/gtfs"
+        coEvery { api.fetchFeedMessage("https://other-feed.example.com/gtfs") } returns feedMessage
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
+        every { api.readRoutes() } returns ""
+
+        val latest = arrivals.latest()
+
+        val first = latest.arrivals[0]
+        first.lineBadge shouldBe null
     }
 
     @Test
@@ -111,12 +126,12 @@ class GtfsArrivalsTest {
     fun `updates stops when stale`() = runBlocking<Unit> {
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url") } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
 
-        coVerify { api.downloadStops("schedule_url") }
+        coVerify { api.downloadSchedule("schedule_url") }
         latest.arrivals shouldHaveSize 3
     }
 
@@ -126,12 +141,12 @@ class GtfsArrivalsTest {
         settings.gtfsApiKey = "test_key"
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadStops("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl, expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
 
-        coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
+        coVerify { api.downloadSchedule("schedule_url", auth = expectedAuth) }
         coVerify { api.fetchFeedMessage(realtimeUrl, expectedAuth) }
         latest.arrivals shouldHaveSize 3
     }
@@ -143,12 +158,12 @@ class GtfsArrivalsTest {
         settings.gtfsApiKeyParam = "header:Authorization"
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadStops("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl, expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
 
-        coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
+        coVerify { api.downloadSchedule("schedule_url", auth = expectedAuth) }
         coVerify { api.fetchFeedMessage(realtimeUrl, expectedAuth) }
         latest.arrivals shouldHaveSize 3
     }
@@ -160,12 +175,12 @@ class GtfsArrivalsTest {
         settings.gtfsApiKeyParam = "app_id"
         settings.gtfsStopsUpdated = fetchTime - 172801
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadStops("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url", auth = expectedAuth) } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl, expectedAuth) } returns feedMessage
 
         val latest = arrivals.latest()
 
-        coVerify { api.downloadStops("schedule_url", auth = expectedAuth) }
+        coVerify { api.downloadSchedule("schedule_url", auth = expectedAuth) }
         coVerify { api.fetchFeedMessage(realtimeUrl, expectedAuth) }
         latest.arrivals shouldHaveSize 3
     }
@@ -180,7 +195,7 @@ class GtfsArrivalsTest {
 
         val latest = arrivals.latest()
 
-        coVerify(exactly = 0) { api.downloadStops(any(), any(), any()) }
+        coVerify(exactly = 0) { api.downloadSchedule(any(), any(), any()) }
         latest.arrivals shouldHaveSize 3
     }
 
@@ -189,12 +204,12 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = 0L
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsLastModifiedEpochSeconds() } returns fetchTime - 172801
-        coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url") } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
 
-        coVerify { api.downloadStops("schedule_url") }
+        coVerify { api.downloadSchedule("schedule_url") }
         latest.arrivals shouldHaveSize 3
     }
 
@@ -203,12 +218,12 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = 0L
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsSource() } returns "old_schedule_url"
-        coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url") } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
 
-        coVerify { api.downloadStops("schedule_url") }
+        coVerify { api.downloadSchedule("schedule_url") }
         latest.arrivals shouldHaveSize 3
     }
 
@@ -217,19 +232,19 @@ class GtfsArrivalsTest {
         settings.gtfsStopsUpdated = fetchTime - 1000
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
         every { api.stopsSource() } returns "old_schedule_url"
-        coEvery { api.downloadStops("schedule_url") } returns Fixtures.STOPS_CSV_1
+        coEvery { api.downloadSchedule("schedule_url") } returns Fixtures.STOPS_CSV_1
         coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
 
         val latest = arrivals.latest()
 
-        coVerify { api.downloadStops("schedule_url") }
+        coVerify { api.downloadSchedule("schedule_url") }
         latest.arrivals shouldHaveSize 3
     }
 
     @Test
     fun `throws NoDataException if stops fail to load`() = runBlocking<Unit> {
         every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
-        coEvery { api.downloadStops("schedule_url") } throws Exception()
+        coEvery { api.downloadSchedule("schedule_url") } throws Exception()
 
         assertFailsWith<NoDataException> {
             arrivals.latest()

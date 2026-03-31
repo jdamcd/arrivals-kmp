@@ -37,4 +37,18 @@ place-north,"North Station",42.365577,-71.06129,1,
 place-sstat,"South Station",42.352271,-71.055242,1,
 place-TC,"Transit Center, Bay 1",42.395,-71.142,1,
 """
+
+    const val ROUTES_CSV =
+        """
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+G,Example Agency,G,Crosstown,,1,http://example.com,6CBE45,
+A,Example Agency,A,8 Avenue Express,,1,http://example.com,2850AD,FFFFFF
+SI,Example Agency,SIR,Staten Island Railway,,2,http://example.com,08179C,FFFFFF
+6,Example Agency,6,Lexington Local,,1,http://example.com,00933C,
+6X,Example Agency,6X,Lexington Express,,1,http://example.com,00933C,
+BLUE,Example Agency,Blue Line,Blue Line,,1,http://example.com,0000FF,
+RED,Example Agency,Red,Red Line,,1,http://example.com,FF0000,
+XPRESS,Example Agency,Express Local,Express Local,,1,http://example.com,00FF00,
+AB,Example Agency,AB,AB Line,,1,http://example.com,AABB00,
+"""
 }
