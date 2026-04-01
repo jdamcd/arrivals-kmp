@@ -27,7 +27,7 @@ struct LcdContent: View {
     private var hasThird: Bool { arrivals.count >= 3 }
 
     private let rowSpacing: CGFloat = 3
-    private let verticalPadding: CGFloat = 1
+    private let verticalPadding: CGFloat = 1.5
 
     var body: some View {
         GeometryReader { geo in
@@ -173,9 +173,8 @@ private struct LineBadge: View {
                     .fill(fillColor)
             }
             Text(line)
-                .font(.lcd(size: 18))
+                .font(.lcd(size: line.count > 1 ? 10 : 17))
                 .foregroundColor(textColor)
-                .lineLimit(1)
         }
         .frame(width: 26, height: 26)
     }

@@ -64,18 +64,18 @@ final class ArrivalsUITests: XCTestCase {
         linePicker.click()
         app.menuItems["ACE"].click()
 
+        let filterField = app.textFields["stopFilterField"]
+        XCTAssertTrue(filterField.waitForExistence(timeout: 30), "Stop filter field should appear after load")
+        filterField.click()
+        filterField.typeText("Hoyt")
+
         let resultsList = app.outlines["searchResultsList"].firstMatch
-        XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "Stop list should load")
+        XCTAssertTrue(resultsList.waitForExistence(timeout: 5), "Filtered results should appear")
 
         let hoyt = resultsList.staticTexts.matching(
             NSPredicate(format: "value CONTAINS 'Hoyt-Schermerhorn'")
         ).firstMatch
-        XCTAssertTrue(hoyt.waitForExistence(timeout: 5), "Hoyt-Schermerhorn should appear in stop list")
-
-        let scrollView = resultsList.scrollViews.firstMatch.exists
-            ? resultsList.scrollViews.firstMatch
-            : resultsList
-        XCTAssertTrue(scrollView.scrollToElement(hoyt), "Should be able to scroll to Hoyt-Schermerhorn")
+        XCTAssertTrue(hoyt.waitForExistence(timeout: 5), "Hoyt-Schermerhorn should appear in filtered results")
         hoyt.click()
 
         takeScreenshot(name: "3a-mta-stop-selected")
@@ -100,6 +100,11 @@ final class ArrivalsUITests: XCTestCase {
         ).firstMatch
         XCTAssertTrue(shoreditch.waitForExistence(timeout: 5))
         shoreditch.click()
+
+        let platformField = app.textFields["platformField"]
+        XCTAssertTrue(platformField.waitForExistence(timeout: 5))
+        platformField.click()
+        platformField.typeText("2")
 
         takeScreenshot(name: "4a-lcd-settings")
 

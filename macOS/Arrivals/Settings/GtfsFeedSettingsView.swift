@@ -7,6 +7,7 @@ struct GtfsFeedSettingsView: View {
     @StateObject private var viewModel: GtfsFeedSettingsViewModel
 
     @State private var selectedStop: StopResult?
+    @State private var filterText: String = ""
 
     private var isValid: Bool {
         selectedStop != nil
@@ -30,11 +31,25 @@ struct GtfsFeedSettingsView: View {
                 ResultsArea {
                     switch viewModel.state {
                     case let .data(results):
-                        List(results, id: \.self, selection: $selectedStop) { result in
-                            Text(result.name)
+                        let filtered = filterText.isNotEmpty
+                            ? results.filter { $0.name.localizedCaseInsensitiveContains(filterText) }
+                            : results
+                        VStack(spacing: 4) {
+                            TextField("Filter", text: $filterText)
+                                .padding(.bottom, 6)
+                                .accessibilityIdentifier("stopFilterField")
+                            Divider()
+                            if filtered.isEmpty {
+                                Text("No matching stops")
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            } else {
+                                List(filtered, id: \.self, selection: $selectedStop) { result in
+                                    Text(result.name)
+                                }
+                                .listStyle(PlainListStyle())
+                                .accessibilityIdentifier("searchResultsList")
+                            }
                         }
-                        .listStyle(PlainListStyle())
-                        .accessibilityIdentifier("searchResultsList")
                     case .idle:
                         Text("Loading stops...")
                     case .empty:
