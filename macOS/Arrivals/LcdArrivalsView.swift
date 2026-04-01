@@ -7,6 +7,14 @@ extension Color {
     static let lcdBadgeFallback = Color(red: 0.49, green: 0.52, blue: 0.55)
 }
 
+extension Font {
+    static let lcdFamilyName = "HelveticaNeue-Medium"
+
+    static func lcd(size: CGFloat) -> Font {
+        .custom(lcdFamilyName, size: size)
+    }
+}
+
 struct LcdContent: View {
     var arrivals: [Arrival]
     @State private var showingThird = false
@@ -111,7 +119,7 @@ private struct LcdArrivalRow: View {
     var body: some View {
         HStack(spacing: 0) {
             Text("\(position)")
-                .font(.custom("HelveticaNeue-Medium", size: 15))
+                .font(.lcd(size: 15))
                 .foregroundColor(.white.opacity(0.5))
                 .frame(width: 18, alignment: .center)
 
@@ -121,7 +129,7 @@ private struct LcdArrivalRow: View {
                 }
 
                 Text(arrival.destination)
-                    .font(.custom("HelveticaNeue-Medium", size: 15))
+                    .font(.lcd(size: 15))
                     .foregroundColor(arrival.isDue ? .lcdRow : .white)
                     .lineLimit(1)
 
@@ -132,7 +140,7 @@ private struct LcdArrivalRow: View {
             }
             .padding(.horizontal, 6)
             .frame(maxHeight: .infinity)
-            .background(Rectangle().fill(arrival.isDue ? Color.white : .lcdRow))
+            .background(Rectangle().fill(arrival.isDue ? .white.opacity(0.85) : .lcdRow))
         }
     }
 }
@@ -142,7 +150,7 @@ struct LcdErrorContent: View {
 
     var body: some View {
         Text(message)
-            .font(.custom("HelveticaNeue-Medium", size: 15))
+            .font(.lcd(size: 15))
             .foregroundColor(.white)
             .accessibilityIdentifier("errorMessage")
     }
@@ -159,14 +167,14 @@ private struct LineBadge: View {
             if express {
                 Rectangle()
                     .fill(fillColor)
-                    .frame(width: 20, height: 20)
+                    .frame(width: 22, height: 22)
                     .rotationEffect(.degrees(45))
             } else {
                 Circle()
                     .fill(fillColor)
             }
             Text(line)
-                .font(.custom("HelveticaNeue-Medium", size: line.count > 1 ? 10 : 18))
+                .font(.lcd(size: line.count > 1 ? 10 : 18))
                 .foregroundColor(textColor)
         }
         .frame(width: 26, height: 26)
@@ -187,10 +195,10 @@ private struct MinutesDisplay: View {
     var body: some View {
         VStack(spacing: -2) {
             Text("\(arrival.minutesToStop)")
-                .font(.custom("HelveticaNeue-Medium", size: 17))
+                .font(.lcd(size: 17))
                 .foregroundColor(arrival.isDue ? .lcdRow : .white)
-            Text("MIN")
-                .font(.custom("HelveticaNeue-Medium", size: 6))
+            Text(arrival.realtime ? "MIN" : "MIN*")
+                .font(.lcd(size: 6))
                 .foregroundColor(arrival.isDue ? .lcdRow.opacity(0.6) : .white.opacity(0.6))
         }
     }

@@ -180,79 +180,104 @@ private struct DisplayMetrics {
     let frameHeight: CGFloat
     let cornerRadius: CGFloat
 
+    static let glass = DisplayMetrics(framePadding: 12, frameHeight: 118, cornerRadius: 10)
+
+    static let legacy = DisplayMetrics(framePadding: 8, frameHeight: 110, cornerRadius: 4)
+
     static var current: DisplayMetrics {
         if #available(macOS 26.0, *) {
-            DisplayMetrics(framePadding: 12, frameHeight: 118, cornerRadius: 10)
+            glass
         } else {
-            DisplayMetrics(framePadding: 8, frameHeight: 110, cornerRadius: 4)
+            legacy
         }
     }
 }
 
 // MARK: - Previews
 
-private let previewBadge = LineBadge(label: "G", color: "6CBE45", textColor: "FFFFFF", express: false)
+private let tflArrivals = [
+    Arrival(id: 1, destination: "New Cross", secondsToStop: 30, realtime: true, line: nil, lineBadge: tflBadge),
+    Arrival(id: 2, destination: "Crystal Palace", secondsToStop: 450, realtime: true, line: nil, lineBadge: tflBadge),
+    Arrival(id: 3, destination: "Clapham Junction", secondsToStop: 900, realtime: true, line: nil, lineBadge: tflBadge),
+]
+private let tflBadge = LineBadge(label: "O", color: "D22730", textColor: "ffffff", express: false)
 
-private let previewArrivals = [
-    Arrival(id: 1, destination: "Church Av", secondsToStop: 30,
-            realtime: true, line: "G", lineBadge: previewBadge),
-    Arrival(id: 2, destination: "Court Sq", secondsToStop: 300,
-            realtime: true, line: "G", lineBadge: previewBadge),
-    Arrival(id: 3, destination: "Church Av", secondsToStop: 720,
-            realtime: true, line: "G", lineBadge: previewBadge),
+private let mtaArrivals = [
+    Arrival(id: 1, destination: "Brighton Beach", secondsToStop: 70, realtime: true, line: "B", lineBadge: LineBadge(label: "B", color: "FF6319", textColor: nil, express: false)),
+    Arrival(id: 2, destination: "Coney Island-Stillwell Av", secondsToStop: 506, realtime: true, line: "F", lineBadge: LineBadge(label: "F", color: "FF6319", textColor: nil, express: true)),
+    Arrival(id: 3, destination: "Coney Island-Stillwell Av", secondsToStop: 956, realtime: true, line: "F", lineBadge: LineBadge(label: "F", color: "FF6319", textColor: nil, express: false)),
 ]
 
-private let previewMetrics = DisplayMetrics.current
-private let legacyMetrics = DisplayMetrics(framePadding: 8, frameHeight: 110, cornerRadius: 4)
+private let edgeCaseArrivals = [
+    Arrival(id: 1, destination: "Dest", secondsToStop: 0, realtime: true, line: "A", lineBadge: nil),
+    Arrival(id: 2, destination: "Very very very long destination name", secondsToStop: 60, realtime: true, line: "F", lineBadge: LineBadge(label: "M", color: "FF3399", textColor: nil, express: true)),
+    Arrival(id: 3, destination: "Scheduled", secondsToStop: 956, realtime: false, line: nil, lineBadge: LineBadge(label: "F", color: "ffffff", textColor: "000000", express: false)),
+]
 
-#Preview("LED") {
-    ContentDisplay(theme: .led, metrics: previewMetrics, content: {
-        LedContent(arrivals: previewArrivals)
+private let previewError = "Error: long multi-line error message to test wrapping"
+
+@MainActor private func previewLed(arrivals: [Arrival] = [], error: String? = nil, station: String? = nil, metrics: DisplayMetrics = .glass) -> some View {
+    ContentDisplay(theme: .led, metrics: metrics, content: {
+        if let error { LedErrorContent(message: error) } else { LedContent(arrivals: arrivals) }
     }, footer: {
-        ControlFooter(tint: DisplayTheme.led.tint, text: "Nassau Av",
+        ControlFooter(tint: DisplayTheme.led.tint, text: station,
                       refresh: RefreshBehaviour(isLoading: false) {},
                       onOpenSettings: {}, onQuit: {})
     })
-    .padding(.horizontal, previewMetrics.framePadding)
-    .padding(.top, previewMetrics.framePadding)
-    .frame(width: 350, height: previewMetrics.frameHeight)
+    .padding(.horizontal, metrics.framePadding)
+    .padding(.top, metrics.framePadding)
+    .frame(width: 350, height: metrics.frameHeight)
 }
 
-#Preview("LCD") {
-    ContentDisplay(theme: .lcd, metrics: previewMetrics, content: {
-        LcdContent(arrivals: previewArrivals)
+@MainActor private func previewLcd(arrivals: [Arrival] = [], error: String? = nil, station: String? = nil, metrics: DisplayMetrics = .glass) -> some View {
+    ContentDisplay(theme: .lcd, metrics: metrics, content: {
+        if let error { LcdErrorContent(message: error) } else { LcdContent(arrivals: arrivals) }
     }, footer: {
-        ControlFooter(tint: DisplayTheme.lcd.tint, text: "Nassau Av",
+        ControlFooter(tint: DisplayTheme.lcd.tint, text: station,
                       refresh: RefreshBehaviour(isLoading: false) {},
                       onOpenSettings: {}, onQuit: {})
     })
-    .padding(.horizontal, previewMetrics.framePadding)
-    .padding(.top, previewMetrics.framePadding)
-    .frame(width: 350, height: previewMetrics.frameHeight)
+    .padding(.horizontal, metrics.framePadding)
+    .padding(.top, metrics.framePadding)
+    .frame(width: 350, height: metrics.frameHeight)
 }
 
-#Preview("LED Legacy") {
-    ContentDisplay(theme: .led, metrics: legacyMetrics, content: {
-        LedContent(arrivals: previewArrivals)
-    }, footer: {
-        ControlFooter(tint: DisplayTheme.led.tint, text: "Nassau Av",
-                      refresh: RefreshBehaviour(isLoading: false) {},
-                      onOpenSettings: {}, onQuit: {})
-    })
-    .padding(.horizontal, legacyMetrics.framePadding)
-    .padding(.top, legacyMetrics.framePadding)
-    .frame(width: 350, height: legacyMetrics.frameHeight)
+#Preview("TfL (LED)") {
+    previewLed(arrivals: tflArrivals, station: "Shoreditch High Street: Platform 2")
 }
 
-#Preview("LCD Legacy") {
-    ContentDisplay(theme: .lcd, metrics: legacyMetrics, content: {
-        LcdContent(arrivals: previewArrivals)
-    }, footer: {
-        ControlFooter(tint: DisplayTheme.lcd.tint, text: "Nassau Av",
-                      refresh: RefreshBehaviour(isLoading: false) {},
-                      onOpenSettings: {}, onQuit: {})
-    })
-    .padding(.horizontal, legacyMetrics.framePadding)
-    .padding(.top, legacyMetrics.framePadding)
-    .frame(width: 350, height: legacyMetrics.frameHeight)
+#Preview("TfL (LCD)") {
+    previewLcd(arrivals: tflArrivals, station: "Shoreditch High Street: Platform 2")
+}
+
+#Preview("MTA (LED)") {
+    previewLed(arrivals: mtaArrivals, station: "42 St-Bryant Park")
+}
+
+#Preview("MTA (LCD)") {
+    previewLcd(arrivals: mtaArrivals, station: "42 St-Bryant Park")
+}
+
+#Preview("Edge cases (LED)") {
+    previewLed(arrivals: edgeCaseArrivals, station: nil)
+}
+
+#Preview("Edge cases (LCD)") {
+    previewLcd(arrivals: edgeCaseArrivals, station: nil)
+}
+
+#Preview("Legacy (LED)") {
+    previewLed(arrivals: mtaArrivals, station: "42 St-Bryant Park", metrics: .legacy)
+}
+
+#Preview("Legacy (LCD)") {
+    previewLcd(arrivals: mtaArrivals, station: "42 St-Bryant Park", metrics: .legacy)
+}
+
+#Preview("Error (LED)") {
+    previewLed(error: previewError)
+}
+
+#Preview("Error (LCD)") {
+    previewLcd(error: previewError)
 }
