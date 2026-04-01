@@ -53,7 +53,7 @@ class TflArrivalsTest {
         first.secondsToStop shouldBe 10
         first.line shouldBe null
         first.displayName shouldBe "Crystal Palace"
-        first.lineBadge?.label shouldBe "O"
+        first.lineBadge?.label shouldBe "WIN"
         first.lineBadge?.color shouldBe "D22730"
         val second = latest.arrivals[1]
         second.destination shouldBe "New Cross"
