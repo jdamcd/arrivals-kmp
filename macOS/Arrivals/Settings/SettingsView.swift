@@ -26,14 +26,6 @@ struct SettingsView: View {
         VStack(spacing: 0) {
             Form {
                 Section {
-                    Picker("Transit system", selection: $selector) {
-                        ForEach(TransitSystem.allCases, id: \.self) {
-                            Text($0.displayName)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .accessibilityIdentifier("transitSystemPicker")
-
                     Picker("Display style", selection: $displayStyle) {
                         ForEach(DisplayStyle.allCases, id: \.self) {
                             Text($0.name)
@@ -41,6 +33,14 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .accessibilityIdentifier("displayStylePicker")
+
+                    Picker("Transit system", selection: $selector) {
+                        ForEach(TransitSystem.allCases, id: \.self) {
+                            Text($0.displayName)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .accessibilityIdentifier("transitSystemPicker")
                 }
             }
             .formStyle(.grouped)

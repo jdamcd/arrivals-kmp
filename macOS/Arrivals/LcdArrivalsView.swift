@@ -26,9 +26,8 @@ struct LcdContent: View {
 
     private var hasThird: Bool { arrivals.count >= 3 }
 
-    private let rowSpacing: CGFloat = 4
-
-    private let verticalPadding: CGFloat = 2
+    private let rowSpacing: CGFloat = 3
+    private let verticalPadding: CGFloat = 1
 
     var body: some View {
         GeometryReader { geo in
@@ -174,8 +173,9 @@ private struct LineBadge: View {
                     .fill(fillColor)
             }
             Text(line)
-                .font(.lcd(size: line.count > 1 ? 10 : 18))
+                .font(.lcd(size: 18))
                 .foregroundColor(textColor)
+                .lineLimit(1)
         }
         .frame(width: 26, height: 26)
     }
@@ -195,7 +195,7 @@ private struct MinutesDisplay: View {
     var body: some View {
         VStack(spacing: -2) {
             Text("\(arrival.minutesToStop)")
-                .font(.lcd(size: 17))
+                .font(.lcd(size: 18))
                 .foregroundColor(arrival.isDue ? .lcdRow : .white)
             Text(arrival.realtime ? "MIN" : "MIN*")
                 .font(.lcd(size: 6))

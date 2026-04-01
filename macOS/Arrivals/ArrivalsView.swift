@@ -115,7 +115,7 @@ private struct ContentDisplay<Content: View, Footer: View>: View {
                 .clipShape(shape)
                 .overlay(
                     theme.borderColor.map { color in
-                        shape.stroke(color, lineWidth: 2)
+                        shape.stroke(color, lineWidth: 2.5)
                     }
                 )
             footer

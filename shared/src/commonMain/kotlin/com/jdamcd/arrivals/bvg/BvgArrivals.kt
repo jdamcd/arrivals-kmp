@@ -93,7 +93,7 @@ internal class BvgArrivals(
 
         Arrival(
             id = departure.tripId.hashCode(),
-            destination = departure.direction,
+            destination = departure.direction.removeSuffix(" (Berlin)"),
             secondsToStop = seconds,
             realtime = realtime,
             line = departure.line.name,

@@ -78,9 +78,9 @@ class BvgArrivalsTest {
 
         latest.station shouldBe "S+U Alexanderplatz"
         latest.arrivals shouldHaveSize 3
-        latest.arrivals[0].destination shouldBe "S Westkreuz (Berlin)"
+        latest.arrivals[0].destination shouldBe "S Westkreuz"
         latest.arrivals[0].line shouldBe "S5"
-        latest.arrivals[0].displayName shouldBe "S5 - S Westkreuz (Berlin)"
+        latest.arrivals[0].displayName shouldBe "S5 - S Westkreuz"
     }
 
     @Test
