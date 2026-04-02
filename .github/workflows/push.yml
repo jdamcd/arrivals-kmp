@@ -88,7 +88,8 @@ jobs:
           -project macOS/Arrivals.xcodeproj \
           -scheme Arrivals \
           -destination 'platform=macOS' \
-          -skip-testing:ArrivalsUITests
+          -skip-testing:ArrivalsUITests \
+          ENABLE_APP_SANDBOX=NO
 
     - name: Upload snapshot failures
       if: failure()
