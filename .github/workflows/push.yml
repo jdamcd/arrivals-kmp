@@ -95,4 +95,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: snapshot-failures
-        path: macOS/ArrivalsTests/__Snapshots__/**/*.png
+        path: ~/Library/Containers/com.jdamcd.Arrivals/Data/tmp/ArrivalsSnapshotTests/
