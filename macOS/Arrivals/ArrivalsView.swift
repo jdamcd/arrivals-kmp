@@ -115,7 +115,7 @@ private struct ContentDisplay<Content: View, Footer: View>: View {
                 .clipShape(shape)
                 .overlay(
                     theme.borderColor.map { color in
-                        shape.stroke(color, lineWidth: 2.5)
+                        shape.strokeBorder(color, lineWidth: 2)
                     }
                 )
             footer
@@ -175,7 +175,7 @@ private struct RefreshBehaviour {
     var onRefresh: () -> Void
 }
 
-private struct DisplayMetrics {
+struct DisplayMetrics {
     let framePadding: CGFloat
     let frameHeight: CGFloat
     let cornerRadius: CGFloat
@@ -195,28 +195,28 @@ private struct DisplayMetrics {
 
 // MARK: - Previews
 
-private let tflArrivals = [
+let tflArrivals = [
     Arrival(id: 1, destination: "New Cross", secondsToStop: 30, realtime: true, line: nil, lineBadge: tflBadge),
     Arrival(id: 2, destination: "Crystal Palace", secondsToStop: 450, realtime: true, line: nil, lineBadge: tflBadge),
     Arrival(id: 3, destination: "Clapham Junction", secondsToStop: 900, realtime: true, line: nil, lineBadge: tflBadge),
 ]
-private let tflBadge = LineBadge(label: "O", color: "D22730", textColor: "ffffff", express: false)
+let tflBadge = LineBadge(label: "WIN", color: "D22730", textColor: nil, express: false)
 
-private let mtaArrivals = [
+let mtaArrivals = [
     Arrival(id: 1, destination: "Brighton Beach", secondsToStop: 70, realtime: true, line: "B", lineBadge: LineBadge(label: "B", color: "FF6319", textColor: nil, express: false)),
     Arrival(id: 2, destination: "Coney Island-Stillwell Av", secondsToStop: 506, realtime: true, line: "F", lineBadge: LineBadge(label: "F", color: "FF6319", textColor: nil, express: true)),
     Arrival(id: 3, destination: "Coney Island-Stillwell Av", secondsToStop: 956, realtime: true, line: "F", lineBadge: LineBadge(label: "F", color: "FF6319", textColor: nil, express: false)),
 ]
 
-private let edgeCaseArrivals = [
+let edgeCaseArrivals = [
     Arrival(id: 1, destination: "Dest", secondsToStop: 0, realtime: true, line: "A", lineBadge: nil),
     Arrival(id: 2, destination: "Very very very long destination name", secondsToStop: 60, realtime: true, line: "F", lineBadge: LineBadge(label: "M", color: "FF3399", textColor: nil, express: true)),
     Arrival(id: 3, destination: "Scheduled", secondsToStop: 956, realtime: false, line: nil, lineBadge: LineBadge(label: "F", color: "ffffff", textColor: "000000", express: false)),
 ]
 
-private let previewError = "Error: long multi-line error message to test wrapping"
+let previewError = "Error: long multi-line error message to test wrapping"
 
-@MainActor private func previewLed(arrivals: [Arrival] = [], error: String? = nil, station: String? = nil, metrics: DisplayMetrics = .glass) -> some View {
+@MainActor func previewLed(arrivals: [Arrival] = [], error: String? = nil, station: String? = nil, metrics: DisplayMetrics = .glass) -> some View {
     ContentDisplay(theme: .led, metrics: metrics, content: {
         if let error { LedErrorContent(message: error) } else { LedContent(arrivals: arrivals) }
     }, footer: {
@@ -229,7 +229,7 @@ private let previewError = "Error: long multi-line error message to test wrappin
     .frame(width: 350, height: metrics.frameHeight)
 }
 
-@MainActor private func previewLcd(arrivals: [Arrival] = [], error: String? = nil, station: String? = nil, metrics: DisplayMetrics = .glass) -> some View {
+@MainActor func previewLcd(arrivals: [Arrival] = [], error: String? = nil, station: String? = nil, metrics: DisplayMetrics = .glass) -> some View {
     ContentDisplay(theme: .lcd, metrics: metrics, content: {
         if let error { LcdErrorContent(message: error) } else { LcdContent(arrivals: arrivals) }
     }, footer: {

@@ -27,7 +27,7 @@ struct LcdContent: View {
     private var hasThird: Bool { arrivals.count >= 3 }
 
     private let rowSpacing: CGFloat = 3
-    private let verticalPadding: CGFloat = 1.5
+    private let verticalPadding: CGFloat = 2
 
     var body: some View {
         GeometryReader { geo in
