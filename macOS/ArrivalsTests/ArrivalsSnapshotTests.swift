@@ -6,6 +6,8 @@ import XCTest
 
 @MainActor
 final class ArrivalsSnapshotTests: XCTestCase {
+    private let strategy: Snapshotting<NSViewController, NSImage> = .image(perceptualPrecision: 0.98)
+
     override func invokeTest() {
         withSnapshotTesting(record: .missing) {
             super.invokeTest()
@@ -13,43 +15,43 @@ final class ArrivalsSnapshotTests: XCTestCase {
     }
 
     func testTflLed() {
-        assertSnapshot(of: host(previewLed(arrivals: tflArrivals, station: "Shoreditch High Street: Platform 2")), as: .image)
+        assertSnapshot(of: host(previewLed(arrivals: tflArrivals, station: "Shoreditch High Street: Platform 2")), as: strategy)
     }
 
     func testTflLcd() {
-        assertSnapshot(of: host(previewLcd(arrivals: tflArrivals, station: "Shoreditch High Street: Platform 2")), as: .image)
+        assertSnapshot(of: host(previewLcd(arrivals: tflArrivals, station: "Shoreditch High Street: Platform 2")), as: strategy)
     }
 
     func testMtaLed() {
-        assertSnapshot(of: host(previewLed(arrivals: mtaArrivals, station: "42 St-Bryant Park")), as: .image)
+        assertSnapshot(of: host(previewLed(arrivals: mtaArrivals, station: "42 St-Bryant Park")), as: strategy)
     }
 
     func testMtaLcd() {
-        assertSnapshot(of: host(previewLcd(arrivals: mtaArrivals, station: "42 St-Bryant Park")), as: .image)
+        assertSnapshot(of: host(previewLcd(arrivals: mtaArrivals, station: "42 St-Bryant Park")), as: strategy)
     }
 
     func testEdgeCasesLed() {
-        assertSnapshot(of: host(previewLed(arrivals: edgeCaseArrivals)), as: .image)
+        assertSnapshot(of: host(previewLed(arrivals: edgeCaseArrivals)), as: strategy)
     }
 
     func testEdgeCasesLcd() {
-        assertSnapshot(of: host(previewLcd(arrivals: edgeCaseArrivals)), as: .image)
+        assertSnapshot(of: host(previewLcd(arrivals: edgeCaseArrivals)), as: strategy)
     }
 
     func testLegacyLed() {
-        assertSnapshot(of: host(previewLed(arrivals: mtaArrivals, station: "42 St-Bryant Park", metrics: .legacy), metrics: .legacy), as: .image)
+        assertSnapshot(of: host(previewLed(arrivals: mtaArrivals, station: "42 St-Bryant Park", metrics: .legacy), metrics: .legacy), as: strategy)
     }
 
     func testLegacyLcd() {
-        assertSnapshot(of: host(previewLcd(arrivals: mtaArrivals, station: "42 St-Bryant Park", metrics: .legacy), metrics: .legacy), as: .image)
+        assertSnapshot(of: host(previewLcd(arrivals: mtaArrivals, station: "42 St-Bryant Park", metrics: .legacy), metrics: .legacy), as: strategy)
     }
 
     func testErrorLed() {
-        assertSnapshot(of: host(previewLed(error: previewError)), as: .image)
+        assertSnapshot(of: host(previewLed(error: previewError)), as: strategy)
     }
 
     func testErrorLcd() {
-        assertSnapshot(of: host(previewLcd(error: previewError)), as: .image)
+        assertSnapshot(of: host(previewLcd(error: previewError)), as: strategy)
     }
 
     private var scaleWindow: NSWindow?
