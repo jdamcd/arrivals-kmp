@@ -52,9 +52,26 @@ final class ArrivalsSnapshotTests: XCTestCase {
         assertSnapshot(of: host(previewLcd(error: previewError)), as: .image)
     }
 
+    private var scaleWindow: NSWindow?
+
     private func host(_ view: some View, metrics: DisplayMetrics = .glass) -> NSViewController {
+        let size = CGSize(width: 350, height: metrics.frameHeight)
         let controller = NSHostingController(rootView: view.background(Color(white: 0.2)))
-        controller.view.frame = CGRect(origin: .zero, size: CGSize(width: 350, height: metrics.frameHeight))
+        controller.view.frame = CGRect(origin: .zero, size: size)
+        let window = ScaledWindow(scaleFactor: 1.0, contentRect: CGRect(origin: .zero, size: size))
+        window.contentView = controller.view
+        scaleWindow = window
         return controller
     }
+}
+
+private class ScaledWindow: NSWindow {
+    private let scaleFactor: CGFloat
+
+    init(scaleFactor: CGFloat, contentRect: NSRect) {
+        self.scaleFactor = scaleFactor
+        super.init(contentRect: contentRect, styleMask: [], backing: .nonretained, defer: false)
+    }
+
+    override var backingScaleFactor: CGFloat { scaleFactor }
 }
