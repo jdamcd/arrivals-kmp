@@ -91,9 +91,9 @@ jobs:
           -skip-testing:ArrivalsUITests \
           ENABLE_APP_SANDBOX=NO
 
-    - name: Upload snapshot failures
+    - name: Upload test results
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: snapshot-failures
-        path: ~/Library/Containers/com.jdamcd.Arrivals/Data/tmp/ArrivalsSnapshotTests/
+        name: test-results
+        path: ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
