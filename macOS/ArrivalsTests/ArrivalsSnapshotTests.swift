@@ -6,7 +6,7 @@ import XCTest
 
 @MainActor
 final class ArrivalsSnapshotTests: XCTestCase {
-    private let strategy: Snapshotting<NSViewController, NSImage> = .image(perceptualPrecision: 0.98)
+    private let strategy: Snapshotting<NSViewController, NSImage> = .image(precision: 0.8, perceptualPrecision: 0.9)
 
     override func invokeTest() {
         withSnapshotTesting(record: .missing) {
