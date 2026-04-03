@@ -10,6 +10,9 @@ struct LedContent: View {
                 DotMatrixRow(leading: arrival.displayName, trailing: arrival.displayTime,
                              animateTrailing: arrival.isDue)
             }
+            ForEach(0 ..< max(0, 3 - arrivals.count), id: \.self) { _ in
+                DotMatrixRow(leading: " ").hidden()
+            }
         }
     }
 }

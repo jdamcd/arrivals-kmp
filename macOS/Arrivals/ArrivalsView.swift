@@ -244,9 +244,8 @@ let mtaArrivals = [
 ]
 
 let edgeCaseArrivals = [
-    Arrival(id: 1, destination: "Dest", secondsToStop: 0, realtime: true, line: "A", lineBadge: nil),
-    Arrival(id: 2, destination: "Very very very long destination name", secondsToStop: 60, realtime: true, line: "F", lineBadge: LineBadge(label: "M", color: "FF3399", textColor: nil, express: true)),
-    Arrival(id: 3, destination: "Scheduled", secondsToStop: 956, realtime: false, line: nil, lineBadge: LineBadge(label: "F", color: "ffffff", textColor: "000000", express: false)),
+    Arrival(id: 1, destination: "Very very very long destination name", secondsToStop: 60, realtime: true, line: "F", lineBadge: LineBadge(label: "M", color: "FF3399", textColor: nil, express: true)),
+    Arrival(id: 2, destination: "Scheduled", secondsToStop: 956, realtime: false, line: nil, lineBadge: nil),
 ]
 
 let previewError = "Error: long multi-line error message to test wrapping"
