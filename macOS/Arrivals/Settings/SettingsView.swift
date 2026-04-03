@@ -102,7 +102,7 @@ struct SettingsView: View {
             }
             .padding()
         }
-        .frame(width: 440, height: 380)
+        .frame(width: 440, height: 360)
         .environmentObject(coordinator)
         .onChange(of: selector) { _, _ in
             coordinator.reset()

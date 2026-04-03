@@ -29,9 +29,6 @@ struct CustomGtfsSettingsView: View {
             TextField("Realtime URL", text: $realtimeUrl)
             TextField("Schedule URL", text: $scheduleUrl)
             TextField("Stop ID", text: $stopId)
-            TextField("API key param (optional)", text: $apiKeyParam)
-                .help("e.g. 'app_id', 'header:Authorization'")
-            TextField("API key (optional)", text: $apiKey)
         }
         .onAppear {
             coordinator.onSave = {
@@ -54,6 +51,12 @@ struct CustomGtfsSettingsView: View {
         .onChange(of: stopId) { _, _ in
             coordinator.canSave = isValid
         }
+
+        Section("Authentication") {
+            TextField("API key param", text: $apiKeyParam)
+                .help("e.g. 'app_id', 'header:Authorization'")
+            TextField("API key", text: $apiKey)
+        }
     }
 }
 
@@ -62,4 +65,5 @@ struct CustomGtfsSettingsView: View {
         CustomGtfsSettingsView()
     }
     .formStyle(.grouped)
+    .environmentObject(SettingsCoordinator())
 }

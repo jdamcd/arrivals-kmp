@@ -75,7 +75,7 @@ struct BvgSettingsView: View {
         }
 
         if isValid {
-            Section("Filters") {
+            Section {
                 TextField("Line", text: $lineFilter)
                     .help("Optional line (e.g. U8, S41)")
                     .autocorrectionDisabled()
@@ -109,4 +109,5 @@ private class BvgSettingsViewModel: StopSearchViewModel {
         BvgSettingsView()
     }
     .formStyle(.grouped)
+    .environmentObject(SettingsCoordinator())
 }

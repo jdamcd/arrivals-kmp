@@ -68,7 +68,7 @@ struct DarwinSettingsView: View {
         }
 
         if isValid {
-            Section("Filters") {
+            Section {
                 TextField("Platform", text: $platformFilter)
                     .help("Optional platform (e.g. 2, 5A)")
                     .autocorrectionDisabled()
@@ -97,4 +97,5 @@ private class DarwinSettingsViewModel: StopSearchViewModel {
         DarwinSettingsView()
     }
     .formStyle(.grouped)
+    .environmentObject(SettingsCoordinator())
 }

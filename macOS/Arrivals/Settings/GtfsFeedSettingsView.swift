@@ -35,7 +35,7 @@ struct GtfsFeedSettingsView: View {
                             ? results.filter { $0.name.localizedCaseInsensitiveContains(filterText) }
                             : results
                         VStack(spacing: 4) {
-                            TextField("Filter", text: $filterText)
+                            TextField("Filter stops", text: $filterText)
                                 .padding(.bottom, 6)
                                 .accessibilityIdentifier("stopFilterField")
                             Divider()

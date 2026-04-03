@@ -81,7 +81,7 @@ struct TflSettingsView: View {
         }
 
         if isValid {
-            Section("Filters") {
+            Section {
                 Picker("Direction", selection: $directionFilter) {
                     ForEach(directions, id: \.self) { direction in
                         Text(direction.capitalized).tag(direction)
@@ -144,4 +144,5 @@ private class TflSettingsViewModel: StopSearchViewModel {
         TflSettingsView()
     }
     .formStyle(.grouped)
+    .environmentObject(SettingsCoordinator())
 }
