@@ -112,11 +112,18 @@ private struct ContentDisplay<Content: View, Footer: View>: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(theme.contentPadding)
                 .background(theme.background)
+                .compositingGroup() // Flattened rendering for sharp LED text
                 .clipShape(shape)
                 .overlay(
                     theme.borderColor.map { color in
                         shape.strokeBorder(color, lineWidth: 2)
                     }
+                )
+                .overlay(
+                    ShadowBorder(cornerRadius: metrics.cornerRadius)
+                        .stroke(ShadowBorder.gradient, lineWidth: 1)
+                        .padding(-1) // Outside the content area
+                        .allowsHitTesting(false)
                 )
             footer
         }
@@ -167,6 +174,34 @@ private struct ControlFooter: View {
         .buttonStyle(PlainButtonStyle())
         .padding(.bottom, 2)
         .frame(height: 28)
+    }
+}
+
+private struct ShadowBorder: SwiftUI.Shape {
+    var cornerRadius: CGFloat
+
+    static let gradient = LinearGradient(
+        stops: [
+            .init(color: .white.opacity(0), location: 0),
+            .init(color: .white.opacity(0.15), location: 0.15),
+            .init(color: .white.opacity(0.15), location: 0.8),
+            .init(color: .white.opacity(0), location: 1),
+        ],
+        startPoint: .topTrailing,
+        endPoint: .bottomLeading
+    )
+
+    func path(in rect: CGRect) -> Path {
+        let cr = cornerRadius
+        var path = Path()
+        path.move(to: CGPoint(x: rect.maxX, y: rect.minY + cr))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - cr))
+        path.addArc(
+            center: CGPoint(x: rect.maxX - cr, y: rect.maxY - cr),
+            radius: cr, startAngle: .zero, endAngle: .degrees(90), clockwise: false
+        )
+        path.addLine(to: CGPoint(x: rect.minX + cr, y: rect.maxY))
+        return path
     }
 }
 

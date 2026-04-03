@@ -26,13 +26,12 @@ struct LcdContent: View {
 
     private var hasThird: Bool { arrivals.count >= 3 }
 
-    private let rowSpacing: CGFloat = 3
-    private let verticalPadding: CGFloat = 2
+    private let verticalSpacing: CGFloat = 2
 
     var body: some View {
         GeometryReader { geo in
-            let rowHeight = (geo.size.height - rowSpacing - verticalPadding * 2) / 2
-            VStack(spacing: rowSpacing) {
+            let rowHeight = (geo.size.height - verticalSpacing * 3) / 2
+            VStack(spacing: verticalSpacing) {
                 if let first = arrivals.first {
                     LcdArrivalRow(position: 1, arrival: first)
                         .frame(height: rowHeight)
@@ -53,7 +52,7 @@ struct LcdContent: View {
                         .frame(height: rowHeight)
                 }
             }
-            .padding(.vertical, verticalPadding)
+            .padding(.vertical, verticalSpacing)
         }
         .onAppear { resetAnimation() }
         .onDisappear { cancelCycle() }
