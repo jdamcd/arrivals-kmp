@@ -1,8 +1,9 @@
 # Arrivals
 
-Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3 targets: a macOS toolbar app, a CLI, and a desktop app (tailored for Raspberry Pi kiosk displays). 
+Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3 targets: a macOS toolbar app, a CLI, and a desktop app (for Raspberry Pi kiosk displays). 
 
-![Screenshot: Arrivals app in the MacOS status bar](readme-img/screenshot.png)
+![Screenshot: macOS status bar, dot matrix style](readme-img/led.png)
+![Screenshot: macOS status bar, LCD style](readme-img/lcd.png)
 
 ### Supported transit systems
 
@@ -18,7 +19,7 @@ Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3
 
 ## Run
 
-The macOS toolbar app can be downloaded from [releases](https://github.com/jdamcd/arrivals-kmp/releases) and moved to your Applications folder. Other targets need to be built from source with the instructions below.
+The macOS toolbar app can be downloaded from [releases](https://github.com/jdamcd/arrivals-kmp/releases) and copied to your Applications folder. Other targets can to be built from source with the instructions below.
 
 ## Build
 
@@ -103,7 +104,7 @@ gtfs_api_key:               # API key
 
 ### CLI
 
-Command-line interface (JVM required). Run `./cli/install` to install the `arrivals` command on macOS, or run it via Gradle with `./gradlew :cli:run`.
+Command-line interface (JVM required). Run `./cli/install` to install the `arrivals` command on macOS or Linux, or run it via Gradle with `./gradlew :cli:run`.
 
 ![Screenshot: arrivals CLI command](readme-img/cli.png)
 
@@ -121,7 +122,7 @@ arrivals gtfs --station G28S \
   --schedule http://web.mta.info/developers/data/nyct/subway/google_transit.zip
 ```
 
-#### Search for stations
+#### Search for station codes
 
 ```bash
 arrivals search tfl "shoreditch high street" # or use list-stops for GTFS
