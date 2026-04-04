@@ -52,7 +52,7 @@ struct CustomGtfsSettingsView: View {
             coordinator.canSave = isValid
         }
 
-        Section("Authentication") {
+        Section("Authentication options") {
             TextField("API key param", text: $apiKeyParam)
                 .help("e.g. 'app_id', 'header:Authorization'")
             TextField("API key", text: $apiKey)

@@ -89,8 +89,8 @@ struct TflSettingsView: View {
                 }
                 .pickerStyle(.automatic)
 
-                TextField("Platform", text: $platformFilter)
-                    .help("Optional platform (e.g. 2, 5A)")
+                TextField("Platform", text: $platformFilter, prompt: Text("Optional"))
+                    .help("e.g. 2, 5A")
                     .autocorrectionDisabled()
                     .accessibilityIdentifier("platformField")
             }

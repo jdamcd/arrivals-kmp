@@ -76,12 +76,12 @@ struct BvgSettingsView: View {
 
         if isValid {
             Section {
-                TextField("Line", text: $lineFilter)
-                    .help("Optional line (e.g. U8, S41)")
+                TextField("Line", text: $lineFilter, prompt: Text("Optional"))
+                    .help("e.g. U8, S41")
                     .autocorrectionDisabled()
 
-                TextField("Platform", text: $platformFilter)
-                    .help("Optional platform (e.g. 1, 2)")
+                TextField("Platform", text: $platformFilter, prompt: Text("Optional"))
+                    .help("e.g. 1, 2")
                     .autocorrectionDisabled()
             }
         }
