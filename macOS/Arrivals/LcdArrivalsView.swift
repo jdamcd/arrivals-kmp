@@ -134,7 +134,6 @@ private struct LcdArrivalRow: View {
                 Spacer()
 
                 MinutesDisplay(arrival: arrival)
-                    .padding(.trailing, 4)
             }
             .padding(.horizontal, 6)
             .frame(maxHeight: .infinity)
@@ -199,5 +198,7 @@ private struct MinutesDisplay: View {
                 .font(.lcd(size: 6))
                 .foregroundColor(arrival.isDue ? .lcdRow.opacity(0.6) : .white.opacity(0.6))
         }
+        .fixedSize()
+        .frame(minWidth: 28, alignment: .center)
     }
 }
