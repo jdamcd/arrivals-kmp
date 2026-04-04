@@ -20,8 +20,6 @@ struct ArrivalsApp: App {
                 .background(WindowAccessor(window: $settingsWindow))
                 .onReceive(NotificationCenter.default.publisher(for: NSWindow.willCloseNotification)) { notif in
                     if let window = notif.object as? NSWindow {
-                        let settingsNum = settingsWindow?.windowNumber ?? -1
-                        print("Window \(window.windowNumber) is closing. Settings is \(settingsNum).")
                         if window.windowNumber == settingsWindow?.windowNumber {
                             NSApplication.accessoryMode()
                         }
@@ -79,7 +77,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let menuButton = statusItem?.button {
-            menuButton.image = NSImage(systemSymbolName: "tram.fill", accessibilityDescription: nil)
+            menuButton.image = NSImage(systemSymbolName: "tram.fill", accessibilityDescription: "Arrivals")
             menuButton.action = #selector(menuButtonToggle)
             menuButton.setAccessibilityIdentifier("statusBarButton")
         }

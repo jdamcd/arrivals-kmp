@@ -1,4 +1,6 @@
 enum DisplayStyle: String, CaseIterable {
+    static let storageKey = "displayStyle"
+
     case london, nyc
 
     var name: String {

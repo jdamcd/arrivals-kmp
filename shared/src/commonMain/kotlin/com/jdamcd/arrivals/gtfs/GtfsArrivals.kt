@@ -94,11 +94,11 @@ internal class GtfsArrivals(
         tripUpdate: TripUpdate,
         stopTimeUpdate: TripUpdate.StopTimeUpdate
     ): Arrival {
+        val seconds = secondsToStop(stopTimeUpdate.arrival?.time ?: stopTimeUpdate.departure?.time)
         val routeId = tripUpdate.trip.route_id
         val style = routes.styleFor(routeId)
-        val destinationId = tripUpdate.stop_time_update.last().stop_id!!
-        val destinationName = stops.stopIdToName(destinationId) ?: destinationId
-        val seconds = secondsToStop(stopTimeUpdate.arrival?.time ?: stopTimeUpdate.departure?.time)
+        val destinationId = tripUpdate.stop_time_update.last().stop_id
+        val destinationName = destinationId?.let { stops.stopIdToName(it) ?: it } ?: "Unknown"
         val lineLabel = style?.let { it.label ?: routeId }
         val lineBadge = lineLabel?.let {
             LineBadge(
@@ -123,12 +123,9 @@ internal class GtfsArrivals(
     )
 
     private fun secondsToStop(time: Long?): Int {
-        if (time == null) {
-            return Int.MAX_VALUE
-        } else {
-            val now = clock.now().epochSeconds
-            return (time - now).toInt()
-        }
+        if (time == null) return Int.MAX_VALUE
+        val now = clock.now().epochSeconds
+        return (time - now).toInt()
     }
 }
 

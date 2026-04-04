@@ -2,6 +2,8 @@
 import SwiftUI
 
 enum TransitSystem: String, CaseIterable {
+    static let storageKey = "settingsTransitSystem"
+
     case tfl, mta, bart, bvg, darwin, customGtfs
 
     var displayName: String {
@@ -19,8 +21,8 @@ enum TransitSystem: String, CaseIterable {
 struct SettingsView: View {
     @StateObject private var coordinator = SettingsCoordinator()
 
-    @AppStorage("settingsTransitSystem") private var selector: TransitSystem = .tfl
-    @AppStorage("displayStyle") private var displayStyle: DisplayStyle = .london
+    @State private var selector: TransitSystem = .tfl
+    @State private var displayStyle: DisplayStyle = .london
 
     var body: some View {
         VStack(spacing: 0) {
@@ -91,6 +93,8 @@ struct SettingsView: View {
                 .accessibilityIdentifier("cancelButton")
 
                 Button("Save") {
+                    UserDefaults.standard.set(displayStyle.rawValue, forKey: DisplayStyle.storageKey)
+                    UserDefaults.standard.set(selector.rawValue, forKey: TransitSystem.storageKey)
                     coordinator.onSave?()
                     NotificationCenter.default.post(name: .settingsSaved, object: nil)
                     NSApp.keyWindow?.close()
@@ -104,6 +108,18 @@ struct SettingsView: View {
         }
         .frame(width: 440, height: 360)
         .environmentObject(coordinator)
+        .onAppear {
+            if let raw = UserDefaults.standard.string(forKey: TransitSystem.storageKey),
+               let system = TransitSystem(rawValue: raw)
+            {
+                selector = system
+            }
+            if let raw = UserDefaults.standard.string(forKey: DisplayStyle.storageKey),
+               let style = DisplayStyle(rawValue: raw)
+            {
+                displayStyle = style
+            }
+        }
         .onChange(of: selector) { _, _ in
             coordinator.reset()
         }

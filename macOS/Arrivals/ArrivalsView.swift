@@ -8,7 +8,7 @@ struct ArrivalsView: View {
     @StateObject var viewModel = ArrivalsViewModel()
     @ObservedObject var popoverState: PopoverState
     @State private var timer: AnyCancellable?
-    @AppStorage("displayStyle") private var displayStyle: DisplayStyle = .london
+    @AppStorage(DisplayStyle.storageKey) private var displayStyle: DisplayStyle = .london
 
     let onOpenSettings: () -> Void
     let onQuit: () -> Void

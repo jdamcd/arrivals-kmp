@@ -67,12 +67,14 @@ private class DebouncingTextFieldModel: ObservableObject {
 struct BlinkViewModifier: ViewModifier {
     let duration: Double
     @State private var isVisible: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content
             .opacity(isVisible ? 0 : 1)
             .animation(.easeOut(duration: duration).repeatForever(), value: isVisible)
             .onAppear {
+                guard !reduceMotion else { return }
                 withAnimation {
                     isVisible = true
                 }
