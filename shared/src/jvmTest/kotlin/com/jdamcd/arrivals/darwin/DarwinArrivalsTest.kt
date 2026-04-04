@@ -275,6 +275,32 @@ class DarwinArrivalsTest {
     }
 
     @Test
+    fun `handles midnight crossing correctly`() = runBlocking<Unit> {
+        // generatedAt at 23:55 GMT, departure at 00:05 should be ~10 min away
+        val midnightBoard = mockBoard.copy(
+            generatedAt = "2025-11-25T23:55:00Z",
+            trainServices = listOf(
+                ApiTrainService(
+                    serviceIdUrlSafe = "midnight1",
+                    std = "00:05",
+                    etd = "On time",
+                    platform = "1",
+                    operator = "Op",
+                    operatorCode = "O",
+                    isCancelled = false,
+                    destination = listOf(ApiCallingPoint("Late Night Dest", "LN"))
+                )
+            )
+        )
+        coEvery { api.fetchDepartures("CLJ", any()) } returns midnightBoard
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].displayTime shouldBe "10 min"
+    }
+
+    @Test
     fun `excludes departures more than 2 hours away`() = runBlocking<Unit> {
         // generatedAt is 10:00, so 12:01 is more than 2 hours
         val board = mockBoard.copy(
