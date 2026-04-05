@@ -2,8 +2,9 @@
 
 Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3 targets: a macOS toolbar app, a CLI, and a desktop app (for Raspberry Pi kiosk displays). 
 
-![Screenshot: macOS status bar, dot matrix style](readme-img/led.png)
-![Screenshot: macOS status bar, LCD style](readme-img/lcd.png)
+| Dot Matrix | LCD |
+|:---:|:---:|
+| ![Screenshot: macOS status bar, dot matrix style](readme-img/led.png) | ![Screenshot: macOS status bar, LCD style](readme-img/lcd.png) |
 
 ### Supported transit systems
 
@@ -40,7 +41,7 @@ The macOS toolbar app can be downloaded from [releases](https://github.com/jdamc
 ### Targets
 
 | Target | Platform | Description | Quick start |
-|--------|----------|-------------|------------|
+|--------|----------|-------------|-------------|
 | **macOS** | macOS | SwiftUI status bar app | Open `macOS/Arrivals.xcodeproj` in Xcode and click the Run button |
 | **Desktop** | Linux (incl. Raspberry Pi), macOS, Windows | Compose Multiplatform window with fullscreen mode | `./gradlew :desktop:run` |
 | **CLI** | JVM (all platforms) | Command-line interface | `./cli/install` |
