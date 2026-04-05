@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+    <link rel="apple-touch-icon" href="img/icon.png">
+    <title>Arrivals</title>
+    <meta name="description" content="Public transit in your macOS menu bar.">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --accent: #4db8ff;
+            --accent-soft: rgba(77, 184, 255, 0.08);
+            --bg: #0b0b12;
+            --text: #c0c0cc;
+            --text-muted: #6a6a80;
+            --text-bright: #eeeef2;
+            --border: rgba(255, 255, 255, 0.06);
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Gradient background */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% -10%, rgba(90, 60, 180, 0.35), transparent 60%),
+                radial-gradient(ellipse 60% 50% at 20% 50%, rgba(30, 80, 160, 0.2), transparent 50%),
+                radial-gradient(ellipse 50% 40% at 85% 30%, rgba(60, 140, 200, 0.15), transparent 50%),
+                radial-gradient(ellipse 40% 50% at 60% 90%, rgba(100, 40, 120, 0.12), transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Subtle noise overlay */
+        .bg-noise {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---- HERO ---- */
+        .hero {
+            padding: 100px 0 64px;
+            text-align: center;
+        }
+
+        .hero-icon {
+            width: 96px;
+            height: 96px;
+            margin-bottom: 28px;
+            border-radius: 22px;
+            opacity: 0;
+            animation: fadeUp 0.7s ease forwards;
+        }
+
+        .hero h1 {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: clamp(2rem, 5vw, 2.6rem);
+            color: var(--text-bright);
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 14px;
+            opacity: 0;
+            animation: fadeUp 0.7s ease 0.08s forwards;
+        }
+
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text);
+            max-width: 420px;
+            margin: 0 auto 32px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            color: #0b0b12;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 12px 28px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-download svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.6;
+        }
+
+        .hero-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .hero-meta a {
+            color: var(--text-muted);
+            text-underline-offset: 2px;
+        }
+
+        /* ---- LIVE DEMO ---- */
+        .demo {
+            position: relative;
+            padding: 32px 0 40px;
+        }
+
+        .demo-board {
+            position: relative;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .demo-live-badge {
+            position: absolute;
+            bottom: 5%;
+            right: 1.5%;
+            font-size: clamp(0.4rem, 1.2vw, 0.6rem);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: #ff4444;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+
+        #arrivals-board {
+            display: flex;
+            justify-content: center;
+        }
+
+        #arrivals-board canvas {
+            max-width: 100%;
+            height: auto !important;
+        }
+
+        /* ---- SCREENSHOTS ---- */
+        .screenshots {
+            padding: 28px 0;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .screenshot-card {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+        }
+
+        .screenshot-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .screenshot-caption {
+            font-size: 0.78rem;
+            color: var(--text);
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 28px;
+        }
+
+        .feature {
+            font-size: 0.9rem;
+            padding-left: 18px;
+            position: relative;
+            color: var(--text);
+        }
+
+        .feature::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.6;
+        }
+
+        /* ---- SYSTEMS ---- */
+        .systems {
+            padding: 28px 0;
+        }
+
+        .section-title {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 1.15rem;
+            color: var(--text-bright);
+            letter-spacing: -0.01em;
+            margin-bottom: 20px;
+        }
+
+        .systems-table {
+            border-collapse: collapse;
+        }
+
+        .systems-table td {
+            padding: 9px 16px 9px 0;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .systems-table td:last-child {
+            padding-right: 0;
+        }
+
+        .systems-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .systems-table .city {
+            font-weight: 500;
+            color: var(--text-bright);
+            white-space: nowrap;
+            padding-right: 48px;
+        }
+
+        .systems-table .system {
+            color: var(--text);
+        }
+
+        .systems-note {
+            margin-top: 14px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .systems-note a {
+            color: var(--text);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        /* ---- CALLOUT ---- */
+        .callout {
+            padding: 28px 0;
+            text-align: center;
+        }
+
+        .callout p {
+            font-size: 0.92rem;
+            color: var(--text);
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 16px 24px;
+            display: block;
+        }
+
+        .callout a {
+            color: var(--text);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        /* ---- FOOTER ---- */
+        .footer {
+            padding: 28px 0 48px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.15s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-bright);
+        }
+
+        /* ---- ANIMATIONS ---- */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 560px) {
+            .hero { padding: 64px 0 40px; }
+            .screenshots-grid { grid-template-columns: 1fr; }
+            .features { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-noise"></div>
+
+<div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+        <img src="img/icon.png" alt="Arrivals" class="hero-icon">
+        <h1>Public transit in your<br>macOS menu bar</h1>
+
+        <!-- LIVE DEMO -->
+        <div class="demo">
+            <div class="demo-board">
+                <div id="arrivals-board"
+                     data-stop="127S"
+                     data-feed="1-7"
+                     data-width="670"
+                     data-height="190">
+                </div>
+                <span class="demo-live-badge">LIVE</span>
+            </div>
+        </div>
+
+        <p>Free, real-time public transit arrival times for London, New York, Berlin, and more.</p>
+        <div class="hero-actions">
+            <a href="https://github.com/jdamcd/arrivals-kmp/releases/download/v1.0/Arrivals.dmg" class="btn-download">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Arrivals 1.0
+            </a>
+            <span class="hero-meta">macOS 14+ &middot; <a href="https://github.com/jdamcd/arrivals-kmp/releases/latest">Release notes</a></span>
+        </div>
+    </section>
+
+    <!-- SCREENSHOTS -->
+    <section class="screenshots">
+        <h2 class="section-title">Screenshots</h2>
+        <div class="screenshots-grid">
+            <div class="screenshot-card">
+                <img src="img/led.png" alt="LED dot-matrix display showing London arrivals" loading="lazy">
+                <div class="screenshot-caption">Dot Matrix</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="img/lcd.png" alt="LCD display showing NYC Subway arrivals" loading="lazy">
+                <div class="screenshot-caption">LCD</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SUPPORTED SYSTEMS -->
+    <section class="systems">
+        <h2 class="section-title">Supported transit systems</h2>
+        <table class="systems-table">
+            <tr>
+                <td class="city">London</td>
+                <td class="system">Underground, Overground, DLR</td>
+            </tr>
+            <tr>
+                <td class="city">UK</td>
+                <td class="system">National Rail</td>
+            </tr>
+            <tr>
+                <td class="city">New York</td>
+                <td class="system">Subway</td>
+            </tr>
+            <tr>
+                <td class="city">SF Bay Area</td>
+                <td class="system">BART</td>
+            </tr>
+            <tr>
+                <td class="city">Berlin</td>
+                <td class="system">U-Bahn, S-Bahn, Tram</td>
+            </tr>
+        </table>
+        <p class="systems-note">...or any custom <a href="https://mobilitydatabase.org">GTFS-RT feed</a></p>
+    </section>
+
+    <section class="callout">
+        <p>Also available in your CLI and on your Raspberry Pi – instructions on <a href="https://github.com/jdamcd/arrivals-kmp">GitHub</a></p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="https://github.com/jdamcd/arrivals-kmp">GitHub</a>
+            <a href="https://github.com/jdamcd/arrivals-kmp/blob/main/LICENSE">Licence</a>
+        </div>
+    </footer>
+
+</div>
+
+<script src="arrivals.js"></script>
+
+</body>
+</html>
