@@ -129,7 +129,7 @@ internal class GtfsArrivals(
     }
 }
 
-internal data class RouteStyle(
+data class RouteStyle(
     val color: String,
     val label: String? = null,
     val textColor: String? = null

@@ -8,6 +8,7 @@ import com.jdamcd.arrivals.gtfs.ApiAuth
 import com.jdamcd.arrivals.gtfs.GtfsApi
 import com.jdamcd.arrivals.gtfs.GtfsArrivals
 import com.jdamcd.arrivals.gtfs.GtfsStopSearch
+import com.jdamcd.arrivals.gtfs.createGtfsApi
 import com.jdamcd.arrivals.gtfs.system.Bart
 import com.jdamcd.arrivals.gtfs.system.Mta
 import com.jdamcd.arrivals.tfl.TflApi
@@ -48,7 +49,7 @@ fun commonModule() = module {
     single<Clock> { Clock.System }
     single { Settings() }
     single { TflApi(get()) }
-    single { GtfsApi(get()) }
+    single<GtfsApi> { createGtfsApi(get()) }
     single { DarwinApi(get()) }
     single { TflArrivals(get(), get(), get()) }
     single { GtfsArrivals(get(), get(), get()) }

@@ -2,7 +2,7 @@ package com.jdamcd.arrivals.gtfs
 
 import com.jdamcd.arrivals.gtfs.csv.parseCsvRows
 
-internal class GtfsStops(stops: String) {
+class GtfsStops(stops: String) {
 
     private val stopIdToName: Map<String, String> = buildMap {
         val (header, rows) = parseCsvRows(stops)

@@ -2,7 +2,7 @@ package com.jdamcd.arrivals.gtfs
 
 import com.jdamcd.arrivals.gtfs.csv.parseCsvRows
 
-internal class GtfsRoutes(
+class GtfsRoutes(
     routes: String,
     agencyExpressOverrides: Map<String, Map<String, String>> = emptyMap()
 ) {

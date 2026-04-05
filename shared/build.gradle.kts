@@ -14,12 +14,27 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
     jvm()
+    js(IR) {
+        browser()
+    }
     listOf(
         macosArm64(),
         macosX64()
     ).forEach {
         it.binaries.framework {
             baseName = "ArrivalsLib"
+        }
+    }
+
+    applyDefaultHierarchyTemplate {
+        common {
+            group("nonJs") {
+                withJvm()
+                group("macos") {
+                    withMacosArm64()
+                    withMacosX64()
+                }
+            }
         }
     }
 
@@ -47,6 +62,10 @@ kotlin {
             implementation(libs.coroutines.test)
             implementation(libs.mockk)
             implementation(libs.ktor.client.mock)
+        }
+
+        jsMain.dependencies {
+            implementation(libs.ktor.client.js)
         }
 
         macosMain.dependencies {
