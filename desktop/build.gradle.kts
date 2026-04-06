@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":shared"))
     implementation(compose.desktop.currentOs)
     implementation(libs.compose.material3)
-    implementation(libs.compose.icons.extended)
+    implementation(libs.compose.icons.core)
     implementation(libs.compose.viewmodel)
     implementation(libs.coroutines.swing)
     implementation(libs.koin)

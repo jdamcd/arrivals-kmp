@@ -1,23 +1,23 @@
 [versions]
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 buildKonfig = "0.17.1"
-spotless = "8.2.1"
+spotless = "8.3.0"
 ktlint = "1.8.0"
-ktor = "3.4.0"
+ktor = "3.4.1"
 coroutines = "1.10.2"
 wire = "5.5.0"
-okio = "3.16.4"
-koin = "4.1.1"
+okio = "3.17.0"
+koin = "4.2.0"
 mockk = "1.14.9"
-kotest = "6.1.0"
+kotest = "6.1.11"
 logging = "2.0.17"
 clikt = "5.1.0"
-composeMP = "1.10.1"
-composeMaterial3 = "1.9.0-beta03"
+composeMP = "1.10.3"
+composeMaterial3 = "1.9.0"
 composeIcons = "1.7.3"
-viewModel = "2.9.6"
-snakeYaml = "2.5"
-json = "1.9.0"
+viewModel = "2.10.0"
+snakeYaml = "2.6"
+json = "1.10.0"
 datetime = "0.7.1"
 
 [libraries]
@@ -35,7 +35,7 @@ koin = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 logging-nop = { group = "org.slf4j", name = "slf4j-nop", version.ref = "logging" }
 clikt = { group = "com.github.ajalt.clikt", name = "clikt", version.ref = "clikt" }
 compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3-desktop", version.ref = "composeMaterial3" }
-compose-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended-desktop", version.ref = "composeIcons" }
+compose-icons-core = { group = "org.jetbrains.compose.material", name = "material-icons-core-desktop", version.ref = "composeIcons" }
 compose-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "viewModel" }
 coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "coroutines" }
 snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeYaml" }
