@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    alias(libs.plugins.kotlin.serialization)
     application
 }
 
@@ -13,4 +14,5 @@ dependencies {
     implementation(libs.koin)
     implementation(libs.kotlin.coroutines)
     implementation(libs.clikt)
+    implementation(libs.kotlinx.serialization.json)
 }

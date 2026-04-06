@@ -13,8 +13,12 @@ kotest = "6.1.0"
 logging = "2.0.17"
 clikt = "5.1.0"
 composeMP = "1.10.1"
+composeMaterial3 = "1.9.0-beta03"
+composeIcons = "1.7.3"
 viewModel = "2.9.6"
 snakeYaml = "2.5"
+json = "1.9.0"
+datetime = "0.7.1"
 
 [libraries]
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
@@ -24,17 +28,18 @@ ktor-client-macos = { group = "io.ktor", name = "ktor-client-darwin", version.re
 ktor-client-jvm = { group = "io.ktor", name = "ktor-client-java", version.ref = "ktor" }
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlin-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version = "0.7.1" }
+kotlin-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 koin = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 logging-nop = { group = "org.slf4j", name = "slf4j-nop", version.ref = "logging" }
 clikt = { group = "com.github.ajalt.clikt", name = "clikt", version.ref = "clikt" }
-compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3-desktop", version = "1.9.0-beta03" }
-compose-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended-desktop", version = "1.7.3" }
+compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3-desktop", version.ref = "composeMaterial3" }
+compose-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended-desktop", version.ref = "composeIcons" }
 compose-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "viewModel" }
 coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "coroutines" }
 snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeYaml" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "json" }
 
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }

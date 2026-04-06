@@ -2,8 +2,10 @@ package com.jdamcd.arrivals.cli
 
 import com.github.ajalt.clikt.command.SuspendingCliktCommand
 import com.github.ajalt.clikt.command.main
+import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -14,6 +16,7 @@ import com.github.ajalt.mordant.table.Borders
 import com.github.ajalt.mordant.table.ColumnWidth
 import com.github.ajalt.mordant.table.table
 import com.jdamcd.arrivals.Arrivals
+import com.jdamcd.arrivals.ArrivalsInfo
 import com.jdamcd.arrivals.GtfsSearch
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.SettingsConfig
@@ -22,6 +25,8 @@ import com.jdamcd.arrivals.StopSearch
 import com.jdamcd.arrivals.TflSearch
 import com.jdamcd.arrivals.initKoin
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.named
@@ -47,6 +52,8 @@ fun main(args: Array<String>) {
 }
 
 private class Cli : SuspendingCliktCommand("arrivals") {
+    val json by option("--json").flag().help("JSON output")
+
     override suspend fun run() = Unit
 }
 
@@ -185,7 +192,7 @@ private class SearchTfl :
                 }
             }
         } catch (e: Exception) {
-            echo(e.message)
+            echoError(e.message)
         }
     }
 }
@@ -205,7 +212,7 @@ private class SearchStops(
         try {
             displayResults(search.searchStops(query), format)
         } catch (e: Exception) {
-            echo(e.message)
+            echoError(e.message)
         }
     }
 }
@@ -238,7 +245,7 @@ private class ListStops :
         try {
             displayResults(gtfsSearch.getStops(realtime))
         } catch (e: Exception) {
-            echo(e.message)
+            echoError(e.message)
         }
     }
 }
@@ -256,24 +263,73 @@ private fun SuspendingCliktCommand.displayResults(
     }
 }
 
+private val SuspendingCliktCommand.jsonOutput: Boolean
+    get() = (currentContext.parent?.command as? Cli)?.json == true
+
 private suspend fun SuspendingCliktCommand.fetchAndDisplay(arrivals: Arrivals) {
-    try {
-        val result = arrivals.latest()
-        echo(yellow(result.station))
-        echo(
-            table {
-                tableBorders = Borders.ALL
-                cellBorders = Borders.NONE
-                column(0) { width = ColumnWidth.Fixed(24) }
-                column(1) { align = TextAlign.RIGHT }
-                body {
-                    result.arrivals.forEach {
-                        row(yellow(it.displayName.take(24)), yellow(it.displayTime))
-                    }
-                }
-            }
-        )
-    } catch (e: Exception) {
-        echo(e.message)
+    if (jsonOutput) {
+        try {
+            echo(Json.encodeToString(arrivals.latest().toJsonResponse()))
+        } catch (e: Exception) {
+            echo(Json.encodeToString(ErrorResponse(e.message ?: "Unknown error")))
+            throw ProgramResult(1)
+        }
+    } else {
+        try {
+            displayTable(arrivals.latest())
+        } catch (e: Exception) {
+            echoError(e.message)
+        }
     }
 }
+
+private fun SuspendingCliktCommand.echoError(message: String?): Nothing {
+    echo(message)
+    throw ProgramResult(1)
+}
+
+private fun SuspendingCliktCommand.displayTable(result: ArrivalsInfo) {
+    echo(yellow(result.station))
+    echo(
+        table {
+            tableBorders = Borders.ALL
+            cellBorders = Borders.NONE
+            column(0) { width = ColumnWidth.Fixed(24) }
+            column(1) { align = TextAlign.RIGHT }
+            body {
+                result.arrivals.forEach {
+                    row(yellow(it.displayName.take(24)), yellow(it.displayTime))
+                }
+            }
+        }
+    )
+}
+
+private fun ArrivalsInfo.toJsonResponse() = ArrivalsResponse(
+    station = station,
+    arrivals = arrivals.map {
+        ArrivalResponse(
+            displayName = it.displayName,
+            displayTime = it.displayTime,
+            isDue = it.isDue
+        )
+    }
+)
+
+@Serializable
+data class ArrivalsResponse(
+    val station: String,
+    val arrivals: List<ArrivalResponse>
+)
+
+@Serializable
+data class ArrivalResponse(
+    val displayName: String,
+    val displayTime: String,
+    val isDue: Boolean
+)
+
+@Serializable
+data class ErrorResponse(
+    val error: String
+)
