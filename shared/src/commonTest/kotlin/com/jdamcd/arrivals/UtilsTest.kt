@@ -132,6 +132,19 @@ class UtilsTest {
     }
 
     @Test
+    fun `filterLedChars normalises eszett`() {
+        filterLedChars("Warschauer Stra\u00dfe") shouldBe "Warschauer Strasse"
+    }
+
+    @Test
+    fun `filterLedChars normalises umlauts`() {
+        filterLedChars("M\u00f6ckernbr\u00fccke") shouldBe "Moeckernbruecke"
+        filterLedChars("Sch\u00f6nhauser Allee") shouldBe "Schoenhauser Allee"
+        filterLedChars("M\u00e4rkisches Museum") shouldBe "Maerkisches Museum"
+        filterLedChars("\u00c4\u00d6\u00dc") shouldBe "AeOeUe"
+    }
+
+    @Test
     fun `filterLedChars handles empty string`() {
         filterLedChars("") shouldBe ""
     }

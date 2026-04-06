@@ -38,14 +38,30 @@ fun matchesPlatformFilter(platform: String, filter: String): Boolean {
 /*
  * The London Underground LED font supports A-Z, a-z, 0-9 and - ' & * + : , .
  * This utility normalises common symbols to ASCII and strips unsupported chars.
+ *
+ * TODO: Investigate Unicode NFKD normalisation to support more languages
  */
-private val LED_FILTER = Regex("[^a-zA-Z0-9 \\-'&*+:,.]")
-
-fun filterLedChars(input: String): String = LED_FILTER.replace(
-    input
-        .replace('\u2018', '\'')
-        .replace('\u2019', '\'')
-        .replace('\u2013', '-')
-        .replace('\u2014', '-'),
-    ""
+private val LED_ALLOWED = Regex("[a-zA-Z0-9 \\-'&*+:,.]")
+private val LED_CHAR_MAP = mapOf(
+    '\u2018' to "'",
+    '\u2019' to "'",
+    '\u2013' to "-",
+    '\u2014' to "-",
+    '\u00df' to "ss",
+    '\u00e4' to "ae",
+    '\u00f6' to "oe",
+    '\u00fc' to "ue",
+    '\u00c4' to "Ae",
+    '\u00d6' to "Oe",
+    '\u00dc' to "Ue"
 )
+
+fun filterLedChars(input: String): String = buildString(input.length) {
+    for (c in input) {
+        val mapped = LED_CHAR_MAP[c]
+        when {
+            mapped != null -> append(mapped)
+            LED_ALLOWED.matches(c.toString()) -> append(c)
+        }
+    }
+}
