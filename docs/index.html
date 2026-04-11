@@ -122,6 +122,7 @@
             border-radius: 10px;
             text-decoration: none;
             transition: transform 0.15s ease, box-shadow 0.15s ease;
+            will-change: transform;
         }
 
         .btn-download:hover {
@@ -158,6 +159,7 @@
             overflow: hidden;
             max-width: 100%;
             margin: 0 auto;
+            aspect-ratio: 670 / 190;
         }
 
         .demo-live-badge {
@@ -257,16 +259,13 @@
 
         .systems-table {
             border-collapse: collapse;
+            width: 100%;
         }
 
         .systems-table td {
-            padding: 9px 16px 9px 0;
+            padding: 9px 0;
             border-bottom: 1px solid var(--border);
             vertical-align: top;
-        }
-
-        .systems-table td:last-child {
-            padding-right: 0;
         }
 
         .systems-table tr:last-child td {
@@ -277,11 +276,11 @@
             font-weight: 500;
             color: var(--text-bright);
             white-space: nowrap;
-            padding-right: 48px;
         }
 
         .systems-table .system {
             color: var(--text);
+            text-align: right;
         }
 
         .systems-note {
