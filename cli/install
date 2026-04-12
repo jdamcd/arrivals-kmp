@@ -34,6 +34,14 @@ esac
 echo "Building native CLI for ${OS}-${ARCH}..."
 "$PROJECT_DIR/gradlew" -p "$PROJECT_DIR" ":cli:$TASK" -q
 
+if [ ! -f "$BINARY" ]; then
+    echo "Error: binary not found at $BINARY"
+    echo "The Kotlin/Native compiler cannot run on this host architecture."
+    echo "Cross-compile from a x86_64 Linux or macOS machine instead:"
+    echo "  ./gradlew :cli:$TASK"
+    exit 1
+fi
+
 echo "Installing to $LINK (sudo)..."
 sudo rm -f "$LINK"
 sudo cp "$BINARY" "$LINK"

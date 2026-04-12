@@ -56,7 +56,7 @@ kotlin {
         }
 
         linuxMain.dependencies {
-            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.curl)
         }
     }
 }
