@@ -92,7 +92,7 @@
             line-height: 1.15;
             margin-bottom: 14px;
             opacity: 0;
-            animation: fadeUp 0.7s ease 0.08s forwards;
+            animation: fadeUp 0.7s ease 0.1s forwards;
         }
 
         .hero p {
@@ -160,6 +160,7 @@
             max-width: 100%;
             margin: 0 auto;
             aspect-ratio: 670 / 190;
+            background: #000;
         }
 
         .demo-live-badge {
@@ -183,6 +184,12 @@
         #arrivals-board canvas {
             max-width: 100%;
             height: auto !important;
+            opacity: 0;
+            animation: fadeIn 0.7s ease 0.1s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
 
         /* ---- SCREENSHOTS ---- */
