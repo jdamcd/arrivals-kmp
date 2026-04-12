@@ -14,6 +14,8 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
     jvm()
+    linuxX64()
+    linuxArm64()
     listOf(
         macosArm64(),
         macosX64()
@@ -51,6 +53,10 @@ kotlin {
 
         macosMain.dependencies {
             implementation(libs.ktor.client.macos)
+        }
+
+        linuxMain.dependencies {
+            implementation(libs.ktor.client.cio)
         }
     }
 }

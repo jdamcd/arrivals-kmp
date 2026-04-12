@@ -44,7 +44,7 @@ The macOS toolbar app can be downloaded from [releases](https://github.com/jdamc
 |--------|----------|-------------|-------------|
 | **macOS** | macOS | SwiftUI status bar app | Open `macOS/Arrivals.xcodeproj` in Xcode and click the Run button |
 | **Desktop** | Linux (incl. Raspberry Pi), macOS, Windows | Compose Multiplatform window with fullscreen mode | `./gradlew :desktop:run` |
-| **CLI** | JVM (all platforms) | Command-line interface | `./cli/install` |
+| **CLI** | Linux, macOS, JVM | Command-line interface | `./cli/install` |
 
 ---
 
@@ -105,7 +105,7 @@ gtfs_api_key:               # API key
 
 ### CLI
 
-Command-line interface (JVM required). Run `./cli/install` to install the `arrivals` command on macOS or Linux, or run it via Gradle with `./gradlew :cli:run`.
+Command-line interface, compiled as a native binary. Run `./cli/install` to build and install the `arrivals` command for your platform, or run it via Gradle with `./gradlew :cli:jvmRun`.
 
 ![Screenshot: arrivals CLI command](readme-img/cli.png)
 

@@ -79,7 +79,7 @@ fun commonModule() = module {
                 )
             }
             install(Logging) {
-                level = LogLevel.INFO
+                level = LogLevel.NONE
             }
         }
     }

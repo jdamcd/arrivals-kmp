@@ -41,7 +41,7 @@ jobs:
       run: ./gradlew allTests
 
     - name: Smoke test CLI
-      run: ./gradlew :cli:run --args="--help"
+      run: ./gradlew :cli:jvmRun --args="--help"
 
     - name: Publish test results
       uses: dorny/test-reporter@v2.1.1

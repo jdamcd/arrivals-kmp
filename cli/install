@@ -3,14 +3,39 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-
-echo "Building CLI..."
-"$PROJECT_DIR/gradlew" -p "$PROJECT_DIR" :cli:installDist -q
-
-TARGET="$SCRIPT_DIR/build/install/arrivals/bin/arrivals"
 LINK="/usr/local/bin/arrivals"
 
+OS="$(uname -s)"
+ARCH="$(uname -m)"
+
+case "${OS}-${ARCH}" in
+    Darwin-arm64)
+        TASK="linkReleaseExecutableMacosArm64"
+        BINARY="$SCRIPT_DIR/build/bin/macosArm64/releaseExecutable/cli.kexe"
+        ;;
+    Darwin-x86_64)
+        TASK="linkReleaseExecutableMacosX64"
+        BINARY="$SCRIPT_DIR/build/bin/macosX64/releaseExecutable/cli.kexe"
+        ;;
+    Linux-x86_64)
+        TASK="linkReleaseExecutableLinuxX64"
+        BINARY="$SCRIPT_DIR/build/bin/linuxX64/releaseExecutable/cli.kexe"
+        ;;
+    Linux-aarch64)
+        TASK="linkReleaseExecutableLinuxArm64"
+        BINARY="$SCRIPT_DIR/build/bin/linuxArm64/releaseExecutable/cli.kexe"
+        ;;
+    *)
+        echo "Unsupported platform: ${OS}-${ARCH}"
+        exit 1
+        ;;
+esac
+
+echo "Building native CLI for ${OS}-${ARCH}..."
+"$PROJECT_DIR/gradlew" -p "$PROJECT_DIR" ":cli:$TASK" -q
+
 echo "Installing to $LINK (sudo)..."
-sudo ln -sf "$TARGET" "$LINK"
+sudo rm -f "$LINK"
+sudo cp "$BINARY" "$LINK"
 
 echo "Installed. Run 'arrivals --help' to start."
