@@ -35,7 +35,8 @@ jobs:
       run: ./gradlew spotlessCheck
 
     - name: Build
-      run: ./gradlew assemble
+      # Skip native CLI linking on Linux due to Clikt cache bug: https://github.com/ajalt/clikt/issues/598
+      run: ./gradlew assemble -x linkDebugExecutableLinuxX64 -x linkDebugExecutableLinuxArm64 -x linkReleaseExecutableLinuxX64 -x linkReleaseExecutableLinuxArm64
 
     - name: Test
       run: ./gradlew allTests
