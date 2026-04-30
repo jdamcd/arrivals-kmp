@@ -101,8 +101,8 @@ struct MtaSettingsView: View {
 private class MtaSettingsViewModel: ObservableObject {
     @Published var state: SettingsState = .idle
 
-    private let fetcher = MacDI().mtaSearch
-    private let settings = MacDI().settings
+    private let fetcher = MacDI.shared.mtaSearch
+    private let settings = MacDI.shared.settings
     private var loadTask: Task<Void, Never>?
 
     deinit {

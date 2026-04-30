@@ -8,7 +8,7 @@ struct ArrivalsApp: App {
 
     init() {
         ArrivalsKt.doInitKoin()
-        let settings = MacDI().settings
+        let settings = MacDI.shared.settings
         if settings.stopId.isEmpty {
             settings.applyColdStart()
         }

@@ -4,7 +4,7 @@ import SwiftUI
 struct CustomGtfsSettingsView: View {
     @EnvironmentObject var coordinator: SettingsCoordinator
 
-    private let settings = MacDI().settings
+    private let settings = MacDI.shared.settings
 
     @State private var realtimeUrl: String
     @State private var scheduleUrl: String

@@ -5,7 +5,7 @@ import SwiftUI
 class StopSearchViewModel: ObservableObject {
     @Published var state: SettingsState = .idle
 
-    let settings = MacDI().settings
+    let settings = MacDI.shared.settings
 
     private let searchStops: (String) async throws -> [StopResult]
     private var searchTask: Task<Void, Never>?

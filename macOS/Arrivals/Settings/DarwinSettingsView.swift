@@ -80,7 +80,7 @@ struct DarwinSettingsView: View {
 @MainActor
 private class DarwinSettingsViewModel: StopSearchViewModel {
     init() {
-        let search = MacDI().darwinSearch
+        let search = MacDI.shared.darwinSearch
         super.init { query in try await search.searchStops(query: query) }
     }
 

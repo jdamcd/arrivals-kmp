@@ -6,7 +6,7 @@ class ArrivalsViewModel: ObservableObject {
     @Published var state: ArrivalsState = .idle
     @Published var loading = false
 
-    private let fetcher = MacDI().arrivals
+    private let fetcher = MacDI.shared.arrivals
 
     func load() {
         if !loading {

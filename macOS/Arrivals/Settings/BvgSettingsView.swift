@@ -91,7 +91,7 @@ struct BvgSettingsView: View {
 @MainActor
 private class BvgSettingsViewModel: StopSearchViewModel {
     init() {
-        let search = MacDI().bvgSearch
+        let search = MacDI.shared.bvgSearch
         super.init { query in try await search.searchStops(query: query) }
     }
 

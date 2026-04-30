@@ -59,10 +59,10 @@ struct SettingsView: View {
                 case .bart:
                     let bart = Bart()
                     GtfsFeedSettingsView(
-                        fetcher: MacDI().bartSearch,
+                        fetcher: MacDI.shared.bartSearch,
                         feedUrl: bart.REALTIME,
                         save: { stopId in
-                            MacDI().settings.saveGtfsConfig(
+                            MacDI.shared.settings.saveGtfsConfig(
                                 stopId: stopId,
                                 realtimeUrl: bart.REALTIME,
                                 scheduleUrl: bart.SCHEDULE,

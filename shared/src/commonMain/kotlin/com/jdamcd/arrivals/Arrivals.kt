@@ -33,7 +33,7 @@ fun initKoin() = startKoin {
 }
 
 @Suppress("Unused")
-class MacDI : KoinComponent {
+object MacDI : KoinComponent {
     val arrivals: Arrivals by inject()
     val settings: Settings by inject()
     val tflSearch: TflSearch by inject()

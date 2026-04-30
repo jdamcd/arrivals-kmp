@@ -104,7 +104,7 @@ private class TflSettingsViewModel: StopSearchViewModel {
     private var disambiguateTask: Task<Void, Never>?
 
     init() {
-        let search = MacDI().tflSearch
+        let search = MacDI.shared.tflSearch
         tflSearch = search
         super.init { query in try await search.searchStops(query: query) }
     }
