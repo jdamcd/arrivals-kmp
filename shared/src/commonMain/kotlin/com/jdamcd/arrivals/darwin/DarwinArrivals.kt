@@ -10,7 +10,12 @@ import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.StopSearch
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
@@ -75,7 +80,7 @@ internal class DarwinArrivals(
         }
     }
 
-    private fun createArrival(service: ApiTrainService, referenceTime: Long): Arrival {
+    private fun createArrival(service: ApiTrainService, referenceTime: Instant): Arrival {
         val destination = service.destination.lastOrNull()?.locationName ?: "Unknown"
         val seconds = calculateSecondsToStop(service.std, service.etd, referenceTime)
 
@@ -86,28 +91,22 @@ internal class DarwinArrivals(
         )
     }
 
-    private fun calculateSecondsToStop(std: String?, etd: String, referenceSeconds: Long): Int {
+    private fun calculateSecondsToStop(std: String?, etd: String, referenceTime: Instant): Int {
         val departureTime = when {
             etd == "On time" && std != null -> std
             etd.contains(":") -> etd
             else -> return Int.MAX_VALUE
         }
 
-        val (departureHours, departureMinutes) = parseTimeString(departureTime)
-        val currentSeconds = (referenceSeconds % 86400).toInt()
-        val currentHours = currentSeconds / 3600
-        val currentMinutes = (currentSeconds % 3600) / 60
-
-        val departureSecondsOfDay = (departureHours * 3600) + (departureMinutes * 60)
-        val currentSecondsOfDay = (currentHours * 3600) + (currentMinutes * 60)
-
-        var diff = departureSecondsOfDay - currentSecondsOfDay
-
-        if (diff < 0) {
-            diff += 86400
+        val (hours, minutes) = parseTimeString(departureTime)
+        val referenceDate = referenceTime.toLocalDateTime(LONDON).date
+        val sameDay = referenceDate.atTime(LocalTime(hours, minutes)).toInstant(LONDON)
+        val departureInstant = if (sameDay < referenceTime) {
+            referenceDate.plus(1, DateTimeUnit.DAY).atTime(LocalTime(hours, minutes)).toInstant(LONDON)
+        } else {
+            sameDay
         }
-
-        return diff
+        return (departureInstant - referenceTime).inWholeSeconds.toInt()
     }
 
     private fun parseTimeString(time: String): Pair<Int, Int> {
@@ -117,12 +116,10 @@ internal class DarwinArrivals(
         return Pair(hours, minutes)
     }
 
-    private fun parseGeneratedAt(timestamp: String): Long = try {
-        val instant = Instant.parse(timestamp)
-        val local = instant.toLocalDateTime(LONDON)
-        ((local.hour * 3600) + (local.minute * 60) + local.second).toLong()
+    private fun parseGeneratedAt(timestamp: String): Instant = try {
+        Instant.parse(timestamp)
     } catch (_: Exception) {
-        clock.now().epochSeconds
+        clock.now()
     }
 
     private fun isValidDeparture(etd: String): Boolean = etd.contains(":") || etd == "On time"
