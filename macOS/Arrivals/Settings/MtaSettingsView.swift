@@ -103,6 +103,7 @@ private class MtaSettingsViewModel: ObservableObject {
 
     private let fetcher = MacDI.shared.mtaSearch
     private let settings = MacDI.shared.settings
+    private let scheduleUrl = Mta().SCHEDULE
     private var loadTask: Task<Void, Never>?
 
     deinit {
@@ -135,7 +136,7 @@ private class MtaSettingsViewModel: ObservableObject {
         settings.saveGtfsConfig(
             stopId: stopId,
             realtimeUrl: lineUrl,
-            scheduleUrl: Mta().SCHEDULE,
+            scheduleUrl: scheduleUrl,
             apiKey: "",
             apiKeyParam: ""
         )

@@ -462,6 +462,15 @@ class TflArrivalsTest {
     }
 
     @Test
+    fun `findScheduleForDay weekday matches Monday to Thursday range`() {
+        val schedules = listOf(
+            ApiTimetableSchedule("Monday - Thursday", knownJourneys = emptyList()),
+            ApiTimetableSchedule("Friday", knownJourneys = emptyList())
+        )
+        findScheduleForDay(schedules, DayOfWeek.WEDNESDAY)?.name shouldBe "Monday - Thursday"
+    }
+
+    @Test
     fun `findScheduleForDay Friday exact match takes priority over range`() {
         val schedules = listOf(
             ApiTimetableSchedule("Monday - Thursday", knownJourneys = emptyList()),
@@ -498,6 +507,40 @@ class TflArrivalsTest {
     @Test
     fun `findScheduleForDay empty schedules returns null`() {
         findScheduleForDay(emptyList(), DayOfWeek.MONDAY) shouldBe null
+    }
+
+    @Test
+    fun `resolveDestinations maps interval id to last stop name`() {
+        val response = ApiTimetableResponse(
+            stops = listOf(
+                ApiTimetableStation("A", "Station A Underground Station"),
+                ApiTimetableStation("B", "Station B"),
+                ApiTimetableStation("C", "Station C Rail Station")
+            ),
+            timetable = ApiTimetable(
+                routes = listOf(
+                    ApiTimetableRoute(
+                        stationIntervals = listOf(
+                            ApiStationInterval(
+                                id = "0",
+                                intervals = listOf(
+                                    ApiStopInterval("B", 5.0),
+                                    ApiStopInterval("C", 10.0)
+                                )
+                            ),
+                            ApiStationInterval(
+                                id = "1",
+                                intervals = listOf(ApiStopInterval("A", 7.0))
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        resolveDestinations(response) shouldBe mapOf(
+            0 to "Station C",
+            1 to "Station A"
+        )
     }
 
     @Test

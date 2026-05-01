@@ -20,6 +20,7 @@ struct CustomGtfsSettingsView: View {
         realtimeUrl = settings.gtfsRealtime
         scheduleUrl = settings.gtfsSchedule
         stopId = settings.stopId
+        // Don't surface a stored key from another transit system
         apiKey = ""
         apiKeyParam = settings.gtfsApiKeyParam
     }

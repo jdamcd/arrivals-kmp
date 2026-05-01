@@ -45,16 +45,19 @@ internal class GtfsArrivals(
         try {
             if (!hasFreshSchedule()) {
                 api.downloadSchedule(settings.gtfsSchedule, auth = auth)
-                stops = GtfsStops(api.readStops())
-                routes = loadRoutes()
+                loadFromDisk()
                 settings.gtfsStopsUpdated = clock.now().epochSeconds
             } else if (!::stops.isInitialized) {
-                stops = GtfsStops(api.readStops())
-                routes = loadRoutes()
+                loadFromDisk()
             }
         } catch (_: Exception) {
             throw NoDataException("Failed to load stops")
         }
+    }
+
+    private fun loadFromDisk() {
+        stops = GtfsStops(api.readStops())
+        routes = loadRoutes()
     }
 
     private fun hasFreshSchedule(): Boolean {
