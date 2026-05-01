@@ -45,9 +45,7 @@ internal data class ApiBvgDeparture(
     @SerialName("when")
     val departureTime: String? = null,
     val plannedWhen: String,
-    val delay: Int? = null,
-    val platform: String? = null,
-    val plannedPlatform: String? = null
+    val platform: String? = null
 )
 
 @Serializable
@@ -60,19 +58,7 @@ internal data class ApiBvgLine(
 internal data class ApiBvgLocation(
     val type: String,
     val id: String? = null,
-    val name: String? = null,
-    val products: ApiBvgProducts? = null
-)
-
-@Serializable
-internal data class ApiBvgProducts(
-    val suburban: Boolean = false,
-    val subway: Boolean = false,
-    val tram: Boolean = false,
-    val bus: Boolean = false,
-    val ferry: Boolean = false,
-    val express: Boolean = false,
-    val regional: Boolean = false
+    val name: String? = null
 )
 
 private const val BASE_URL = "https://v6.bvg.transport.rest"

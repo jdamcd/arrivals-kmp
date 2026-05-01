@@ -38,7 +38,6 @@ class BvgArrivalsTest {
                 line = ApiBvgLine(name = "S5", product = "suburban"),
                 departureTime = "2026-03-07T12:05:00+00:00",
                 plannedWhen = "2026-03-07T12:05:00+00:00",
-                delay = 0,
                 platform = "4"
             ),
             ApiBvgDeparture(
@@ -47,7 +46,6 @@ class BvgArrivalsTest {
                 line = ApiBvgLine(name = "U2", product = "subway"),
                 departureTime = "2026-03-07T12:10:00+00:00",
                 plannedWhen = "2026-03-07T12:10:00+00:00",
-                delay = 0,
                 platform = "2 (U2)"
             ),
             ApiBvgDeparture(
@@ -56,7 +54,6 @@ class BvgArrivalsTest {
                 line = ApiBvgLine(name = "U5", product = "subway"),
                 departureTime = "2026-03-07T12:15:00+00:00",
                 plannedWhen = "2026-03-07T12:15:00+00:00",
-                delay = 0,
                 platform = "1 (U5)"
             )
         )
@@ -106,7 +103,6 @@ class BvgArrivalsTest {
                     line = ApiBvgLine(name = "S5", product = "suburban"),
                     departureTime = "2026-03-07T12:05:00+00:00",
                     plannedWhen = "2026-03-07T12:05:00+00:00",
-                    delay = 0,
                     platform = "4"
                 ),
                 ApiBvgDeparture(
@@ -243,7 +239,6 @@ class BvgArrivalsTest {
                     line = ApiBvgLine(name = "U$index", product = "subway"),
                     departureTime = "2026-03-07T12:${(5 + index).toString().padStart(2, '0')}:00+00:00",
                     plannedWhen = "2026-03-07T12:${(5 + index).toString().padStart(2, '0')}:00+00:00",
-                    delay = 0,
                     platform = "$index"
                 )
             }
@@ -266,7 +261,6 @@ class BvgArrivalsTest {
                     line = ApiBvgLine(name = "S5", product = "suburban"),
                     departureTime = "2026-03-07T11:55:00+00:00", // 5 min in the past
                     plannedWhen = "2026-03-07T11:55:00+00:00",
-                    delay = 0,
                     platform = "4"
                 ),
                 ApiBvgDeparture(
@@ -275,7 +269,6 @@ class BvgArrivalsTest {
                     line = ApiBvgLine(name = "U2", product = "subway"),
                     departureTime = "2026-03-07T12:10:00+00:00",
                     plannedWhen = "2026-03-07T12:10:00+00:00",
-                    delay = 0,
                     platform = "2"
                 )
             )
@@ -299,7 +292,6 @@ class BvgArrivalsTest {
                     line = ApiBvgLine(name = "S5", product = "suburban"),
                     departureTime = "2026-03-07T14:05:00+00:00", // 2h 5min away
                     plannedWhen = "2026-03-07T14:05:00+00:00",
-                    delay = 0,
                     platform = "4"
                 ),
                 ApiBvgDeparture(
@@ -308,7 +300,6 @@ class BvgArrivalsTest {
                     line = ApiBvgLine(name = "U2", product = "subway"),
                     departureTime = "2026-03-07T12:10:00+00:00",
                     plannedWhen = "2026-03-07T12:10:00+00:00",
-                    delay = 0,
                     platform = "2"
                 )
             )
@@ -332,7 +323,6 @@ class BvgArrivalsTest {
                     line = ApiBvgLine(name = "S5", product = "suburban"),
                     departureTime = "2026-03-07T12:10:00+00:00",
                     plannedWhen = "2026-03-07T12:10:00+00:00",
-                    delay = 0,
                     platform = "4"
                 ),
                 ApiBvgDeparture(
@@ -348,7 +338,6 @@ class BvgArrivalsTest {
                     line = ApiBvgLine(name = "U7", product = "subway"),
                     departureTime = "2026-03-07T12:02:00+00:00",
                     plannedWhen = "2026-03-07T12:02:00+00:00",
-                    delay = 0,
                     platform = "1"
                 )
             )
@@ -384,7 +373,6 @@ class BvgArrivalsTest {
                     line = ApiBvgLine(name = "U2", product = "subway"),
                     departureTime = "2026-03-07T12:10:00+00:00",
                     plannedWhen = "2026-03-07T12:10:00+00:00",
-                    delay = 0,
                     platform = "2"
                 )
             )

@@ -5,7 +5,6 @@ import com.jdamcd.arrivals.jsonResponse
 import com.jdamcd.arrivals.mockClient
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
@@ -60,8 +59,6 @@ class BvgApiTest {
         results[0].id shouldBe "900100003"
         results[0].name shouldBe "S+U Alexanderplatz Bhf (Berlin)"
         results[0].type shouldBe "stop"
-        results[0].products shouldNotBe null
-        results[0].products!!.subway shouldBe true
     }
 
     @Test

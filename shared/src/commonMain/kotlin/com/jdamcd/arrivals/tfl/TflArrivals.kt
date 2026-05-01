@@ -11,6 +11,9 @@ import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.TflSearch
 import com.jdamcd.arrivals.matchesPlatformFilter
 import com.jdamcd.arrivals.stripPlatform
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -116,31 +119,40 @@ internal class TflArrivals(
     private suspend fun scheduledDepartures(
         lineIds: Set<String>,
         station: String
-    ): ArrivalsInfo {
+    ): ArrivalsInfo = coroutineScope {
         val now = clock.now().toLocalDateTime(LONDON)
+        val departures = lineIds
+            .map { lineId -> async { departuresForLine(lineId, now) } }
+            .awaitAll()
+            .flatten()
+            .sortedBy { it.secondsToStop }
+            .take(3)
+        ArrivalsInfo(station = station, arrivals = departures)
+    }
 
-        val departures = lineIds.flatMap { lineId ->
-            try {
-                val response = api.fetchTimetable(lineId, settings.stopId)
-                val destinations = resolveDestinations(response)
+    // A failure for one line shouldn't blank out the others
+    private suspend fun departuresForLine(lineId: String, now: LocalDateTime): List<Arrival> = try {
+        val response = api.fetchTimetable(lineId, settings.stopId)
+        val destinations = resolveDestinations(response)
+        response.timetable.routes.flatMap { route ->
+            departuresForRoute(route, destinations, now, lineId)
+        }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (_: Exception) {
+        emptyList()
+    }
 
-                response.timetable.routes.flatMap { route ->
-                    val schedule = findScheduleForDay(route.schedules, now.dayOfWeek)
-                        ?: return@flatMap emptyList()
-                    schedule.knownJourneys
-                        .mapNotNull { journey -> toArrival(journey, destinations, now, lineId) }
-                        .filter { it.secondsToStop < MAX_SECONDS_AHEAD }
-                        .sortedBy { it.secondsToStop }
-                        .take(3)
-                }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (_: Exception) {
-                emptyList()
-            }
-        }.sortedBy { it.secondsToStop }.take(3)
-
-        return ArrivalsInfo(station = station, arrivals = departures)
+    private fun departuresForRoute(
+        route: ApiTimetableRoute,
+        destinations: Map<Int, String>,
+        now: LocalDateTime,
+        lineId: String
+    ): List<Arrival> {
+        val schedule = findScheduleForDay(route.schedules, now.dayOfWeek) ?: return emptyList()
+        return schedule.knownJourneys
+            .mapNotNull { toArrival(it, destinations, now, lineId) }
+            .filter { it.secondsToStop < MAX_SECONDS_AHEAD }
     }
 
     private fun toArrival(

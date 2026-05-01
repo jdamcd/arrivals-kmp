@@ -32,7 +32,7 @@ internal class BvgArrivals(
         val response = api.fetchDepartures(stopId)
         val model = formatArrivals(stopName, response.departures)
         if (model.arrivals.isEmpty()) {
-            throw NoDataException("No departures found")
+            throw NoDataException("No arrivals found")
         }
         return model
     }

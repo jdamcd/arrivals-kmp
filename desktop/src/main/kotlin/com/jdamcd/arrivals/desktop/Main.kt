@@ -112,7 +112,7 @@ fun loadConfig(settings: Settings) {
     if (configFile.exists()) {
         try {
             FileInputStream(configFile).use { inputStream ->
-                val data: Map<String, Any> = Yaml().load(inputStream)
+                val data: Map<String, Any> = Yaml().load(inputStream) ?: return
                 settings.clearStopConfig()
                 data.getString(SettingsConfig.MODE)?.let { settings.mode = it }
                 data.getString(SettingsConfig.STOP)?.let { settings.stopId = it }

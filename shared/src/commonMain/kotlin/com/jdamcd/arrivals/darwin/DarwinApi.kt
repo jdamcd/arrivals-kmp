@@ -28,9 +28,7 @@ internal data class ApiDarwinBoard(
     val generatedAt: String,
     val locationName: String,
     val crs: String,
-    val trainServices: List<ApiTrainService>? = null,
-    val busServices: List<ApiTrainService>? = null,
-    val nrccMessages: List<ApiNrccMessage>? = null
+    val trainServices: List<ApiTrainService>? = null
 )
 
 @Serializable
@@ -42,11 +40,7 @@ internal data class ApiTrainService(
     val operator: String,
     val operatorCode: String,
     val isCancelled: Boolean = false,
-    val cancelReason: String? = null,
-    val delayReason: String? = null,
-    val destination: List<ApiCallingPoint>,
-    val origin: List<ApiCallingPoint>? = null,
-    val rsid: String? = null
+    val destination: List<ApiCallingPoint>
 )
 
 @Serializable
@@ -54,11 +48,6 @@ internal data class ApiCallingPoint(
     val locationName: String,
     val crs: String,
     val via: String? = null
-)
-
-@Serializable
-internal data class ApiNrccMessage(
-    val value: String
 )
 
 @Serializable
