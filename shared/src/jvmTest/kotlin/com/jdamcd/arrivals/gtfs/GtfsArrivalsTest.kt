@@ -2,8 +2,8 @@ package com.jdamcd.arrivals.gtfs
 
 import com.google.transit.realtime.FeedMessage
 import com.jdamcd.arrivals.Fixtures
+import com.jdamcd.arrivals.InMemorySettings
 import com.jdamcd.arrivals.NoDataException
-import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.TestHelper
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -25,7 +25,7 @@ class GtfsArrivalsTest {
 
     private val api = mockk<GtfsApi>(relaxUnitFun = true)
     private val clock = mockk<Clock>()
-    private val settings = Settings()
+    private val settings = InMemorySettings()
     private val arrivals = GtfsArrivals(api, clock, settings)
 
     private val realtimeUrl = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g"

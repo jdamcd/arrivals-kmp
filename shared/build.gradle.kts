@@ -10,9 +10,6 @@ plugins {
 }
 
 kotlin {
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
-    }
     jvm()
     linuxX64()
     linuxArm64()

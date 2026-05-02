@@ -7,7 +7,7 @@ import kotlin.test.Test
 
 class SettingsTest {
 
-    private val settings = Settings()
+    private val settings: Settings = InMemorySettings()
 
     @BeforeTest
     fun setup() {

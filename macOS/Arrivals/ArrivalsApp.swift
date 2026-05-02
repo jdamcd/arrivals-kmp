@@ -7,7 +7,7 @@ struct ArrivalsApp: App {
     @State private var settingsWindow: NSWindow?
 
     init() {
-        ArrivalsKt.doInitKoin()
+        MacosInitKt.doInitKoinMacos()
         let settings = MacDI.shared.settings
         if settings.stopId.isEmpty {
             settings.applyColdStart()

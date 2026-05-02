@@ -29,7 +29,7 @@ import kotlin.time.Clock
 
 @Suppress("Unused")
 fun initKoin() = startKoin {
-    modules(commonModule())
+    modules(commonModule(), module { single<Settings> { InMemorySettings() } })
 }
 
 @Suppress("Unused")
@@ -46,7 +46,6 @@ object MacDI : KoinComponent {
 @OptIn(kotlin.time.ExperimentalTime::class)
 fun commonModule() = module {
     single<Clock> { Clock.System }
-    single { Settings() }
     single { TflApi(get()) }
     single { GtfsApi(get()) }
     single { DarwinApi(get()) }

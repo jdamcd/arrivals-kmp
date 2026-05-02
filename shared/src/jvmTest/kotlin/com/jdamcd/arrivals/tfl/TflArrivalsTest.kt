@@ -1,7 +1,7 @@
 package com.jdamcd.arrivals.tfl
 
+import com.jdamcd.arrivals.InMemorySettings
 import com.jdamcd.arrivals.NoDataException
-import com.jdamcd.arrivals.Settings
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -18,7 +18,7 @@ import kotlin.time.Instant
 class TflArrivalsTest {
 
     private val api = mockk<TflApi>()
-    private val settings = Settings()
+    private val settings = InMemorySettings()
 
     // 2026-03-07T12:00:00Z = Saturday
     private val fixedClock = object : Clock {

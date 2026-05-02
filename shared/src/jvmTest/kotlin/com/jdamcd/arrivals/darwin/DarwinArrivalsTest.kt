@@ -1,7 +1,7 @@
 package com.jdamcd.arrivals.darwin
 
+import com.jdamcd.arrivals.InMemorySettings
 import com.jdamcd.arrivals.NoDataException
-import com.jdamcd.arrivals.Settings
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -18,7 +18,7 @@ import kotlin.time.Clock
 class DarwinArrivalsTest {
 
     private val api = mockk<DarwinApi>()
-    private val settings = Settings()
+    private val settings = InMemorySettings()
     private val clock = Clock.System
     private val arrivals = DarwinArrivals(api, settings, clock)
 

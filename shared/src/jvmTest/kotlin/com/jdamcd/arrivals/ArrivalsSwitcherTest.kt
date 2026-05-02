@@ -16,7 +16,7 @@ class ArrivalsSwitcherTest {
     private val gtfs = mockk<GtfsArrivals>()
     private val darwin = mockk<DarwinArrivals>()
     private val bvg = mockk<BvgArrivals>()
-    private val settings = Settings()
+    private val settings = InMemorySettings()
     private val switcher = ArrivalsSwitcher(tfl, gtfs, darwin, bvg, settings)
 
     private val tflResult = ArrivalsInfo("TfL Station", emptyList())

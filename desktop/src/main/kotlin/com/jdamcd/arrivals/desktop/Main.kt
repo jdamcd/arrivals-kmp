@@ -18,8 +18,6 @@ import androidx.compose.ui.window.rememberWindowState
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.SettingsConfig
-import com.jdamcd.arrivals.applyColdStart
-import com.jdamcd.arrivals.clearStopConfig
 import com.jdamcd.arrivals.initKoin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

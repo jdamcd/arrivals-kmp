@@ -1,7 +1,7 @@
 package com.jdamcd.arrivals.bvg
 
+import com.jdamcd.arrivals.InMemorySettings
 import com.jdamcd.arrivals.NoDataException
-import com.jdamcd.arrivals.Settings
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -18,7 +18,7 @@ import kotlin.time.Instant
 class BvgArrivalsTest {
 
     private val api = mockk<BvgApi>()
-    private val settings = Settings()
+    private val settings = InMemorySettings()
     private val fixedClock = object : Clock {
         override fun now(): Instant = Instant.fromEpochSeconds(1772884800) // 2026-03-07T12:00:00Z
     }
