@@ -1,10 +1,12 @@
 # Arrivals
 
-Arrivals is a Kotlin Multiplatform project for live transit times. It supports 3 targets: a macOS toolbar app, a CLI, and a desktop app (for [Raspberry Pi kiosk displays](https://jdamcd.blog/posts/pi-arrivals/)). 
+Arrivals is a Kotlin Multiplatform project for live public transit times. It supports 3 targets: a macOS toolbar app, a CLI, and a desktop app (for e.g. [Raspberry Pi kiosk displays](https://jdamcd.blog/posts/pi-arrivals/)). 
 
 | Dot Matrix | LCD |
 |:---:|:---:|
 | ![Screenshot: macOS status bar, dot matrix style](readme-img/led.png) | ![Screenshot: macOS status bar, LCD style](readme-img/lcd.png) |
+
+There's a separate Python renderer in the [arrivals-led](https://github.com/jdamcd/arrivals-led) repo, which drives a physical 128x32 LED panel.
 
 ### Supported transit systems
 
