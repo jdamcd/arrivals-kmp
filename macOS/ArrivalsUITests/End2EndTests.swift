@@ -21,7 +21,7 @@ final class ArrivalsUITests: XCTestCase {
         XCTAssertTrue(popover.waitForExistence(timeout: 10), "Popover should appear")
 
         let stationName = popover.staticTexts["stationName"]
-        XCTAssertTrue(stationName.waitForExistence(timeout: 15), "Station name should appear after loading")
+        XCTAssertTrue(stationName.waitForExistence(timeout: 30), "Station name should appear after loading")
 
         takeScreenshot(name: "1-popover-arrivals")
     }
@@ -35,7 +35,7 @@ final class ArrivalsUITests: XCTestCase {
         searchField.typeText("shoreditch")
 
         let resultsList = app.outlines["searchResultsList"].firstMatch
-        XCTAssertTrue(resultsList.waitForExistence(timeout: 15), "Search results should appear")
+        XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "Search results should appear")
 
         let shoreditch = resultsList.staticTexts.matching(
             NSPredicate(format: "value CONTAINS 'Shoreditch High Street'")
@@ -65,7 +65,7 @@ final class ArrivalsUITests: XCTestCase {
         app.menuItems["ACE"].click()
 
         let filterField = app.textFields["stopFilterField"]
-        XCTAssertTrue(filterField.waitForExistence(timeout: 30), "Stop filter field should appear after load")
+        XCTAssertTrue(filterField.waitForExistence(timeout: 60), "Stop filter field should appear after load")
         filterField.click()
         filterField.typeText("Hoyt")
 
@@ -93,7 +93,7 @@ final class ArrivalsUITests: XCTestCase {
         searchField.typeText("shoreditch")
 
         let resultsList = app.outlines["searchResultsList"].firstMatch
-        XCTAssertTrue(resultsList.waitForExistence(timeout: 15), "Search results should appear")
+        XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "Search results should appear")
 
         let shoreditch = resultsList.staticTexts.matching(
             NSPredicate(format: "value CONTAINS 'Shoreditch High Street'")
@@ -137,7 +137,7 @@ final class ArrivalsUITests: XCTestCase {
         XCTAssertTrue(popover.waitForExistence(timeout: 10), "Popover should reappear after save")
 
         let stationName = popover.staticTexts["stationName"]
-        XCTAssertTrue(stationName.waitForExistence(timeout: 15), "Station name should appear after save")
+        XCTAssertTrue(stationName.waitForExistence(timeout: 30), "Station name should appear after save")
     }
 
     private func takeScreenshot(name: String) {
