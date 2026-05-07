@@ -5,11 +5,14 @@ import com.github.ajalt.clikt.command.main
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.choice
+import com.github.ajalt.clikt.parameters.types.int
+import com.github.ajalt.clikt.parameters.types.restrictTo
 import com.github.ajalt.mordant.rendering.TextAlign
 import com.github.ajalt.mordant.rendering.TextColors.yellow
 import com.github.ajalt.mordant.table.Borders
@@ -73,13 +76,19 @@ private class Tfl :
         .choice("inbound", "outbound", "all")
         .help("Direction filter (optional)")
 
+    private val count by option("--count")
+        .int()
+        .restrictTo(min = 1)
+        .default(3)
+        .help("Number of arrivals to show (default: 3)")
+
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_TFL
         station?.let { settings.stopId = it }
         platform?.let { settings.platform = it }
         direction?.let { settings.direction = it }
 
-        fetchAndDisplay(arrivals)
+        fetchAndDisplay { arrivals.latest(count) }
     }
 }
 
@@ -104,6 +113,12 @@ private class Gtfs :
     private val apiKey by option("--api-key")
         .help("API key for authenticated feeds")
 
+    private val count by option("--count")
+        .int()
+        .restrictTo(min = 1)
+        .default(3)
+        .help("Number of arrivals to show (default: 3)")
+
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_GTFS
         stop?.let { settings.stopId = it }
@@ -112,7 +127,7 @@ private class Gtfs :
         apiKey?.let { settings.gtfsApiKey = it }
         apiKeyParam?.let { settings.gtfsApiKeyParam = it }
 
-        fetchAndDisplay(arrivals)
+        fetchAndDisplay { arrivals.latest(count) }
     }
 }
 
@@ -128,12 +143,18 @@ private class Darwin :
     private val platform by option("--platform")
         .help("Platform filter (optional)")
 
+    private val count by option("--count")
+        .int()
+        .restrictTo(min = 1)
+        .default(3)
+        .help("Number of arrivals to show (default: 3)")
+
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_DARWIN
         station?.let { settings.stopId = it }
         platform?.let { settings.platform = it }
 
-        fetchAndDisplay(arrivals)
+        fetchAndDisplay { arrivals.latest(count) }
     }
 }
 
@@ -152,13 +173,19 @@ private class Bvg :
     private val platform by option("--platform")
         .help("Platform filter (optional)")
 
+    private val count by option("--count")
+        .int()
+        .restrictTo(min = 1)
+        .default(3)
+        .help("Number of arrivals to show (default: 3)")
+
     override suspend fun run() {
         settings.mode = SettingsConfig.MODE_BVG
         station?.let { settings.stopId = it }
         line?.let { settings.line = it }
         platform?.let { settings.platform = it }
 
-        fetchAndDisplay(arrivals)
+        fetchAndDisplay { arrivals.latest(count) }
     }
 }
 
@@ -266,17 +293,17 @@ private fun SuspendingCliktCommand.displayResults(
 private val SuspendingCliktCommand.jsonOutput: Boolean
     get() = (currentContext.parent?.command as? Cli)?.json == true
 
-private suspend fun SuspendingCliktCommand.fetchAndDisplay(arrivals: Arrivals) {
+private suspend fun SuspendingCliktCommand.fetchAndDisplay(fetch: suspend () -> ArrivalsInfo) {
     if (jsonOutput) {
         try {
-            echo(Json.encodeToString(arrivals.latest().toJsonResponse()))
+            echo(Json.encodeToString(fetch().toJsonResponse()))
         } catch (e: Exception) {
             echo(Json.encodeToString(ErrorResponse(e.message ?: "Unknown error")))
             throw ProgramResult(1)
         }
     } else {
         try {
-            displayTable(arrivals.latest())
+            displayTable(fetch())
         } catch (e: Exception) {
             echoError(e.message)
         }

@@ -13,7 +13,7 @@ class ArrivalsViewModel: ObservableObject {
             loading = true
             Task {
                 do {
-                    let result = try await fetcher.latest()
+                    let result = try await fetcher.latest(count: 3)
                     state = .data(result)
                 } catch {
                     let message = (error as NSError).localizedDescription

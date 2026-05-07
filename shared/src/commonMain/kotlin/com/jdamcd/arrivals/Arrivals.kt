@@ -92,17 +92,17 @@ internal class ArrivalsSwitcher(
     private val settings: Settings
 ) : Arrivals {
 
-    override suspend fun latest(): ArrivalsInfo = when (settings.mode) {
-        SettingsConfig.MODE_TFL -> tfl.latest()
-        SettingsConfig.MODE_DARWIN -> darwin.latest()
-        SettingsConfig.MODE_BVG -> bvg.latest()
-        else -> gtfs.latest()
+    override suspend fun latest(count: Int): ArrivalsInfo = when (settings.mode) {
+        SettingsConfig.MODE_TFL -> tfl.latest(count)
+        SettingsConfig.MODE_DARWIN -> darwin.latest(count)
+        SettingsConfig.MODE_BVG -> bvg.latest(count)
+        else -> gtfs.latest(count)
     }
 }
 
 interface Arrivals {
     @Throws(NoDataException::class, CancellationException::class)
-    suspend fun latest(): ArrivalsInfo
+    suspend fun latest(count: Int = 3): ArrivalsInfo
 }
 
 interface TflSearch {

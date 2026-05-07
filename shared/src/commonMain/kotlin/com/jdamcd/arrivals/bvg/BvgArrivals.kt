@@ -25,12 +25,12 @@ internal class BvgArrivals(
     private var cachedStopName: Pair<String, String>? = null
 
     @Throws(NoDataException::class, CancellationException::class)
-    override suspend fun latest(): ArrivalsInfo {
+    override suspend fun latest(count: Int): ArrivalsInfo {
         val stopId = settings.stopId
         if (stopId.isEmpty()) throw NoDataException("No BVG stop configured")
         val stopName = getCachedStopName(stopId)
         val response = api.fetchDepartures(stopId)
-        val model = formatArrivals(stopName, response.departures)
+        val model = formatArrivals(stopName, response.departures, count)
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No arrivals found")
         }
@@ -50,7 +50,7 @@ internal class BvgArrivals(
         .filter { it.type == "stop" && it.id != null && it.name != null }
         .map { StopResult(id = it.id!!, name = it.name!!, isHub = false) }
 
-    private fun formatArrivals(stopName: String, departures: List<ApiBvgDeparture>): ArrivalsInfo {
+    private fun formatArrivals(stopName: String, departures: List<ApiBvgDeparture>, count: Int): ArrivalsInfo {
         val station = formatStationName(stopName)
         val nowSeconds = clock.now().epochSeconds
 
@@ -67,7 +67,7 @@ internal class BvgArrivals(
             .mapNotNull { departure -> createArrival(departure, nowSeconds) }
             .filter { it.secondsToStop in 0 until MAX_SECONDS_AHEAD }
             .sortedBy { it.secondsToStop }
-            .take(3)
+            .take(count)
             .toList()
 
         return ArrivalsInfo(station = station, arrivals = arrivals)

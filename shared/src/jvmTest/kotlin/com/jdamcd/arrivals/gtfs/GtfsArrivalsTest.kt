@@ -75,6 +75,15 @@ class GtfsArrivalsTest {
     }
 
     @Test
+    fun `count parameter limits arrivals`() = runBlocking<Unit> {
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feedMessage
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
+
+        arrivals.latest(count = 1).arrivals shouldHaveSize 1
+    }
+
+    @Test
     fun `gets line badge from routes data`() = runBlocking<Unit> {
         settings.gtfsRealtime = "https://other-feed.example.com/gtfs"
         coEvery { api.fetchFeedMessage("https://other-feed.example.com/gtfs") } returns feedMessage

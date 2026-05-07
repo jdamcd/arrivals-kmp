@@ -63,6 +63,12 @@ Keys are generated as `BuildConfig` constants via BuildKonfig (configured in `sh
 
 **Always run `./check` before committing** — it runs formatting, build, and all tests in one go. This is what CI checks, so if it passes locally, CI will pass.
 
+`./check` output is long and gets truncated mid-stream. Tee it to a log file so the full output is preserved on failure:
+
+```bash
+./check 2>&1 | tee /tmp/check.log
+```
+
 Smoke test changes to the shared module via the CLI to catch runtime issues. Use search commands to find station IDs, then verify arrivals work end-to-end:
 ```bash
 # Find station IDs

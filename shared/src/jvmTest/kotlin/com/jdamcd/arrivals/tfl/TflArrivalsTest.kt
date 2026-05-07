@@ -89,6 +89,27 @@ class TflArrivalsTest {
     }
 
     @Test
+    fun `count parameter limits realtime arrivals`() = runBlocking<Unit> {
+        settings.platform = ""
+        coEvery { api.fetchArrivals("123") } returns response
+
+        arrivals.latest(count = 1).arrivals shouldHaveSize 1
+        arrivals.latest(count = 4).arrivals shouldHaveSize 4
+    }
+
+    @Test
+    fun `count parameter limits scheduled fallback arrivals`() = runBlocking<Unit> {
+        settings.platform = ""
+        val terminalResponse = listOf(
+            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
+        )
+        coEvery { api.fetchArrivals("123") } returns terminalResponse
+        coEvery { api.fetchTimetable("victoria", "123") } returns timetableResponse()
+
+        arrivals.latest(count = 1).arrivals shouldHaveSize 1
+    }
+
+    @Test
     fun `throws NoDataException on empty results`() = runBlocking<Unit> {
         coEvery { api.fetchArrivals("123") } returns emptyList()
 

@@ -33,7 +33,7 @@ internal class TflArrivals(
     TflSearch {
 
     @Throws(NoDataException::class, CancellationException::class)
-    override suspend fun latest(): ArrivalsInfo {
+    override suspend fun latest(count: Int): ArrivalsInfo {
         val apiArrivals = api.fetchArrivals(settings.stopId)
         val station = stationInfo(apiArrivals.firstOrNull()?.stationName ?: "")
 
@@ -44,13 +44,13 @@ internal class TflArrivals(
             // Real-time data at terminals shows arrivals, not departures — use schedule
             val lineIds = apiArrivals.map { it.lineId }.filter { it.isNotEmpty() }.toSet()
             if (lineIds.isNotEmpty()) {
-                val scheduled = scheduledDepartures(lineIds, station)
+                val scheduled = scheduledDepartures(lineIds, station, count)
                 if (scheduled.arrivals.isNotEmpty()) return scheduled
             }
             throw NoDataException("No arrivals found")
         }
 
-        val model = formatArrivals(filtered, station)
+        val model = formatArrivals(filtered, station, count)
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No arrivals found")
         }
@@ -83,7 +83,7 @@ internal class TflArrivals(
         .map { it.platformName }
         .toSet()
 
-    private fun formatArrivals(apiArrivals: List<ApiArrival>, station: String): ArrivalsInfo {
+    private fun formatArrivals(apiArrivals: List<ApiArrival>, station: String, count: Int): ArrivalsInfo {
         val arrivals =
             apiArrivals
                 .asSequence()
@@ -99,7 +99,7 @@ internal class TflArrivals(
                 .filter { arrival ->
                     !hasDirectionFilter() ||
                         (arrival.direction?.contains(settings.direction) == true)
-                }.take(3)
+                }.take(count)
                 .map {
                     Arrival(
                         // DLR arrivals all have the same ID, so use hash
@@ -118,7 +118,8 @@ internal class TflArrivals(
 
     private suspend fun scheduledDepartures(
         lineIds: Set<String>,
-        station: String
+        station: String,
+        count: Int
     ): ArrivalsInfo = coroutineScope {
         val now = clock.now().toLocalDateTime(LONDON)
         val departures = lineIds
@@ -126,7 +127,7 @@ internal class TflArrivals(
             .awaitAll()
             .flatten()
             .sortedBy { it.secondsToStop }
-            .take(3)
+            .take(count)
         ArrivalsInfo(station = station, arrivals = departures)
     }
 

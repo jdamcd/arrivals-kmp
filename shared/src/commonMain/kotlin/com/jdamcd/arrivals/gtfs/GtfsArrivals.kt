@@ -27,11 +27,11 @@ internal class GtfsArrivals(
         get() = ApiAuth.parse(settings.gtfsApiKey, settings.gtfsApiKeyParam)
 
     @Throws(NoDataException::class, CancellationException::class)
-    override suspend fun latest(): ArrivalsInfo {
+    override suspend fun latest(count: Int): ArrivalsInfo {
         updateSchedule()
         val model: ArrivalsInfo
         try {
-            model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime, auth))
+            model = formatArrivals(api.fetchFeedMessage(settings.gtfsRealtime, auth), count)
         } catch (_: Exception) {
             throw NoDataException("No connection")
         }
@@ -71,15 +71,16 @@ internal class GtfsArrivals(
         return updatedAt + twoDaysInSeconds > clock.now().epochSeconds
     }
 
-    private fun formatArrivals(feedMessage: FeedMessage): ArrivalsInfo {
+    private fun formatArrivals(feedMessage: FeedMessage, count: Int): ArrivalsInfo {
         val stop = settings.stopId
-        val arrivals = getNextArrivalsForStop(stop, feedMessage.entity)
+        val arrivals = getNextArrivalsForStop(stop, feedMessage.entity, count)
         return ArrivalsInfo(stops.stopIdToName(stop) ?: stop, arrivals)
     }
 
     private fun getNextArrivalsForStop(
         stopId: String,
-        feedItems: List<FeedEntity>
+        feedItems: List<FeedEntity>,
+        count: Int
     ): List<Arrival> = feedItems
         .asSequence()
         .mapNotNull { it.trip_update }
@@ -90,7 +91,7 @@ internal class GtfsArrivals(
         }
         .filter { it.secondsToStop >= 0 }
         .sortedBy { it.secondsToStop }
-        .take(3)
+        .take(count)
         .toList()
 
     private fun createArrival(

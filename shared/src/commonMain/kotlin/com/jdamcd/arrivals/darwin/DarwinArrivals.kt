@@ -32,8 +32,8 @@ internal class DarwinArrivals(
     StopSearch {
 
     @Throws(NoDataException::class, CancellationException::class)
-    override suspend fun latest(): ArrivalsInfo {
-        val model = formatArrivals(api.fetchDepartures(settings.stopId))
+    override suspend fun latest(count: Int): ArrivalsInfo {
+        val model = formatArrivals(api.fetchDepartures(settings.stopId), count)
         if (model.arrivals.isEmpty()) {
             throw NoDataException("No arrivals found")
         }
@@ -49,7 +49,7 @@ internal class DarwinArrivals(
         )
     }
 
-    private fun formatArrivals(board: ApiDarwinBoard): ArrivalsInfo {
+    private fun formatArrivals(board: ApiDarwinBoard, count: Int): ArrivalsInfo {
         val station = formatStationName(board)
         val referenceTime = parseGeneratedAt(board.generatedAt)
 
@@ -64,7 +64,7 @@ internal class DarwinArrivals(
             ?.map { service -> createArrival(service, referenceTime) }
             ?.filter { it.secondsToStop < MAX_SECONDS_AHEAD }
             ?.sortedBy { it.secondsToStop }
-            ?.take(3)
+            ?.take(count)
             ?.toList()
             ?: emptyList()
 

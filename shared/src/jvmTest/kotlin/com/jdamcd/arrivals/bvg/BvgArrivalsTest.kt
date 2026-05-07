@@ -81,6 +81,15 @@ class BvgArrivalsTest {
     }
 
     @Test
+    fun `count parameter limits departures`() = runBlocking<Unit> {
+        coEvery { api.fetchStop("900100003") } returns mockStop
+        coEvery { api.fetchDepartures("900100003") } returns mockDepartures
+
+        arrivals.latest(count = 1).arrivals shouldHaveSize 1
+        arrivals.latest(count = 2).arrivals shouldHaveSize 2
+    }
+
+    @Test
     fun `sets line badge with color`() = runBlocking<Unit> {
         coEvery { api.fetchStop("900100003") } returns mockStop
         coEvery { api.fetchDepartures("900100003") } returns mockDepartures

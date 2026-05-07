@@ -100,6 +100,13 @@ class DarwinArrivalsTest {
     }
 
     @Test
+    fun `count parameter limits departures`() = runBlocking<Unit> {
+        coEvery { api.fetchDepartures("CLJ", any()) } returns mockBoard
+
+        arrivals.latest(count = 1).arrivals shouldHaveSize 1
+    }
+
+    @Test
     fun `filters cancelled trains`() = runBlocking<Unit> {
         coEvery { api.fetchDepartures("CLJ", any()) } returns mockBoard
 
