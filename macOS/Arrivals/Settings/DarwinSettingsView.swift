@@ -46,8 +46,7 @@ struct DarwinSettingsView: View {
                     case .error:
                         Text("Search error")
                     case .loading:
-                        ProgressView()
-                            .scaleEffect(0.5)
+                        LoadingSpinner()
                     }
                 }
             }
@@ -70,7 +69,7 @@ struct DarwinSettingsView: View {
         if isValid {
             Section {
                 TextField("Platform", text: $platformFilter, prompt: Text("Optional"))
-                    .help("e.g. 2, 5A")
+                    .helpHint(help: "e.g. 2, 5A", spoken: "For example, 2 or 5A")
                     .autocorrectionDisabled()
             }
         }

@@ -20,6 +20,7 @@ struct LcdContent: View {
     @State private var showingThird = false
     @State private var secondRowVisible = true
     @State private var cycleTask: Task<Void, Never>?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let cycleInterval: TimeInterval = 15
     private let fadeDuration: TimeInterval = 0.8
@@ -67,6 +68,10 @@ struct LcdContent: View {
 
     private func startCycle() {
         cycleTask?.cancel()
+        if reduceMotion {
+            showingThird.toggle()
+            return
+        }
         cycleTask = Task { @MainActor in
             withAnimation(.easeOut(duration: fadeDuration)) {
                 secondRowVisible = false
@@ -107,6 +112,13 @@ private struct AlternatingRow: View {
             }
         }
         .opacity(visible ? 1 : 0)
+        .accessibilityRepresentation {
+            // Both arrivals are always in the a11y tree even though only one is visually shown
+            VStack {
+                Text(second.accessibilityLabel(position: 2))
+                Text(third.accessibilityLabel(position: 3))
+            }
+        }
     }
 }
 
@@ -139,6 +151,8 @@ private struct LcdArrivalRow: View {
             .frame(maxHeight: .infinity)
             .background(Rectangle().fill(arrival.isDue ? .white.opacity(0.85) : .lcdRow))
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(arrival.accessibilityLabel(position: position))
     }
 }
 

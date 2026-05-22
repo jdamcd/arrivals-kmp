@@ -1,5 +1,6 @@
 import AppKit
 @testable import Arrivals
+@preconcurrency import ArrivalsLib
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -76,4 +77,47 @@ private class ScaledWindow: NSWindow {
     }
 
     override var backingScaleFactor: CGFloat { scaleFactor }
+}
+
+@MainActor
+final class SettingsSnapshotTests: XCTestCase {
+    private let strategy: Snapshotting<NSView, NSImage> = .image(precision: 0.8, perceptualPrecision: 0.9)
+    private var scaleWindow: NSWindow?
+
+    override func setUp() {
+        super.setUp()
+        // Koin is initialized by the host ArrivalsApp.init(), so tests don't need to start it
+        UserDefaults.standard.removeObject(forKey: TransitSystem.storageKey)
+        UserDefaults.standard.removeObject(forKey: DisplayStyle.storageKey)
+        UserDefaults(suiteName: SettingsConfig.shared.STORE_NAME)?.removePersistentDomain(forName: SettingsConfig.shared.STORE_NAME)
+    }
+
+    override func invokeTest() {
+        withSnapshotTesting(record: .missing) {
+            super.invokeTest()
+        }
+    }
+
+    func testSettingsDefault() {
+        assertSnapshot(of: settingsView(), as: strategy)
+    }
+
+    func testSettingsCustomGtfs() {
+        UserDefaults.standard.set(TransitSystem.customGtfs.rawValue, forKey: TransitSystem.storageKey)
+        assertSnapshot(of: settingsView(), as: strategy)
+    }
+
+    private func settingsView() -> NSView {
+        // Window-content background gives .bordered (Cancel) button enough contrast to be visible
+        let controller = NSHostingController(
+            rootView: SettingsView().background(Color(NSColor.windowBackgroundColor))
+        )
+        let window = ScaledWindow(scaleFactor: 1.0, contentRect: NSRect(origin: .zero, size: NSSize(width: 2000, height: 2000)))
+        window.contentViewController = controller
+        controller.view.layoutSubtreeIfNeeded()
+        let natural = controller.view.fittingSize
+        controller.view.frame = NSRect(origin: .zero, size: natural)
+        scaleWindow = window
+        return controller.view
+    }
 }

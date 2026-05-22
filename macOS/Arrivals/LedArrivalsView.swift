@@ -6,12 +6,16 @@ struct LedContent: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            ForEach(arrivals, id: \.id) { arrival in
+            ForEach(Array(arrivals.enumerated()), id: \.element.id) { index, arrival in
                 DotMatrixRow(leading: arrival.displayName, trailing: arrival.displayTime,
                              animateTrailing: arrival.isDue)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(arrival.accessibilityLabel(position: index + 1))
             }
             ForEach(0 ..< max(0, 3 - arrivals.count), id: \.self) { _ in
-                DotMatrixRow(leading: " ").hidden()
+                DotMatrixRow(leading: " ")
+                    .hidden()
+                    .accessibilityHidden(true)
             }
         }
     }
@@ -22,6 +26,7 @@ struct LedErrorContent: View {
 
     var body: some View {
         DotMatrixText(text: message)
+            .accessibilityLabel(message)
             .accessibilityIdentifier("errorMessage")
     }
 }

@@ -56,7 +56,7 @@ struct CustomGtfsSettingsView: View {
 
         Section("Authentication options") {
             TextField("API key param", text: $apiKeyParam)
-                .help("e.g. 'app_id', 'header:Authorization'")
+                .helpHint(help: "e.g. 'app_id', 'header:Authorization'", spoken: "For example, app_id or header:Authorization")
             TextField("API key", text: $apiKey)
         }
     }

@@ -74,8 +74,7 @@ struct MtaSettingsView: View {
                     case .error:
                         Text("Failed to load stops")
                     case .loading:
-                        ProgressView()
-                            .scaleEffect(0.5)
+                        LoadingSpinner()
                     }
                 }
             }

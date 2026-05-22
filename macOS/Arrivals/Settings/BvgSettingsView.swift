@@ -23,6 +23,7 @@ struct BvgSettingsView: View {
                     selectedResult = nil
                 }
             } else {
+                let stationHint = "S-Bahn, U-Bahn, and Tram stations."
                 HStack {
                     DebouncingTextField(label: "Station", value: $searchQuery) { value in
                         if value.isEmpty {
@@ -32,9 +33,11 @@ struct BvgSettingsView: View {
                         }
                     }
                     .autocorrectionDisabled()
+                    .accessibilityHint(stationHint)
                     Image(systemName: "questionmark.app")
                         .foregroundColor(Color.gray)
-                        .help("S-Bahn, U-Bahn, and Tram stations.")
+                        .help(stationHint)
+                        .accessibilityHidden(true)
                 }
 
                 ResultsArea {
@@ -52,8 +55,7 @@ struct BvgSettingsView: View {
                     case .error:
                         Text("Search error")
                     case .loading:
-                        ProgressView()
-                            .scaleEffect(0.5)
+                        LoadingSpinner()
                     }
                 }
             }
@@ -77,11 +79,11 @@ struct BvgSettingsView: View {
         if isValid {
             Section {
                 TextField("Line", text: $lineFilter, prompt: Text("Optional"))
-                    .help("e.g. U8, S41")
+                    .helpHint(help: "e.g. U8, S41", spoken: "For example, U8 or S41")
                     .autocorrectionDisabled()
 
                 TextField("Platform", text: $platformFilter, prompt: Text("Optional"))
-                    .help("e.g. 1, 2")
+                    .helpHint(help: "e.g. 1, 2", spoken: "For example, 1 or 2")
                     .autocorrectionDisabled()
             }
         }

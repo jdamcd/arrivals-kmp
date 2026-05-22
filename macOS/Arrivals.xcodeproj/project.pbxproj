@@ -22,6 +22,7 @@
 		49A1C0082F70A00100000008 /* End2EndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A1C0012F70A00100000001 /* End2EndTests.swift */; };
 		49BB4D7E2ED3E5D700DE9C02 /* DebouncingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */; };
 		49BB4D802ED3E5D700DE9C02 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */; };
+		49CC00112F7E00AA00BBCCDD /* AccessibilityLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CC00102F7E00AA00BBCCDD /* AccessibilityLabelTests.swift */; };
 		49BB4D822ED6970900DE9C02 /* DarwinSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */; };
 		49BDE17B2F47B17E00F0A558 /* GtfsFeedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BDE17C2F47B17E00F0A558 /* GtfsFeedSettingsView.swift */; };
 		49CC00012F7E00AA00BBCCDD /* SnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CC00002F7E00AA00BBCCDD /* SnapshotTests.swift */; };
@@ -74,6 +75,7 @@
 		49A1C0022F70A00100000002 /* ArrivalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArrivalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebouncingTests.swift; sourceTree = "<group>"; };
 		49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
+		49CC00102F7E00AA00BBCCDD /* AccessibilityLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityLabelTests.swift; sourceTree = "<group>"; };
 		49BB4D812ED6970900DE9C02 /* DarwinSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinSettingsView.swift; sourceTree = "<group>"; };
 		49BDE17C2F47B17E00F0A558 /* GtfsFeedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GtfsFeedSettingsView.swift; sourceTree = "<group>"; };
 		49CC00002F7E00AA00BBCCDD /* SnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 				49CC00002F7E00AA00BBCCDD /* SnapshotTests.swift */,
 				49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */,
 				49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */,
+				49CC00102F7E00AA00BBCCDD /* AccessibilityLabelTests.swift */,
 			);
 			path = ArrivalsTests;
 			sourceTree = "<group>";
@@ -396,6 +399,7 @@
 				49CC00012F7E00AA00BBCCDD /* SnapshotTests.swift in Sources */,
 				49BB4D7E2ED3E5D700DE9C02 /* DebouncingTests.swift in Sources */,
 				49BB4D802ED3E5D700DE9C02 /* StringExtensionsTests.swift in Sources */,
+				49CC00112F7E00AA00BBCCDD /* AccessibilityLabelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

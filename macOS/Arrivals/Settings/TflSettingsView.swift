@@ -26,6 +26,7 @@ struct TflSettingsView: View {
                     selectedResult = nil
                 }
             } else {
+                let stationHint = "London Overground, Tube, DLR, and Tram stations. Scheduled times at terminal stations."
                 HStack {
                     DebouncingTextField(label: "Station", value: $searchQuery) { value in
                         if value.isEmpty {
@@ -35,9 +36,11 @@ struct TflSettingsView: View {
                         }
                     }
                     .autocorrectionDisabled()
+                    .accessibilityHint(stationHint)
                     Image(systemName: "questionmark.app")
                         .foregroundColor(Color.gray)
-                        .help("London Overground, Tube, DLR, and Tram stations. Scheduled times at terminal stations.")
+                        .help(stationHint)
+                        .accessibilityHidden(true)
                 }
                 ResultsArea {
                     switch viewModel.state {
@@ -54,8 +57,7 @@ struct TflSettingsView: View {
                     case .error:
                         Text("Search error")
                     case .loading:
-                        ProgressView()
-                            .scaleEffect(0.5)
+                        LoadingSpinner()
                     }
                 }
             }
@@ -90,7 +92,7 @@ struct TflSettingsView: View {
                 .pickerStyle(.automatic)
 
                 TextField("Platform", text: $platformFilter, prompt: Text("Optional"))
-                    .help("e.g. 2, 5A")
+                    .helpHint(help: "e.g. 2, 5A", spoken: "For example, 2 or 5A")
                     .autocorrectionDisabled()
                     .accessibilityIdentifier("platformField")
             }

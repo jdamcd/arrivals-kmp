@@ -1,5 +1,37 @@
+@preconcurrency import ArrivalsLib
 import Combine
 import SwiftUI
+
+extension Arrival {
+    func accessibilityLabel(position: Int) -> String {
+        var parts = ["Position \(position)"]
+        if lineBadge?.express == true {
+            parts.append("express")
+        }
+        if let line {
+            parts.append("\(line) to \(destination)")
+        } else {
+            parts.append(destination)
+        }
+        if isDue {
+            parts.append("due")
+        } else {
+            parts.append("\(minutesToStop) minute\(minutesToStop == 1 ? "" : "s")")
+        }
+        if !realtime {
+            parts.append("scheduled")
+        }
+        return parts.joined(separator: ", ")
+    }
+}
+
+struct LoadingSpinner: View {
+    var body: some View {
+        ProgressView()
+            .scaleEffect(0.5)
+            .accessibilityLabel("Loading")
+    }
+}
 
 struct ResultsArea<Content: View>: View {
     @ViewBuilder var content: Content
@@ -83,6 +115,10 @@ struct BlinkViewModifier: ViewModifier {
 }
 
 extension View {
+    func helpHint(help: String, spoken: String) -> some View {
+        self.help(help).accessibilityHint(spoken)
+    }
+
     func blinking(enabled: Bool = true, duration: Double = 0.75) -> some View {
         Group {
             if enabled {

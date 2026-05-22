@@ -23,8 +23,7 @@ struct ArrivalsView: View {
         ZStack {
             switch viewModel.state {
             case .idle:
-                ProgressView()
-                    .scaleEffect(0.5)
+                LoadingSpinner()
             case let .error(message):
                 ContentDisplay(theme: theme, metrics: metrics, content: {
                     if displayStyle == .nyc {
@@ -155,6 +154,7 @@ private struct ControlFooter: View {
             } preAction: {
                 onOpenSettings()
             } postAction: {}
+                .accessibilityLabel("Settings")
                 .accessibilityIdentifier("settingsButton")
             Button {
                 refresh.onRefresh()
@@ -162,6 +162,7 @@ private struct ControlFooter: View {
                 Image(systemName: "arrow.clockwise.circle.fill")
                     .foregroundColor(refresh.isLoading ? disabledTint : tint)
             }.disabled(refresh.isLoading)
+                .accessibilityLabel("Refresh")
                 .accessibilityIdentifier("refreshButton")
             Button {
                 onQuit()
@@ -169,9 +170,10 @@ private struct ControlFooter: View {
                 Image(systemName: "x.circle.fill")
                     .foregroundColor(tint)
             }
+            .accessibilityLabel("Quit")
             .accessibilityIdentifier("quitButton")
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.borderless)
         .padding(.bottom, 2)
         .frame(height: 28)
     }
