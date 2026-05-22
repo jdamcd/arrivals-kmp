@@ -114,6 +114,7 @@ final class SettingsSnapshotTests: XCTestCase {
         )
         let window = ScaledWindow(scaleFactor: 1.0, contentRect: NSRect(origin: .zero, size: NSSize(width: 2000, height: 2000)))
         window.contentViewController = controller
+        controller.view.appearance = NSAppearance(named: .darkAqua)
         controller.view.layoutSubtreeIfNeeded()
         let natural = controller.view.fittingSize
         controller.view.frame = NSRect(origin: .zero, size: natural)

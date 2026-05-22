@@ -64,6 +64,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         popover.behavior = .transient
         popover.animates = true
+        popover.appearance = NSAppearance(named: .darkAqua)
         popover.contentViewController = NSViewController()
         popover.contentViewController?.view = NSHostingView(rootView: menuView)
 
