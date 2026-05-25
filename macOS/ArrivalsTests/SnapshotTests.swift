@@ -99,26 +99,39 @@ final class SettingsSnapshotTests: XCTestCase {
     }
 
     func testSettingsDefault() {
-        assertSnapshot(of: settingsView(), as: strategy)
+        forEachAppearance { systemAppearance, name in
+            assertSnapshot(of: settingsView(appearance: systemAppearance), as: strategy, named: name)
+        }
     }
 
     func testSettingsCustomGtfs() {
         UserDefaults.standard.set(TransitSystem.customGtfs.rawValue, forKey: TransitSystem.storageKey)
-        assertSnapshot(of: settingsView(), as: strategy)
+        forEachAppearance { systemAppearance, name in
+            assertSnapshot(of: settingsView(appearance: systemAppearance), as: strategy, named: name)
+        }
     }
 
-    private func settingsView() -> NSView {
+    private func settingsView(appearance: NSAppearance.Name) -> NSView {
         // Window-content background gives .bordered (Cancel) button enough contrast to be visible
         let controller = NSHostingController(
             rootView: SettingsView().background(Color(NSColor.windowBackgroundColor))
         )
         let window = ScaledWindow(scaleFactor: 1.0, contentRect: NSRect(origin: .zero, size: NSSize(width: 2000, height: 2000)))
         window.contentViewController = controller
-        controller.view.appearance = NSAppearance(named: .darkAqua)
+        controller.view.appearance = NSAppearance(named: appearance)
         controller.view.layoutSubtreeIfNeeded()
         let natural = controller.view.fittingSize
         controller.view.frame = NSRect(origin: .zero, size: natural)
         scaleWindow = window
         return controller.view
+    }
+}
+
+@MainActor
+private func forEachAppearance(_ body: (NSAppearance.Name, String) -> Void) {
+    for (name, appearance) in [("light", NSAppearance.Name.aqua), ("dark", NSAppearance.Name.darkAqua)] {
+        XCTContext.runActivity(named: name) { _ in
+            body(appearance, name)
+        }
     }
 }
