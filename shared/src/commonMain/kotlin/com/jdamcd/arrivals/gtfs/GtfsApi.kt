@@ -51,7 +51,7 @@ internal class GtfsApi(client: HttpClient) :
     }
 
     suspend fun downloadSchedule(url: String, folder: String = "gtfs", auth: ApiAuth? = null) {
-        val tempZipFile = "$baseDir/gtfs.zip".toPath()
+        val tempZipFile = "$baseDir/$folder.zip".toPath()
         try {
             val zipContent = executeRequest(url) {
                 auth.applyTo(this)
