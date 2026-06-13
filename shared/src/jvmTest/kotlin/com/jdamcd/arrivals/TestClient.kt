@@ -37,3 +37,12 @@ fun MockRequestHandleScope.jsonResponse(
     status = status,
     headers = headersOf(HttpHeaders.ContentType, "application/json")
 )
+
+fun MockRequestHandleScope.bytesResponse(
+    content: ByteArray,
+    status: HttpStatusCode = HttpStatusCode.OK
+) = respond(
+    content = content,
+    status = status,
+    headers = headersOf(HttpHeaders.ContentType, "application/octet-stream")
+)

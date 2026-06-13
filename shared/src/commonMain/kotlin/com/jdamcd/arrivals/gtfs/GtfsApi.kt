@@ -1,10 +1,10 @@
 package com.jdamcd.arrivals.gtfs
 
 import com.google.transit.realtime.FeedMessage
+import com.jdamcd.arrivals.HttpApiClient
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsBytes
@@ -32,7 +32,11 @@ internal sealed class ApiAuth {
     }
 }
 
-internal class GtfsApi(private val client: HttpClient) {
+internal class GtfsApi(client: HttpClient) :
+    HttpApiClient(
+        client = client,
+        apiName = "GTFS feed"
+    ) {
 
     private val baseDir = getFilesDir()
     private val stopsFileName = "stops.txt"
@@ -40,7 +44,7 @@ internal class GtfsApi(private val client: HttpClient) {
     private val sourceFileName = "stops.source"
 
     suspend fun fetchFeedMessage(url: String, auth: ApiAuth? = null): FeedMessage {
-        val bodyBytes = client.get(url) {
+        val bodyBytes = executeRequest(url) {
             auth.applyTo(this)
         }.bodyAsBytes()
         return FeedMessage.ADAPTER.decode(bodyBytes)
@@ -49,7 +53,7 @@ internal class GtfsApi(private val client: HttpClient) {
     suspend fun downloadSchedule(url: String, folder: String = "gtfs", auth: ApiAuth? = null) {
         val tempZipFile = "$baseDir/gtfs.zip".toPath()
         try {
-            val zipContent = client.get(url) {
+            val zipContent = executeRequest(url) {
                 auth.applyTo(this)
                 timeout {
                     requestTimeoutMillis = 60_000 // 1 min for large schedule zips

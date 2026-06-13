@@ -7,7 +7,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
 import kotlin.coroutines.cancellation.CancellationException
 
-internal abstract class JsonApiClient(
+internal abstract class HttpApiClient(
     private val client: HttpClient,
     private val apiName: String
 ) {

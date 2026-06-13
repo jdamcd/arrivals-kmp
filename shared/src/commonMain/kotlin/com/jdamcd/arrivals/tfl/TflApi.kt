@@ -1,14 +1,14 @@
 package com.jdamcd.arrivals.tfl
 
 import com.jdamcd.arrivals.BuildKonfig
-import com.jdamcd.arrivals.JsonApiClient
+import com.jdamcd.arrivals.HttpApiClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.parameter
 import kotlinx.serialization.Serializable
 
 internal class TflApi(client: HttpClient) :
-    JsonApiClient(
+    HttpApiClient(
         client = client,
         apiName = "TfL API"
     ) {
