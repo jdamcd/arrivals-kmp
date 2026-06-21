@@ -46,6 +46,7 @@ kotlin {
             implementation(libs.coroutines.test)
             implementation(libs.mockk)
             implementation(libs.ktor.client.mock)
+            implementation(libs.okio.fakefilesystem)
         }
 
         macosMain.dependencies {

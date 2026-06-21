@@ -8,13 +8,13 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import okio.FileSystem
 import okio.Path.Companion.toPath
-import okio.SYSTEM
+import okio.fakefilesystem.FakeFileSystem
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -22,14 +22,22 @@ class GtfsApiTest {
 
     private val feedUrl = "https://feed.example.com/gtfs"
     private val scheduleUrl = "https://feed.example.com/schedule.zip"
-    private val baseDir = System.getProperty("java.io.tmpdir")
+    private val baseDir = getFilesDir()
+
+    private val fileSystem = FakeFileSystem()
+
+    @BeforeTest
+    fun setUp() {
+        fileSystem.createDirectories(baseDir.toPath())
+    }
 
     @Test
     fun `fetchFeedMessage decodes protobuf response`() = runBlocking<Unit> {
         val api = GtfsApi(
             mockClient {
                 bytesResponse(TestHelper.resource("feed_message.bin"))
-            }
+            },
+            fileSystem
         )
 
         val feed = api.fetchFeedMessage(feedUrl)
@@ -40,7 +48,8 @@ class GtfsApiTest {
     @Test
     fun `fetchFeedMessage throws error message on 4xx`() = runBlocking<Unit> {
         val api = GtfsApi(
-            mockClient { bytesResponse(ByteArray(0), HttpStatusCode.Forbidden) }
+            mockClient { bytesResponse(ByteArray(0), HttpStatusCode.Forbidden) },
+            fileSystem
         )
 
         val e = assertFailsWith<NoDataException> {
@@ -52,7 +61,8 @@ class GtfsApiTest {
     @Test
     fun `fetchFeedMessage throws connection message on 5xx`() = runBlocking<Unit> {
         val api = GtfsApi(
-            mockClient { bytesResponse(ByteArray(0), HttpStatusCode.InternalServerError) }
+            mockClient { bytesResponse(ByteArray(0), HttpStatusCode.InternalServerError) },
+            fileSystem
         )
 
         val e = assertFailsWith<NoDataException> {
@@ -64,7 +74,8 @@ class GtfsApiTest {
     @Test
     fun `fetchFeedMessage throws connection message when request fails`() = runBlocking<Unit> {
         val api = GtfsApi(
-            mockClient { throw IOException("oh no") }
+            mockClient { throw IOException("oh no") },
+            fileSystem
         )
 
         val e = assertFailsWith<NoDataException> {
@@ -76,7 +87,8 @@ class GtfsApiTest {
     @Test
     fun `downloadSchedule throws error message on 4xx before unpacking`() = runBlocking<Unit> {
         val api = GtfsApi(
-            mockClient { bytesResponse(ByteArray(0), HttpStatusCode.Forbidden) }
+            mockClient { bytesResponse(ByteArray(0), HttpStatusCode.Forbidden) },
+            fileSystem
         )
 
         val e = assertFailsWith<NoDataException> {
@@ -88,7 +100,8 @@ class GtfsApiTest {
     @Test
     fun `downloadSchedule throws connection message on 5xx before unpacking`() = runBlocking<Unit> {
         val api = GtfsApi(
-            mockClient { bytesResponse(ByteArray(0), HttpStatusCode.InternalServerError) }
+            mockClient { bytesResponse(ByteArray(0), HttpStatusCode.InternalServerError) },
+            fileSystem
         )
 
         val e = assertFailsWith<NoDataException> {
@@ -101,16 +114,14 @@ class GtfsApiTest {
     fun `downloadSchedule unpacks schedule into the target folder`() = runBlocking<Unit> {
         val folder = "test_unpack"
         val api = GtfsApi(
-            mockClient { bytesResponse(zipBytes("stops.txt" to STOPS, "routes.txt" to ROUTES)) }
+            mockClient { bytesResponse(zipBytes("stops.txt" to STOPS, "routes.txt" to ROUTES)) },
+            fileSystem
         )
-        try {
-            api.downloadSchedule(scheduleUrl, folder)
 
-            api.readStops(folder) shouldBe STOPS
-            api.readRoutes(folder) shouldBe ROUTES
-        } finally {
-            cleanup(folder)
-        }
+        api.downloadSchedule(scheduleUrl, folder)
+
+        api.readStops(folder) shouldBe STOPS
+        api.readRoutes(folder) shouldBe ROUTES
     }
 
     @Test
@@ -123,18 +134,15 @@ class GtfsApiTest {
                     "stop_id,stop_name\nB1,BART Stop\n"
                 }
                 bytesResponse(zipBytes("stops.txt" to stops))
-            }
+            },
+            fileSystem
         )
-        try {
-            api.downloadSchedule("https://example.com/mta.zip", "test_mta")
-            api.downloadSchedule("https://example.com/bart.zip", "test_bart")
 
-            api.readStops("test_mta") shouldContain "MTA Stop"
-            api.readStops("test_bart") shouldContain "BART Stop"
-        } finally {
-            cleanup("test_mta")
-            cleanup("test_bart")
-        }
+        api.downloadSchedule("https://example.com/mta.zip", "test_mta")
+        api.downloadSchedule("https://example.com/bart.zip", "test_bart")
+
+        api.readStops("test_mta") shouldContain "MTA Stop"
+        api.readStops("test_bart") shouldContain "BART Stop"
     }
 
     @Test
@@ -142,60 +150,47 @@ class GtfsApiTest {
         val folder = "test_isolation"
         val sharedTempZip = "$baseDir/gtfs.zip".toPath()
         val api = GtfsApi(
-            mockClient { bytesResponse(zipBytes("stops.txt" to STOPS)) }
+            mockClient { bytesResponse(zipBytes("stops.txt" to STOPS)) },
+            fileSystem
         )
-        try {
-            FileSystem.SYSTEM.write(sharedTempZip) { writeUtf8("sentinel") }
+        fileSystem.write(sharedTempZip) { writeUtf8("sentinel") }
 
-            api.downloadSchedule(scheduleUrl, folder)
+        api.downloadSchedule(scheduleUrl, folder)
 
-            // A non-default folder download must not touch the legacy shared temp path
-            FileSystem.SYSTEM.exists(sharedTempZip) shouldBe true
-            FileSystem.SYSTEM.read(sharedTempZip) { readUtf8() } shouldBe "sentinel"
-        } finally {
-            FileSystem.SYSTEM.delete(sharedTempZip)
-            cleanup(folder)
-        }
+        // A non-default folder download must not touch the legacy shared temp path
+        fileSystem.exists(sharedTempZip) shouldBe true
+        fileSystem.read(sharedTempZip) { readUtf8() } shouldBe "sentinel"
     }
 
     @Test
     fun `downloadSchedule removes the temp zip after success`() = runBlocking<Unit> {
         val folder = "test_cleanup_ok"
         val api = GtfsApi(
-            mockClient { bytesResponse(zipBytes("stops.txt" to STOPS)) }
+            mockClient { bytesResponse(zipBytes("stops.txt" to STOPS)) },
+            fileSystem
         )
-        try {
-            api.downloadSchedule(scheduleUrl, folder)
 
-            FileSystem.SYSTEM.exists(tempZip(folder)) shouldBe false
-        } finally {
-            cleanup(folder)
-        }
+        api.downloadSchedule(scheduleUrl, folder)
+
+        fileSystem.exists(tempZip(folder)) shouldBe false
     }
 
     @Test
     fun `downloadSchedule removes the temp zip when unpacking fails`() = runBlocking<Unit> {
         val folder = "test_cleanup_fail"
         val api = GtfsApi(
-            mockClient { bytesResponse(byteArrayOf(1, 2, 3, 4)) } // 200, but not a valid zip
+            mockClient { bytesResponse(byteArrayOf(1, 2, 3, 4)) }, // 200, but not a valid zip
+            fileSystem
         )
-        try {
-            assertFailsWith<Exception> {
-                api.downloadSchedule(scheduleUrl, folder)
-            }
 
-            FileSystem.SYSTEM.exists(tempZip(folder)) shouldBe false
-        } finally {
-            cleanup(folder)
+        assertFailsWith<Exception> {
+            api.downloadSchedule(scheduleUrl, folder)
         }
+
+        fileSystem.exists(tempZip(folder)) shouldBe false
     }
 
     private fun tempZip(folder: String) = "$baseDir/$folder.zip".toPath()
-
-    private fun cleanup(folder: String) {
-        FileSystem.SYSTEM.deleteRecursively("$baseDir/$folder".toPath())
-        FileSystem.SYSTEM.delete(tempZip(folder))
-    }
 
     private fun zipBytes(vararg entries: Pair<String, String>): ByteArray {
         val out = ByteArrayOutputStream()

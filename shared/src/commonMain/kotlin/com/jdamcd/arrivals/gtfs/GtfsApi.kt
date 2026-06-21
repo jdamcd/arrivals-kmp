@@ -32,11 +32,13 @@ internal sealed class ApiAuth {
     }
 }
 
-internal class GtfsApi(client: HttpClient) :
-    HttpApiClient(
-        client = client,
-        apiName = "GTFS feed"
-    ) {
+internal class GtfsApi(
+    client: HttpClient,
+    private val fileSystem: FileSystem = FileSystem.SYSTEM
+) : HttpApiClient(
+    client = client,
+    apiName = "GTFS feed"
+) {
 
     private val baseDir = getFilesDir()
     private val stopsFileName = "stops.txt"
@@ -59,48 +61,48 @@ internal class GtfsApi(client: HttpClient) :
                     requestTimeoutMillis = 60_000 // 1 min for large schedule zips
                 }
             }.readRawBytes()
-            FileSystem.SYSTEM.write(tempZipFile) {
+            fileSystem.write(tempZipFile) {
                 write(zipContent)
             }
             unpackZip(tempZipFile, dirPath(folder))
             writeStopsSource(url, folder)
         } finally {
-            FileSystem.SYSTEM.delete(tempZipFile)
+            fileSystem.delete(tempZipFile)
         }
     }
 
     private fun dirPath(folder: String = "gtfs") = "$baseDir/$folder".toPath()
 
-    fun hasStops(): Boolean = FileSystem.SYSTEM.exists(dirPath().resolve(stopsFileName))
+    fun hasStops(): Boolean = fileSystem.exists(dirPath().resolve(stopsFileName))
 
     fun stopsLastModifiedEpochSeconds(): Long {
-        val metadata = FileSystem.SYSTEM.metadata(dirPath().resolve(stopsFileName))
+        val metadata = fileSystem.metadata(dirPath().resolve(stopsFileName))
         return metadata.lastModifiedAtMillis?.div(1000) ?: 0L
     }
 
     fun stopsSource(): String? = try {
-        FileSystem.SYSTEM.read(dirPath().resolve(sourceFileName)) { readUtf8() }.trim()
+        fileSystem.read(dirPath().resolve(sourceFileName)) { readUtf8() }.trim()
     } catch (_: Exception) {
         null
     }
 
     private fun writeStopsSource(url: String, folder: String = "gtfs") {
-        FileSystem.SYSTEM.write(dirPath(folder).resolve(sourceFileName)) { writeUtf8(url) }
+        fileSystem.write(dirPath(folder).resolve(sourceFileName)) { writeUtf8(url) }
     }
 
-    fun readStops(folder: String = "gtfs"): String = FileSystem.SYSTEM.read(dirPath(folder).resolve(stopsFileName)) { readUtf8() }
+    fun readStops(folder: String = "gtfs"): String = fileSystem.read(dirPath(folder).resolve(stopsFileName)) { readUtf8() }
 
     fun readRoutes(folder: String = "gtfs"): String? {
         val routesPath = dirPath(folder).resolve(routesFileName)
-        return if (FileSystem.SYSTEM.exists(routesPath)) {
-            FileSystem.SYSTEM.read(routesPath) { readUtf8() }
+        return if (fileSystem.exists(routesPath)) {
+            fileSystem.read(routesPath) { readUtf8() }
         } else {
             null // Optional file in GTFS spec
         }
     }
 
     private fun unpackZip(source: Path, destination: Path) {
-        val zipFile = FileSystem.SYSTEM.openZip(source)
+        val zipFile = fileSystem.openZip(source)
         val paths = zipFile.listRecursively("/".toPath())
             .filter { zipFile.metadata(it).isRegularFile }
             .toList()
@@ -109,8 +111,8 @@ internal class GtfsApi(client: HttpClient) :
             zipFile.source(filePath).buffer().use { source ->
                 val relativePath = filePath.toString().trimStart('/')
                 val fileToWrite = destination.resolve(relativePath)
-                fileToWrite.createParentDirectories()
-                FileSystem.SYSTEM.sink(fileToWrite).buffer().use { sink ->
+                fileToWrite.parent?.let { fileSystem.createDirectories(it) }
+                fileSystem.sink(fileToWrite).buffer().use { sink ->
                     sink.writeAll(source)
                 }
             }
@@ -123,12 +125,6 @@ private fun ApiAuth?.applyTo(builder: HttpRequestBuilder) {
         is ApiAuth.QueryParam -> builder.parameter(name, key)
         is ApiAuth.Header -> builder.header(name, key)
         null -> {}
-    }
-}
-
-private fun Path.createParentDirectories() {
-    this.parent?.let { parent ->
-        FileSystem.SYSTEM.createDirectories(parent)
     }
 }
 
