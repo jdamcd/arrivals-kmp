@@ -28,7 +28,6 @@ import java.nio.file.ClosedWatchServiceException
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.StandardWatchEventKinds
-import kotlin.system.exitProcess
 
 private val koin = initKoin().koin
 private val configFile = File("${System.getProperty("user.home")}/.arrivals.yml")
@@ -60,9 +59,11 @@ fun main(args: Array<String>) = application {
         resizable = !fixWindow,
         onKeyEvent = {
             if (it.key == Key.Escape) {
-                exitProcess(0)
+                exitApplication()
+                true
+            } else {
+                false
             }
-            false
         }
     ) {
         ArrivalsView(state, viewModel::refresh)
@@ -80,7 +81,11 @@ private fun watchConfig(settings: Settings, onReload: () -> Unit) {
         val job = scope.launch(Dispatchers.IO) {
             try {
                 val dir = configFile.parentFile.toPath()
-                dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
+                dir.register(
+                    watchService,
+                    StandardWatchEventKinds.ENTRY_MODIFY,
+                    StandardWatchEventKinds.ENTRY_CREATE
+                )
                 val fileName = configFile.name
 
                 while (true) {

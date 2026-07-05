@@ -47,7 +47,10 @@ class ArrivalsViewModel(private val arrivals: Arrivals) : ViewModel() {
         } catch (e: NoDataException) {
             _uiState.value = ArrivalsState.Error(e.message ?: "Unknown error")
         } catch (e: Throwable) {
-            if (_uiState.value !is ArrivalsState.Data) {
+            val current = _uiState.value
+            if (current is ArrivalsState.Data) {
+                _uiState.value = ArrivalsState.Data(current.result, false)
+            } else {
                 _uiState.value = ArrivalsState.Error("Unknown error")
             }
         }
