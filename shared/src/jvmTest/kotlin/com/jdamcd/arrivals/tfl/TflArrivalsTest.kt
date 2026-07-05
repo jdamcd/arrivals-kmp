@@ -475,6 +475,54 @@ class TflArrivalsTest {
     }
 
     @Test
+    fun `keeps post-midnight departures near midnight via extended service-day hours`() = runBlocking<Unit> {
+        settings.platform = ""
+        // 2026-03-07T23:55:00Z = Saturday 23:55 GMT (March, no DST)
+        val lateClock = object : Clock {
+            override fun now(): Instant = Instant.fromEpochSeconds(1772927700)
+        }
+        val lateArrivals = TflArrivals(api, settings, lateClock)
+        val terminalResponse = listOf(
+            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
+        )
+        // TfL encodes a 00:05 departure as hour "24", so no day rollover is needed to keep it
+        val extendedHoursTimetable = ApiTimetableResponse(
+            stops = listOf(
+                ApiTimetableStation("940GZZLUBXN", "Brixton Underground Station"),
+                ApiTimetableStation("940GZZLUWWL", "Walthamstow Central Underground Station")
+            ),
+            timetable = ApiTimetable(
+                routes = listOf(
+                    ApiTimetableRoute(
+                        stationIntervals = listOf(
+                            ApiStationInterval(
+                                id = "0",
+                                intervals = listOf(ApiStopInterval("940GZZLUWWL", 30.0))
+                            )
+                        ),
+                        schedules = listOf(
+                            ApiTimetableSchedule(
+                                name = "Saturday",
+                                knownJourneys = listOf(
+                                    ApiKnownJourney("24", "05", 0) // 00:05, 10 min after 23:55
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        coEvery { api.fetchArrivals("123") } returns terminalResponse
+        coEvery { api.fetchTimetable("victoria", "123") } returns extendedHoursTimetable
+
+        val latest = lateArrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldBe "Walthamstow Central"
+        latest.arrivals[0].displayTime shouldBe "10 min*"
+    }
+
+    @Test
     fun `findScheduleForDay weekday matches Monday to Friday range`() {
         val schedules = listOf(
             ApiTimetableSchedule("Monday - Friday", knownJourneys = emptyList())
