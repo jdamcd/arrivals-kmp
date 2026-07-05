@@ -48,7 +48,7 @@ Keys are generated as `BuildConfig` constants via BuildKonfig (configured in `sh
 
 **CLI**:
 ```bash
-./gradlew :cli:run --args="--help"
+./gradlew :cli:jvmRun --args="--help"
 ```
 
 ### Testing & Quality
@@ -72,16 +72,16 @@ Keys are generated as `BuildConfig` constants via BuildKonfig (configured in `sh
 Smoke test changes to the shared module via the CLI to catch runtime issues. Use search commands to find station IDs, then verify arrivals work end-to-end:
 ```bash
 # Find station IDs
-./gradlew :cli:run --args="search tfl shoreditch"
-./gradlew :cli:run --args="search darwin clapham"
-./gradlew :cli:run --args="search bvg alexanderplatz"
-./gradlew :cli:run --args="list-stops --realtime <feed-url> --schedule <schedule-url>"
+./gradlew :cli:jvmRun --args="search tfl shoreditch"
+./gradlew :cli:jvmRun --args="search darwin clapham"
+./gradlew :cli:jvmRun --args="search bvg alexanderplatz"
+./gradlew :cli:jvmRun --args="list-stops --realtime <feed-url> --schedule <schedule-url>"
 
 # Fetch arrivals
-./gradlew :cli:run --args="tfl --station 910GSHRDHST --platform 2"
-./gradlew :cli:run --args="darwin --station CLJ --platform 5"
-./gradlew :cli:run --args="bvg --station 900013102 --line U8"
-./gradlew :cli:run --args="gtfs --station A42N --realtime https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace --schedule http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
+./gradlew :cli:jvmRun --args="tfl --station 910GSHRDHST --platform 2"
+./gradlew :cli:jvmRun --args="darwin --station CLJ --platform 5"
+./gradlew :cli:jvmRun --args="bvg --station 900013102 --line U8"
+./gradlew :cli:jvmRun --args="gtfs --station A42N --realtime https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace --schedule http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
 ```
 
 If API responses look suspicious, call the APIs directly (e.g. via `curl`) to rule out upstream issues.
