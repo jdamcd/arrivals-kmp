@@ -98,7 +98,7 @@ internal class DarwinArrivals(
             else -> return Int.MAX_VALUE
         }
 
-        val (hours, minutes) = parseTimeString(departureTime)
+        val (hours, minutes) = parseTimeString(departureTime) ?: return Int.MAX_VALUE // Drop on unexpected time format
         val referenceDate = referenceTime.toLocalDateTime(LONDON).date
         val sameDay = referenceDate.atTime(LocalTime(hours, minutes)).toInstant(LONDON)
         val departureInstant = if (sameDay < referenceTime) {
@@ -109,10 +109,10 @@ internal class DarwinArrivals(
         return (departureInstant - referenceTime).inWholeSeconds.toInt()
     }
 
-    private fun parseTimeString(time: String): Pair<Int, Int> {
+    private fun parseTimeString(time: String): Pair<Int, Int>? {
         val parts = time.split(":")
-        val hours = parts[0].toInt()
-        val minutes = parts[1].toInt()
+        val hours = parts[0].toIntOrNull() ?: return null
+        val minutes = parts.getOrNull(1)?.toIntOrNull() ?: return null
         return Pair(hours, minutes)
     }
 

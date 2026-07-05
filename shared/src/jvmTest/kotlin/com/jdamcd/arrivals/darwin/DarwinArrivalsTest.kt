@@ -125,6 +125,22 @@ class DarwinArrivalsTest {
     }
 
     @Test
+    fun `skips services with unparseable ETD without crashing`() = runBlocking<Unit> {
+        val board = mockBoard.copy(
+            trainServices = listOf(
+                ApiTrainService(serviceIdUrlSafe = "drift", std = "10:15", etd = "Delayed 10:15", platform = "1", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Drift Dest", "DD"))),
+                ApiTrainService(serviceIdUrlSafe = "ok", std = "10:20", etd = "10:20", platform = "2", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Good Dest", "GD")))
+            )
+        )
+        coEvery { api.fetchDepartures("CLJ", any()) } returns board
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].destination shouldBe "Good Dest"
+    }
+
+    @Test
     fun `formats station name with platform filter`() = runBlocking<Unit> {
         settings.platform = "5"
         coEvery { api.fetchDepartures("CLJ", any()) } returns mockBoard
