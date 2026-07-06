@@ -1,8 +1,13 @@
 package com.jdamcd.arrivals.gtfs
 
+import com.google.transit.realtime.FeedEntity
+import com.google.transit.realtime.FeedHeader
 import com.google.transit.realtime.FeedMessage
+import com.google.transit.realtime.TripDescriptor
+import com.google.transit.realtime.TripUpdate
 import com.jdamcd.arrivals.Fixtures
 import com.jdamcd.arrivals.InMemorySettings
+import com.jdamcd.arrivals.MAX_SECONDS_AHEAD
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.TestHelper
 import io.kotest.matchers.collections.shouldHaveSize
@@ -73,6 +78,42 @@ class GtfsArrivalsTest {
         third.displayTime shouldBe "16 min"
         third.secondsToStop shouldBe 956
     }
+
+    @Test
+    fun `drops arrivals beyond the time bound and null-time entries`() = runBlocking<Unit> {
+        val feed = feedMessageAtStop(
+            "G28S",
+            fetchTime + 60, // valid, kept
+            fetchTime + MAX_SECONDS_AHEAD + 3600, // beyond 2h, dropped
+            null // no arrival or departure time, dropped
+        )
+        coEvery { api.fetchFeedMessage(realtimeUrl) } returns feed
+        every { clock.now() } returns Instant.fromEpochSeconds(fetchTime)
+        every { api.readStops() } returns Fixtures.STOPS_CSV_1
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].secondsToStop shouldBe 60
+    }
+
+    private fun feedMessageAtStop(stopId: String, vararg times: Long?) = FeedMessage(
+        FeedHeader("2.0"),
+        times.mapIndexed { index, time ->
+            FeedEntity(
+                id = index.toString(),
+                trip_update = TripUpdate(
+                    trip = TripDescriptor(route_id = "G"),
+                    stop_time_update = listOf(
+                        TripUpdate.StopTimeUpdate(
+                            stop_id = stopId,
+                            arrival = time?.let { TripUpdate.StopTimeEvent(time = it) }
+                        )
+                    )
+                )
+            )
+        }
+    )
 
     @Test
     fun `count parameter limits arrivals`() = runBlocking<Unit> {

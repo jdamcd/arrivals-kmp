@@ -7,6 +7,7 @@ import com.jdamcd.arrivals.Arrival
 import com.jdamcd.arrivals.Arrivals
 import com.jdamcd.arrivals.ArrivalsInfo
 import com.jdamcd.arrivals.LineBadge
+import com.jdamcd.arrivals.MAX_SECONDS_AHEAD
 import com.jdamcd.arrivals.NoDataException
 import com.jdamcd.arrivals.Settings
 import com.jdamcd.arrivals.gtfs.system.Mta
@@ -84,7 +85,7 @@ internal class GtfsArrivals(
                 .filter { it.stop_id == stopId }
                 .map { createArrival(tripUpdate, it) }
         }
-        .filter { it.secondsToStop >= 0 }
+        .filter { it.secondsToStop in 0 until MAX_SECONDS_AHEAD }
         .sortedBy { it.secondsToStop }
         .take(count)
         .toList()
