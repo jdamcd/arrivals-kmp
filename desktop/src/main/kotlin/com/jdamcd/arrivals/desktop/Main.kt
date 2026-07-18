@@ -111,11 +111,12 @@ private fun watchConfig(settings: Settings, onReload: () -> Unit) {
     }
 }
 
-fun loadConfig(settings: Settings) {
-    if (configFile.exists()) {
+fun loadConfig(settings: Settings, file: File = configFile) {
+    if (file.exists()) {
         try {
-            FileInputStream(configFile).use { inputStream ->
-                val data: Map<String, Any> = Yaml().load(inputStream) ?: return
+            FileInputStream(file).use { inputStream ->
+                val data = Yaml().load<Any?>(inputStream)
+                if (data !is Map<*, *>) return
                 settings.clearStopConfig()
                 data.getString(SettingsConfig.MODE)?.let { settings.mode = it }
                 data.getString(SettingsConfig.STOP)?.let { settings.stopId = it }
@@ -135,4 +136,4 @@ fun loadConfig(settings: Settings) {
     }
 }
 
-private fun Map<String, Any>.getString(key: String): String? = get(key)?.toString()
+private fun Map<*, *>.getString(key: String): String? = get(key)?.toString()

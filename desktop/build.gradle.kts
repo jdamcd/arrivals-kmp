@@ -15,6 +15,12 @@ dependencies {
     implementation(libs.coroutines.swing)
     implementation(libs.koin)
     implementation(libs.snakeyaml)
+    testImplementation(kotlin("test"))
+    testImplementation(libs.kotest)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 compose.desktop {

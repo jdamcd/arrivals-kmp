@@ -37,22 +37,22 @@ import org.koin.core.qualifier.named
 fun main(args: Array<String>) {
     initKoin()
     runBlocking {
-        Cli()
-            .subcommands(
-                Tfl(),
-                Gtfs(),
-                Darwin(),
-                Bvg(),
-                Search().subcommands(
-                    SearchTfl(),
-                    SearchStops("darwin", "darwin"),
-                    SearchStops("bvg", "bvg") { "${it.name} (${it.id})" }
-                ),
-                ListStops()
-            )
-            .main(args)
+        buildCli().main(args)
     }
 }
+
+internal fun buildCli(): SuspendingCliktCommand = Cli().subcommands(
+    Tfl(),
+    Gtfs(),
+    Darwin(),
+    Bvg(),
+    Search().subcommands(
+        SearchTfl(),
+        SearchStops("darwin", "darwin"),
+        SearchStops("bvg", "bvg") { "${it.name} (${it.id})" }
+    ),
+    ListStops()
+)
 
 private class Cli : SuspendingCliktCommand("arrivals") {
     val json by option("--json").flag().help("JSON output")

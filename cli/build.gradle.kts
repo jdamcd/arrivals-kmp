@@ -28,5 +28,10 @@ kotlin {
             implementation(libs.clikt)
             implementation(libs.kotlinx.serialization.json)
         }
+        jvmTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotest)
+            implementation(libs.mockk)
+        }
     }
 }

@@ -35,6 +35,8 @@
 		49LCD0012F80000100000001 /* LcdArrivalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49LCD0002F80000100000000 /* LcdArrivalsView.swift */; };
 		49LED0012F80000200000001 /* LedArrivalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49LED0002F80000200000000 /* LedArrivalsView.swift */; };
 		CC1DCB94557920A526E61763 /* SettingsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B240A866F863FB5CA7A509B6 /* SettingsState.swift */; };
+		49VMT0012F90000100000001 /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49VMT0002F90000100000000 /* ViewModelTests.swift */; };
+		49CHX0012F90000200000001 /* ColorHexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CHX0002F90000200000000 /* ColorHexTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +89,8 @@
 		49LCD0002F80000100000000 /* LcdArrivalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LcdArrivalsView.swift; sourceTree = "<group>"; };
 		49LED0002F80000200000000 /* LedArrivalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LedArrivalsView.swift; sourceTree = "<group>"; };
 		B240A866F863FB5CA7A509B6 /* SettingsState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsState.swift; sourceTree = "<group>"; };
+		49VMT0002F90000100000000 /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
+		49CHX0002F90000200000000 /* ColorHexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHexTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +186,8 @@
 				49BB4D7A2ED3E5D700DE9C02 /* DebouncingTests.swift */,
 				49BB4D7C2ED3E5D700DE9C02 /* StringExtensionsTests.swift */,
 				49CC00102F7E00AA00BBCCDD /* AccessibilityLabelTests.swift */,
+				49VMT0002F90000100000000 /* ViewModelTests.swift */,
+				49CHX0002F90000200000000 /* ColorHexTests.swift */,
 			);
 			path = ArrivalsTests;
 			sourceTree = "<group>";
@@ -400,6 +406,8 @@
 				49BB4D7E2ED3E5D700DE9C02 /* DebouncingTests.swift in Sources */,
 				49BB4D802ED3E5D700DE9C02 /* StringExtensionsTests.swift in Sources */,
 				49CC00112F7E00AA00BBCCDD /* AccessibilityLabelTests.swift in Sources */,
+				49VMT0012F90000100000001 /* ViewModelTests.swift in Sources */,
+				49CHX0012F90000200000001 /* ColorHexTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
