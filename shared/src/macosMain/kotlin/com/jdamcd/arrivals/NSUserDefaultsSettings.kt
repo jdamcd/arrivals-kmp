@@ -17,6 +17,12 @@ class NSUserDefaultsSettings : Settings {
             defaults.setObject(value, SettingsConfig.STOP)
         }
 
+    override var stopName: String
+        get() = defaults.stringForKey(SettingsConfig.STOP_NAME) ?: ""
+        set(value) {
+            defaults.setObject(value, SettingsConfig.STOP_NAME)
+        }
+
     override var platform: String
         get() = defaults.stringForKey(SettingsConfig.PLATFORM) ?: ""
         set(value) {

@@ -13,6 +13,7 @@ class SettingsTest {
     fun setup() {
         settings.mode = SettingsConfig.MODE_TFL
         settings.stopId = "910GSHRDHST"
+        settings.stopName = "Shoreditch High Street"
         settings.platform = "2"
         settings.line = "U8"
         settings.direction = "inbound"
@@ -28,6 +29,7 @@ class SettingsTest {
         settings.clearStopConfig()
 
         settings.stopId shouldBe ""
+        settings.stopName shouldBe ""
         settings.platform shouldBe ""
         settings.line shouldBe ""
         settings.direction shouldBe ""
@@ -47,6 +49,7 @@ class SettingsTest {
     fun `saveGtfsConfig clears stop config and sets GTFS fields`() {
         settings.saveGtfsConfig(
             stopId = "B20N",
+            stopName = "Broadway (B20N)",
             realtimeUrl = "https://example.com/feeds/gtfs-bdfm",
             scheduleUrl = "https://example.com/data/google_transit.zip",
             apiKey = "newkey",
@@ -55,6 +58,7 @@ class SettingsTest {
 
         settings.mode shouldBe SettingsConfig.MODE_GTFS
         settings.stopId shouldBe "B20N"
+        settings.stopName shouldBe "Broadway (B20N)"
         settings.gtfsRealtime shouldBe "https://example.com/feeds/gtfs-bdfm"
         settings.gtfsSchedule shouldBe "https://example.com/data/google_transit.zip"
         settings.gtfsApiKey shouldBe "newkey"
@@ -75,6 +79,7 @@ class SettingsTest {
 
         settings.gtfsApiKey shouldBe ""
         settings.gtfsApiKeyParam shouldBe ""
+        settings.stopName shouldBe ""
     }
 
     @Test

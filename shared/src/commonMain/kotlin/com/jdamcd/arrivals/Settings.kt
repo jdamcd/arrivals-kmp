@@ -5,6 +5,7 @@ import com.jdamcd.arrivals.gtfs.system.Mta
 interface Settings {
     var mode: String
     var stopId: String
+    var stopName: String
     var platform: String
     var line: String
     var direction: String
@@ -24,6 +25,7 @@ interface Settings {
 
     fun clearStopConfig() {
         stopId = ""
+        stopName = ""
         platform = ""
         line = ""
         direction = ""
@@ -32,6 +34,7 @@ interface Settings {
 
     fun saveGtfsConfig(
         stopId: String,
+        stopName: String = "",
         realtimeUrl: String,
         scheduleUrl: String,
         apiKey: String = "",
@@ -39,6 +42,7 @@ interface Settings {
     ) {
         clearStopConfig()
         this.stopId = stopId
+        this.stopName = stopName
         gtfsRealtime = realtimeUrl
         gtfsSchedule = scheduleUrl
         gtfsApiKey = apiKey
@@ -50,6 +54,7 @@ interface Settings {
 class InMemorySettings : Settings {
     override var mode = SettingsConfig.MODE_TFL
     override var stopId = ""
+    override var stopName = ""
     override var platform = ""
     override var line = ""
     override var direction = ""
@@ -70,6 +75,7 @@ object SettingsConfig {
     const val MODE_BVG = "bvg"
 
     const val STOP = "stop"
+    const val STOP_NAME = "stop_name"
     const val PLATFORM = "platform"
     const val LINE = "line"
     const val DIRECTION = "direction"
