@@ -6,6 +6,8 @@ struct DarwinSettingsView: View {
 
     @StateObject private var viewModel = DarwinSettingsViewModel()
 
+    private let settings = MacDI.shared.settings
+
     @State private var searchQuery: String = ""
     @State private var selectedResult: StopResult?
 
@@ -52,6 +54,10 @@ struct DarwinSettingsView: View {
             }
         }
         .onAppear {
+            if selectedResult == nil, settings.mode == SettingsConfig().MODE_DARWIN, let stop = settings.configuredStop {
+                selectedResult = stop
+                platformFilter = settings.platform
+            }
             coordinator.onSave = {
                 if let selectedResult {
                     viewModel.save(
@@ -86,6 +92,7 @@ private class DarwinSettingsViewModel: StopSearchViewModel {
     func save(station: StopResult, platformFilter: String) {
         settings.clearStopConfig()
         settings.stopId = station.id
+        settings.stopName = station.name
         settings.platform = platformFilter
         settings.mode = SettingsConfig().MODE_DARWIN
     }

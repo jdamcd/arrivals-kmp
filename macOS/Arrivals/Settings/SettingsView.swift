@@ -2,8 +2,6 @@
 import SwiftUI
 
 enum TransitSystem: String, CaseIterable {
-    static let storageKey = "settingsTransitSystem"
-
     case tfl, mta, bart, bvg, darwin, customGtfs
 
     var displayName: String {
@@ -16,6 +14,21 @@ enum TransitSystem: String, CaseIterable {
         case .customGtfs: "Custom GTFS"
         }
     }
+
+    // Configured system is derived from mode (TfL/Darwin/BVG/GTFS)
+    // GTFS feed URL disambiguates MTA/BART/custom
+    static func configured(from settings: ArrivalsLib.Settings) -> TransitSystem {
+        let config = SettingsConfig()
+        let mode = settings.mode
+        if mode == config.MODE_DARWIN { return .darwin }
+        if mode == config.MODE_BVG { return .bvg }
+        if mode == config.MODE_GTFS {
+            if Mta().realtime.values.contains(settings.gtfsRealtime) { return .mta }
+            if settings.gtfsRealtime == Bart().REALTIME { return .bart }
+            return .customGtfs
+        }
+        return .tfl
+    }
 }
 
 struct SettingsView: View {
@@ -23,6 +36,11 @@ struct SettingsView: View {
 
     @State private var selector: TransitSystem = .tfl
     @State private var displayStyle: DisplayStyle = .london
+    @State private var initialDisplayStyle: DisplayStyle = .london
+
+    private var displayStyleChanged: Bool {
+        displayStyle != initialDisplayStyle
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -35,7 +53,9 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .accessibilityIdentifier("displayStylePicker")
+                }
 
+                Section {
                     Picker("Transit system", selection: $selector) {
                         ForEach(TransitSystem.allCases, id: \.self) {
                             Text($0.displayName)
@@ -44,13 +64,7 @@ struct SettingsView: View {
                     .pickerStyle(.menu)
                     .accessibilityIdentifier("transitSystemPicker")
                 }
-            }
-            .formStyle(.grouped)
-            .fixedSize(horizontal: false, vertical: true)
 
-            Divider()
-
-            Form {
                 switch selector {
                 case .tfl:
                     TflSettingsView()
@@ -61,9 +75,11 @@ struct SettingsView: View {
                     GtfsFeedSettingsView(
                         fetcher: MacDI.shared.bartSearch,
                         feedUrl: bart.REALTIME,
-                        save: { stopId in
+                        preselected: preselectedGtfsStop(feedUrl: bart.REALTIME),
+                        save: { stopId, stopName in
                             MacDI.shared.settings.saveGtfsConfig(
                                 stopId: stopId,
+                                stopName: stopName,
                                 realtimeUrl: bart.REALTIME,
                                 scheduleUrl: bart.SCHEDULE,
                                 apiKey: bart.API_KEY,
@@ -94,13 +110,12 @@ struct SettingsView: View {
 
                 Button("Save") {
                     UserDefaults.standard.set(displayStyle.rawValue, forKey: DisplayStyle.storageKey)
-                    UserDefaults.standard.set(selector.rawValue, forKey: TransitSystem.storageKey)
                     coordinator.onSave?()
                     NotificationCenter.default.post(name: .settingsSaved, object: nil)
                     NSApp.keyWindow?.close()
                 }
                 .keyboardShortcut(.defaultAction)
-                .disabled(!coordinator.canSave)
+                .disabled(!(coordinator.canSave || displayStyleChanged))
                 .buttonStyle(.borderedProminent)
                 .accessibilityIdentifier("saveButton")
             }
@@ -109,20 +124,27 @@ struct SettingsView: View {
         .frame(width: 440, height: 360)
         .environmentObject(coordinator)
         .onAppear {
-            if let raw = UserDefaults.standard.string(forKey: TransitSystem.storageKey),
-               let system = TransitSystem(rawValue: raw)
-            {
-                selector = system
-            }
+            selector = TransitSystem.configured(from: MacDI.shared.settings)
             if let raw = UserDefaults.standard.string(forKey: DisplayStyle.storageKey),
                let style = DisplayStyle(rawValue: raw)
             {
                 displayStyle = style
+                initialDisplayStyle = style
             }
         }
         .onChange(of: selector) { _, _ in
             coordinator.reset()
         }
+    }
+
+    private func preselectedGtfsStop(feedUrl: String) -> StopResult? {
+        let settings = MacDI.shared.settings
+        guard settings.mode == SettingsConfig().MODE_GTFS,
+              settings.gtfsRealtime == feedUrl
+        else {
+            return nil
+        }
+        return settings.configuredStop
     }
 }
 

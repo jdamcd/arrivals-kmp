@@ -87,7 +87,6 @@ final class SettingsSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Koin is initialized by the host ArrivalsApp.init(), so tests don't need to start it
-        UserDefaults.standard.removeObject(forKey: TransitSystem.storageKey)
         UserDefaults.standard.removeObject(forKey: DisplayStyle.storageKey)
         UserDefaults(suiteName: SettingsConfig.shared.STORE_NAME)?.removePersistentDomain(forName: SettingsConfig.shared.STORE_NAME)
     }
@@ -105,7 +104,8 @@ final class SettingsSnapshotTests: XCTestCase {
     }
 
     func testSettingsCustomGtfs() {
-        UserDefaults.standard.set(TransitSystem.customGtfs.rawValue, forKey: TransitSystem.storageKey)
+        // GTFS mode with no MTA/BART feed URL resolves to the custom tab
+        MacDI.shared.settings.mode = SettingsConfig.shared.MODE_GTFS
         forEachAppearance { systemAppearance, name in
             assertSnapshot(of: settingsView(appearance: systemAppearance), as: strategy, named: name)
         }

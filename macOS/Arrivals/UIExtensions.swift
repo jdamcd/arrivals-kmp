@@ -151,6 +151,12 @@ struct SelectedStopRow: View {
     }
 }
 
+extension ArrivalsLib.Settings {
+    var configuredStop: StopResult? {
+        stopName.isNotEmpty ? StopResult(id: stopId, name: stopName, isHub: false) : nil
+    }
+}
+
 extension String {
     func trim() -> String {
         trimmingCharacters(in: .whitespacesAndNewlines)

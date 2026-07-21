@@ -27,7 +27,8 @@ final class ArrivalsUITests: XCTestCase {
     }
 
     func test2_ConfigureTflStation() {
-        openSettings(transitSystem: "London (TfL)", displayStyle: "Dot Matrix")
+        openSettings(displayStyle: "Dot Matrix", transitSystem: "London (TfL)")
+        clearSelectedStop()
 
         let searchField = app.textFields["searchField"]
         XCTAssertTrue(searchField.waitForExistence(timeout: 5))
@@ -45,10 +46,7 @@ final class ArrivalsUITests: XCTestCase {
 
         takeScreenshot(name: "2a-tfl-station-selected")
 
-        let platformField = app.textFields["platformField"]
-        XCTAssertTrue(platformField.waitForExistence(timeout: 5))
-        platformField.click()
-        platformField.typeText("2")
+        setPlatform("2")
 
         takeScreenshot(name: "2b-tfl-platform-set")
 
@@ -57,7 +55,8 @@ final class ArrivalsUITests: XCTestCase {
     }
 
     func test3_ConfigureMtaStation() {
-        openSettings(transitSystem: "NYC (MTA)", displayStyle: "Dot Matrix")
+        openSettings(displayStyle: "Dot Matrix", transitSystem: "NYC (MTA)")
+        clearSelectedStop()
 
         let linePicker = app.popUpButtons["linePicker"]
         XCTAssertTrue(linePicker.waitForExistence(timeout: 5))
@@ -85,7 +84,8 @@ final class ArrivalsUITests: XCTestCase {
     }
 
     func test4_SwitchToLcdDisplay() {
-        openSettings(transitSystem: "London (TfL)", displayStyle: "LCD")
+        openSettings(displayStyle: "LCD", transitSystem: "London (TfL)")
+        clearSelectedStop()
 
         let searchField = app.textFields["searchField"]
         XCTAssertTrue(searchField.waitForExistence(timeout: 5))
@@ -101,10 +101,7 @@ final class ArrivalsUITests: XCTestCase {
         XCTAssertTrue(shoreditch.waitForExistence(timeout: 5))
         shoreditch.click()
 
-        let platformField = app.textFields["platformField"]
-        XCTAssertTrue(platformField.waitForExistence(timeout: 5))
-        platformField.click()
-        platformField.typeText("2")
+        setPlatform("2")
 
         takeScreenshot(name: "4a-lcd-settings")
 
@@ -112,22 +109,38 @@ final class ArrivalsUITests: XCTestCase {
         takeScreenshot(name: "4b-lcd-popover")
     }
 
-    private func openSettings(transitSystem: String, displayStyle: String) {
+    private func openSettings(displayStyle: String, transitSystem: String) {
         let popover = app.popovers.firstMatch
         XCTAssertTrue(popover.waitForExistence(timeout: 10))
 
         popover.buttons["settingsButton"].click()
         XCTAssertTrue(app.buttons["saveButton"].waitForExistence(timeout: 5), "Settings window should open")
 
-        let transitPicker = app.popUpButtons["transitSystemPicker"]
-        XCTAssertTrue(transitPicker.waitForExistence(timeout: 5))
-        transitPicker.click()
-        app.menuItems[transitSystem].click()
-
         let stylePicker = app.popUpButtons["displayStylePicker"]
         XCTAssertTrue(stylePicker.waitForExistence(timeout: 5))
         stylePicker.click()
         app.menuItems[displayStyle].click()
+
+        let transitPicker = app.popUpButtons["transitSystemPicker"]
+        XCTAssertTrue(transitPicker.waitForExistence(timeout: 5))
+        transitPicker.click()
+        app.menuItems[transitSystem].click()
+    }
+
+    private func setPlatform(_ value: String) {
+        let platformField = app.textFields["platformField"]
+        XCTAssertTrue(platformField.waitForExistence(timeout: 5))
+        platformField.click()
+        // Pre-filled so clear before setting a new platform
+        platformField.typeKey("a", modifierFlags: .command)
+        platformField.typeText(value)
+    }
+
+    private func clearSelectedStop() {
+        let changeButton = app.buttons["changeStopButton"]
+        if changeButton.waitForExistence(timeout: 2) {
+            changeButton.click()
+        }
     }
 
     private func saveAndVerifyPopoverUpdate() {

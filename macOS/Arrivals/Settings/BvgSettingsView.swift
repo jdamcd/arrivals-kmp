@@ -6,6 +6,8 @@ struct BvgSettingsView: View {
 
     @StateObject private var viewModel = BvgSettingsViewModel()
 
+    private let settings = MacDI.shared.settings
+
     @State private var searchQuery: String = ""
     @State private var selectedResult: StopResult?
 
@@ -61,6 +63,11 @@ struct BvgSettingsView: View {
             }
         }
         .onAppear {
+            if selectedResult == nil, settings.mode == SettingsConfig().MODE_BVG, let stop = settings.configuredStop {
+                selectedResult = stop
+                lineFilter = settings.line
+                platformFilter = settings.platform
+            }
             coordinator.onSave = {
                 if let selectedResult {
                     viewModel.save(
@@ -100,6 +107,7 @@ private class BvgSettingsViewModel: StopSearchViewModel {
     func save(station: StopResult, lineFilter: String, platformFilter: String) {
         settings.clearStopConfig()
         settings.stopId = station.id
+        settings.stopName = station.name
         settings.line = lineFilter
         settings.platform = platformFilter
         settings.mode = SettingsConfig().MODE_BVG

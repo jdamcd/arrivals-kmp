@@ -13,12 +13,13 @@ struct GtfsFeedSettingsView: View {
         selectedStop != nil
     }
 
-    init(fetcher: GtfsSearch, feedUrl: String, save: @escaping (String) -> Void) {
+    init(fetcher: GtfsSearch, feedUrl: String, preselected: StopResult?, save: @escaping (String, String) -> Void) {
         _viewModel = StateObject(wrappedValue: GtfsFeedSettingsViewModel(
             fetcher: fetcher,
             feedUrl: feedUrl,
             save: save
         ))
+        _selectedStop = State(initialValue: preselected)
     }
 
     var body: some View {
@@ -26,6 +27,9 @@ struct GtfsFeedSettingsView: View {
             if let selected = selectedStop {
                 SelectedStopRow(label: "Stop", name: selected.name) {
                     selectedStop = nil
+                    if viewModel.state == .idle {
+                        viewModel.getStops()
+                    }
                 }
             } else {
                 ResultsArea {
@@ -63,10 +67,12 @@ struct GtfsFeedSettingsView: View {
             }
         }
         .onAppear {
-            viewModel.getStops()
+            if selectedStop == nil {
+                viewModel.getStops()
+            }
             coordinator.onSave = {
                 if let selectedStop {
-                    viewModel.save(stopId: selectedStop.id)
+                    viewModel.save(stopId: selectedStop.id, stopName: selectedStop.name)
                 }
             }
             coordinator.canSave = isValid
@@ -83,10 +89,10 @@ private class GtfsFeedSettingsViewModel: ObservableObject {
 
     private let fetcher: GtfsSearch
     private let feedUrl: String
-    private let onSave: (String) -> Void
+    private let onSave: (String, String) -> Void
     private var loadTask: Task<Void, Never>?
 
-    init(fetcher: GtfsSearch, feedUrl: String, save: @escaping (String) -> Void) {
+    init(fetcher: GtfsSearch, feedUrl: String, save: @escaping (String, String) -> Void) {
         self.fetcher = fetcher
         self.feedUrl = feedUrl
         onSave = save
@@ -114,7 +120,7 @@ private class GtfsFeedSettingsViewModel: ObservableObject {
         }
     }
 
-    func save(stopId: String) {
-        onSave(stopId)
+    func save(stopId: String, stopName: String) {
+        onSave(stopId, stopName)
     }
 }

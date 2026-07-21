@@ -36,6 +36,7 @@ struct CustomGtfsSettingsView: View {
             coordinator.onSave = {
                 settings.saveGtfsConfig(
                     stopId: stopId.trim(),
+                    stopName: "",
                     realtimeUrl: realtimeUrl.trim(),
                     scheduleUrl: scheduleUrl.trim(),
                     apiKey: apiKey.trim(),

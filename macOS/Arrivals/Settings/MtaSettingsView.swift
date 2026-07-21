@@ -17,7 +17,16 @@ struct MtaSettingsView: View {
     }
 
     init() {
-        lines = Mta().realtime
+        let mta = Mta()
+        lines = mta.realtime
+        let settings = MacDI.shared.settings
+        if settings.mode == SettingsConfig().MODE_GTFS,
+           let stop = settings.configuredStop,
+           let line = mta.realtime.first(where: { $0.value == settings.gtfsRealtime })?.key
+        {
+            _selectedLine = State(initialValue: line)
+            _selectedStop = State(initialValue: stop)
+        }
     }
 
     var body: some View {
@@ -43,6 +52,9 @@ struct MtaSettingsView: View {
             if let selected = selectedStop {
                 SelectedStopRow(label: "Stop", name: selected.name) {
                     selectedStop = nil
+                    if viewModel.state == .idle, let selectedLine, let feedUrl = lines[selectedLine] {
+                        viewModel.getStops(feedUrl: feedUrl)
+                    }
                 }
             } else {
                 ResultsArea {
@@ -82,7 +94,7 @@ struct MtaSettingsView: View {
         .onAppear {
             coordinator.onSave = {
                 if let selectedLine, let feedUrl = lines[selectedLine], let selectedStop {
-                    viewModel.save(lineUrl: feedUrl, stopId: selectedStop.id)
+                    viewModel.save(lineUrl: feedUrl, stopId: selectedStop.id, stopName: selectedStop.name)
                 }
             }
             coordinator.canSave = isValid
@@ -131,9 +143,10 @@ private class MtaSettingsViewModel: ObservableObject {
         }
     }
 
-    func save(lineUrl: String, stopId: String) {
+    func save(lineUrl: String, stopId: String, stopName: String) {
         settings.saveGtfsConfig(
             stopId: stopId,
+            stopName: stopName,
             realtimeUrl: lineUrl,
             scheduleUrl: scheduleUrl,
             apiKey: "",

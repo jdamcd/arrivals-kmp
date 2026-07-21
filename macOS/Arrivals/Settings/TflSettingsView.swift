@@ -6,6 +6,8 @@ struct TflSettingsView: View {
 
     @StateObject private var viewModel = TflSettingsViewModel()
 
+    private let settings = MacDI.shared.settings
+
     @State private var searchQuery: String = ""
     @State private var selectedResult: StopResult?
 
@@ -63,6 +65,11 @@ struct TflSettingsView: View {
             }
         }
         .onAppear {
+            if selectedResult == nil, settings.mode == SettingsConfig().MODE_TFL, let stop = settings.configuredStop {
+                selectedResult = stop
+                platformFilter = settings.platform
+                directionFilter = settings.direction.isNotEmpty ? settings.direction : "all"
+            }
             coordinator.onSave = {
                 if let selectedResult {
                     viewModel.save(
@@ -135,6 +142,7 @@ private class TflSettingsViewModel: StopSearchViewModel {
     func save(stopPoint: StopResult, platformFilter: String, directionFilter: String) {
         settings.clearStopConfig()
         settings.stopId = stopPoint.id
+        settings.stopName = stopPoint.name
         settings.platform = platformFilter
         settings.direction = directionFilter
         settings.mode = SettingsConfig().MODE_TFL
