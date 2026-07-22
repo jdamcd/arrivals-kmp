@@ -78,7 +78,7 @@ struct DebouncingTextField: View {
     }
 }
 
-private class DebouncingTextFieldModel: ObservableObject {
+class DebouncingTextFieldModel: ObservableObject {
     @Published var text: String = "" {
         didSet {
             guard text != oldValue else { return }

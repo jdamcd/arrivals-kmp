@@ -1,111 +1,83 @@
 @testable import Arrivals
-import Combine
 import XCTest
 
 final class DebouncingTests: XCTestCase {
-    var cancellables: Set<AnyCancellable>!
+    private var model: DebouncingTextFieldModel!
 
-    override func setUp() {
-        super.setUp()
-        cancellables = []
+    override func tearDown() {
+        model = nil
+        super.tearDown()
     }
 
-    func testDebounceDelaysValuePropagation() {
-        let expectation = expectation(description: "Debounced value should be received after delay")
-        let publisher = PassthroughSubject<String, Never>()
+    func testDelaysValuePropagation() {
+        let expectation = expectation(description: "Debounced value should be delivered after delay")
         var receivedValue: String?
+        model = DebouncingTextFieldModel(debounceInterval: 0.3) { value in
+            receivedValue = value
+            expectation.fulfill()
+        }
 
-        publisher
-            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-            .sink { value in
-                receivedValue = value
-                expectation.fulfill()
-            }
-            .store(in: &cancellables)
+        model.text = "test"
 
-        publisher.send("test")
-
-        XCTAssertNil(receivedValue, "Value should not be received immediately")
+        XCTAssertNil(receivedValue, "Value should not be delivered immediately")
 
         wait(for: [expectation], timeout: 1.0)
-        XCTAssertEqual(receivedValue, "test", "Value should be received after debounce delay")
+        XCTAssertEqual(receivedValue, "test", "Value should be delivered after the debounce interval")
     }
 
-    func testDebounceIgnoresRapidChanges() {
-        let expectation = expectation(description: "Only final value should be received")
-        let publisher = PassthroughSubject<String, Never>()
+    func testIgnoresRapidChanges() {
+        let expectation = expectation(description: "Only the final value should be delivered")
         var receivedValues: [String] = []
+        model = DebouncingTextFieldModel(debounceInterval: 0.3) { value in
+            receivedValues.append(value)
+            if value == "four" { expectation.fulfill() }
+        }
 
-        publisher
-            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-            .sink { value in
-                receivedValues.append(value)
-                if value == "four" {
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
-
-        publisher.send("one")
-        publisher.send("two")
-        publisher.send("three")
-        publisher.send("four")
+        model.text = "one"
+        model.text = "two"
+        model.text = "three"
+        model.text = "four"
 
         wait(for: [expectation], timeout: 1.0)
 
-        XCTAssertEqual(receivedValues.count, 1, "Should only receive one value")
-        XCTAssertEqual(receivedValues.first, "four", "Should receive the final value")
+        XCTAssertEqual(receivedValues, ["four"], "Rapid changes should collapse to the final value")
     }
 
     @MainActor
-    func testDebounceAllowsSlowChanges() {
-        let expectation = expectation(description: "All slow values should be received")
-        let publisher = PassthroughSubject<String, Never>()
+    func testAllowsSlowChanges() {
+        let expectation = expectation(description: "Both spaced-out values should be delivered")
         var receivedValues: [String] = []
+        model = DebouncingTextFieldModel(debounceInterval: 0.2) { value in
+            receivedValues.append(value)
+            if receivedValues.count == 2 { expectation.fulfill() }
+        }
 
-        publisher
-            .debounce(for: .seconds(0.2), scheduler: DispatchQueue.main)
-            .sink { value in
-                receivedValues.append(value)
-                if receivedValues.count == 2 {
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
+        model.text = "one"
 
-        publisher.send("one")
-
-        // Wait longer than debounce interval before sending second value
+        // Wait longer than the debounce interval before sending the second value
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            publisher.send("two")
+            self.model.text = "two"
         }
 
         wait(for: [expectation], timeout: 2.0)
 
-        XCTAssertEqual(receivedValues, ["one", "two"], "Both values should be received when spaced out")
+        XCTAssertEqual(receivedValues, ["one", "two"], "Both values should be delivered when spaced out")
     }
 
-    func testDebounceHandlesEmptyStrings() {
-        let expectation = expectation(description: "Empty string should be debounced")
-        let publisher = PassthroughSubject<String, Never>()
-        var receivedValue: String?
+    func testIgnoresDuplicateConsecutiveValues() {
+        let expectation = expectation(description: "Duplicate value should be delivered once")
+        expectation.assertForOverFulfill = false
+        var receivedValues: [String] = []
+        model = DebouncingTextFieldModel(debounceInterval: 0.2) { value in
+            receivedValues.append(value)
+            expectation.fulfill()
+        }
 
-        publisher
-            .debounce(for: .seconds(0.2), scheduler: DispatchQueue.main)
-            .sink { value in
-                receivedValue = value
-                expectation.fulfill()
-            }
-            .store(in: &cancellables)
-
-        publisher.send("")
+        model.text = "repeat"
+        model.text = "repeat"
 
         wait(for: [expectation], timeout: 1.0)
-        XCTAssertEqual(receivedValue, "", "Empty string should be handled")
-    }
 
-    override func tearDown() {
-        cancellables = nil
-        super.tearDown()
+        XCTAssertEqual(receivedValues, ["repeat"], "Setting the same value twice should publish once")
     }
 }

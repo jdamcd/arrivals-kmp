@@ -13,14 +13,19 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 @OptIn(kotlin.time.ExperimentalTime::class)
 class DarwinArrivalsTest {
 
     private val api = mockk<DarwinApi>()
     private val settings = InMemorySettings()
-    private val clock = Clock.System
-    private val arrivals = DarwinArrivals(api, settings, clock)
+
+    // Matches mockBoard.generatedAt; only consulted when generatedAt fails to parse
+    private val fixedClock = object : Clock {
+        override fun now(): Instant = Instant.parse("2025-11-25T10:00:00Z")
+    }
+    private val arrivals = DarwinArrivals(api, settings, fixedClock)
 
     private val mockBoard = ApiDarwinBoard(
         generatedAt = "2025-11-25T10:00:00Z",
@@ -340,5 +345,22 @@ class DarwinArrivalsTest {
         latest.arrivals shouldHaveSize 2
         latest.arrivals[0].destination shouldBe "Within 2hrs"
         latest.arrivals[1].destination shouldBe "Just under 2hrs"
+    }
+
+    @Test
+    fun `falls back to clock when generatedAt is unparseable`() = runBlocking<Unit> {
+        // Clock reads 10:00, so a 10:15 departure is 15 min away
+        val board = mockBoard.copy(
+            generatedAt = "not-a-timestamp",
+            trainServices = listOf(
+                ApiTrainService(serviceIdUrlSafe = "s1", std = "10:15", etd = "10:15", platform = "1", operator = "Op", operatorCode = "O", isCancelled = false, destination = listOf(ApiCallingPoint("Fallback Dest", "FD")))
+            )
+        )
+        coEvery { api.fetchDepartures("CLJ", any()) } returns board
+
+        val latest = arrivals.latest()
+
+        latest.arrivals shouldHaveSize 1
+        latest.arrivals[0].displayTime shouldBe "15 min"
     }
 }
