@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+    <link rel="apple-touch-icon" href="img/icon.png">
+    <title>Privacy Policy &middot; Arrivals</title>
+    <meta name="description" content="Privacy policy for the Arrivals macOS app.">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --accent: #4db8ff;
+            --bg: #0b0b12;
+            --text: #c0c0cc;
+            --text-muted: #6a6a80;
+            --text-bright: #eeeef2;
+            --border: rgba(255, 255, 255, 0.06);
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% -10%, rgba(90, 60, 180, 0.35), transparent 60%),
+                radial-gradient(ellipse 60% 50% at 20% 50%, rgba(30, 80, 160, 0.2), transparent 50%),
+                radial-gradient(ellipse 50% 40% at 85% 30%, rgba(60, 140, 200, 0.15), transparent 50%),
+                radial-gradient(ellipse 40% 50% at 60% 90%, rgba(100, 40, 120, 0.12), transparent 50%);
+            pointer-events: none;
+        }
+
+        .bg-noise {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .masthead {
+            padding: 80px 0 40px;
+            text-align: center;
+        }
+
+        .masthead img {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            margin-bottom: 22px;
+        }
+
+        .masthead h1 {
+            font-weight: 700;
+            font-size: clamp(1.8rem, 4vw, 2.2rem);
+            color: var(--text-bright);
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        .masthead .updated {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .prose {
+            padding-bottom: 32px;
+        }
+
+        .prose h2 {
+            font-weight: 600;
+            font-size: 1.15rem;
+            color: var(--text-bright);
+            letter-spacing: -0.01em;
+            margin: 36px 0 12px;
+        }
+
+        .prose p {
+            margin-bottom: 14px;
+        }
+
+        .prose ul {
+            list-style: none;
+            margin: 0 0 14px;
+        }
+
+        .prose li {
+            padding-left: 18px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .prose li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.6;
+        }
+
+        .prose strong {
+            color: var(--text-bright);
+            font-weight: 600;
+        }
+
+        .prose a {
+            color: var(--text);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .prose a:hover {
+            color: var(--text-bright);
+        }
+
+        .footer {
+            padding: 24px 0 48px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            margin-top: 24px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.15s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-bright);
+        }
+
+        @media (max-width: 560px) {
+            .masthead { padding: 56px 0 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-noise"></div>
+
+<div class="container">
+
+    <header class="masthead">
+        <a href="index.html"><img src="img/icon.png" alt="Arrivals"></a>
+        <h1>Privacy Policy</h1>
+        <div class="updated">Last updated: July 2026</div>
+    </header>
+
+    <main class="prose">
+        <h2>What we collect</h2>
+        <p><strong>Nothing.</strong> Arrivals is a menu bar app that shows live public transit arrival times. It has no account and no sign-in, and it collects no personal information. There are no analytics, no tracking, no advertising, and no data is sent to us or any server we control. We have no way to identify you or your device.</p>
+
+        <h2>Network requests</h2>
+        <p>To show arrival times, the app makes requests directly from your Mac to the transit data provider you choose. Depending on your configuration, that provider is one of:</p>
+        <ul>
+            <li><strong>Transport for London (TfL)</strong> &mdash; London Underground, Overground, DLR</li>
+            <li><strong>Rail Delivery Group (Darwin)</strong> &mdash; UK National Rail</li>
+            <li><strong>Metropolitan Transportation Authority (MTA)</strong> &mdash; New York City Subway</li>
+            <li><strong>Berliner Verkehrsbetriebe (BVG)</strong> &mdash; Berlin U-Bahn, S-Bahn, Tram</li>
+            <li><strong>511.org</strong> &mdash; San Francisco Bay Area BART</li>
+            <li>Any <strong>custom GTFS feed</strong> whose URL you enter yourself</li>
+        </ul>
+        <p>These requests include the station or stop you have configured, so the provider can return the relevant times. They go directly from your device to the provider; we do not proxy, log, or see them. Each provider handles data under its own privacy policy.</p>
+
+        <h2>Data stored on your device</h2>
+        <p>Your settings &mdash; the transit system, station, platform, and display preferences you pick &mdash; are stored locally on your Mac. They are not synced to any server or shared with anyone.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about privacy? Open an issue on <a href="https://github.com/jdamcd/arrivals-kmp">GitHub</a>.</p>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/jdamcd/arrivals-kmp">GitHub</a>
+            <a href="https://github.com/jdamcd/arrivals-kmp/blob/main/LICENSE">Licence</a>
+        </div>
+    </footer>
+
+</div>
+
+</body>
+</html>
