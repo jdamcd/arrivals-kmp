@@ -79,14 +79,14 @@ struct TflSettingsView: View {
                     )
                 }
             }
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
         .onChange(of: selectedResult) { _, newValue in
             if let result = newValue, result.isHub {
                 viewModel.disambiguate(stop: result)
                 selectedResult = nil
             }
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
 
         if isValid {

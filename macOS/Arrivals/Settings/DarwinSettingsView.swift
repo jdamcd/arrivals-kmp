@@ -66,10 +66,10 @@ struct DarwinSettingsView: View {
                     )
                 }
             }
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
         .onChange(of: selectedResult) { _, _ in
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
 
         if isValid {

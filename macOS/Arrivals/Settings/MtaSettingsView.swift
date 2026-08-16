@@ -97,13 +97,13 @@ struct MtaSettingsView: View {
                     viewModel.save(lineUrl: feedUrl, stopId: selectedStop.id, stopName: selectedStop.name)
                 }
             }
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
         .onChange(of: selectedLine) { _, _ in
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
         .onChange(of: selectedStop) { _, _ in
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
     }
 }

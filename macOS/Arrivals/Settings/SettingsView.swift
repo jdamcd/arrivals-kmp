@@ -110,12 +110,15 @@ struct SettingsView: View {
 
                 Button("Save") {
                     UserDefaults.standard.set(displayStyle.rawValue, forKey: DisplayStyle.storageKey)
-                    coordinator.onSave?()
+                    // Save is also enabled by a display style change alone
+                    if coordinator.hasValidConfig {
+                        coordinator.onSave?()
+                    }
                     NotificationCenter.default.post(name: .settingsSaved, object: nil)
                     NSApp.keyWindow?.close()
                 }
                 .keyboardShortcut(.defaultAction)
-                .disabled(!(coordinator.canSave || displayStyleChanged))
+                .disabled(!(coordinator.hasValidConfig || displayStyleChanged))
                 .buttonStyle(.borderedProminent)
                 .accessibilityIdentifier("saveButton")
             }

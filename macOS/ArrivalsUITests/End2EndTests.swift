@@ -30,19 +30,7 @@ final class ArrivalsUITests: XCTestCase {
         openSettings(displayStyle: "Dot Matrix", transitSystem: "London (TfL)")
         clearSelectedStop()
 
-        let searchField = app.textFields["searchField"]
-        XCTAssertTrue(searchField.waitForExistence(timeout: 5))
-        searchField.click()
-        searchField.typeText("shoreditch")
-
-        let resultsList = app.outlines["searchResultsList"].firstMatch
-        XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "Search results should appear")
-
-        let shoreditch = resultsList.staticTexts.matching(
-            NSPredicate(format: "value CONTAINS 'Shoreditch High Street'")
-        ).firstMatch
-        XCTAssertTrue(shoreditch.waitForExistence(timeout: 5), "Shoreditch High Street should appear in results")
-        shoreditch.click()
+        selectTflShoreditch()
 
         takeScreenshot(name: "2a-tfl-station-selected")
 
@@ -87,6 +75,54 @@ final class ArrivalsUITests: XCTestCase {
         openSettings(displayStyle: "LCD", transitSystem: "London (TfL)")
         clearSelectedStop()
 
+        selectTflShoreditch()
+        setPlatform("2")
+
+        takeScreenshot(name: "4a-lcd-settings")
+
+        saveAndVerifyPopoverUpdate()
+        takeScreenshot(name: "4b-lcd-popover")
+    }
+
+    func test5_DisplayStyleOnlySaveKeepsStopConfig() {
+        openSettings(displayStyle: "Dot Matrix", transitSystem: "London (TfL)")
+        clearSelectedStop()
+        selectTflShoreditch()
+        setPlatform("2")
+        saveAndVerifyPopoverUpdate()
+
+        // Custom GTFS fields are empty for a TfL user, so Save is only enabled by
+        // the display style change and must not commit the invalid GTFS config
+        openSettings(displayStyle: "LCD", transitSystem: "Custom GTFS")
+        let saveButton = app.buttons["saveButton"]
+        XCTAssertTrue(saveButton.isEnabled, "Save should be enabled by the display style change alone")
+        saveButton.click()
+
+        let popover = app.popovers.firstMatch
+        XCTAssertTrue(popover.waitForExistence(timeout: 10), "Popover should reappear after save")
+        let stationName = popover.staticTexts["stationName"]
+        XCTAssertTrue(stationName.waitForExistence(timeout: 30), "Arrivals should still load, not error")
+
+        takeScreenshot(name: "5a-popover-after-style-only-save")
+
+        popover.buttons["settingsButton"].click()
+        XCTAssertTrue(app.buttons["saveButton"].waitForExistence(timeout: 5), "Settings window should open")
+
+        let transitPicker = app.popUpButtons["transitSystemPicker"]
+        XCTAssertTrue(transitPicker.waitForExistence(timeout: 5))
+        XCTAssertEqual(transitPicker.value as? String, "London (TfL)", "Transit system should still be TfL")
+
+        let selectedStop = app.staticTexts["selectedStopName"]
+        XCTAssertTrue(selectedStop.waitForExistence(timeout: 5), "Stop should still be selected")
+        XCTAssertTrue(
+            (selectedStop.value as? String ?? "").contains("Shoreditch High Street"),
+            "Stop should still be Shoreditch High Street"
+        )
+
+        takeScreenshot(name: "5b-settings-config-intact")
+    }
+
+    private func selectTflShoreditch() {
         let searchField = app.textFields["searchField"]
         XCTAssertTrue(searchField.waitForExistence(timeout: 5))
         searchField.click()
@@ -98,15 +134,8 @@ final class ArrivalsUITests: XCTestCase {
         let shoreditch = resultsList.staticTexts.matching(
             NSPredicate(format: "value CONTAINS 'Shoreditch High Street'")
         ).firstMatch
-        XCTAssertTrue(shoreditch.waitForExistence(timeout: 5))
+        XCTAssertTrue(shoreditch.waitForExistence(timeout: 5), "Shoreditch High Street should appear in results")
         shoreditch.click()
-
-        setPlatform("2")
-
-        takeScreenshot(name: "4a-lcd-settings")
-
-        saveAndVerifyPopoverUpdate()
-        takeScreenshot(name: "4b-lcd-popover")
     }
 
     private func openSettings(displayStyle: String, transitSystem: String) {

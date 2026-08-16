@@ -75,10 +75,10 @@ struct GtfsFeedSettingsView: View {
                     viewModel.save(stopId: selectedStop.id, stopName: selectedStop.name)
                 }
             }
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
         .onChange(of: selectedStop) { _, _ in
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
     }
 }

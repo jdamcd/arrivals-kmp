@@ -43,16 +43,16 @@ struct CustomGtfsSettingsView: View {
                     apiKeyParam: apiKeyParam.trim()
                 )
             }
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
         .onChange(of: realtimeUrl) { _, _ in
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
         .onChange(of: scheduleUrl) { _, _ in
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
         .onChange(of: stopId) { _, _ in
-            coordinator.canSave = isValid
+            coordinator.hasValidConfig = isValid
         }
 
         Section("Authentication options") {

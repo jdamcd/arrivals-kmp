@@ -2,11 +2,11 @@ import SwiftUI
 
 @MainActor
 class SettingsCoordinator: ObservableObject {
-    @Published var canSave: Bool = false
+    @Published var hasValidConfig: Bool = false
     var onSave: (() -> Void)?
 
     func reset() {
-        canSave = false
+        hasValidConfig = false
         onSave = nil
     }
 }
