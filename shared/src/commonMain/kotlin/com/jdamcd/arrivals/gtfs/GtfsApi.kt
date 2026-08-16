@@ -2,6 +2,7 @@ package com.jdamcd.arrivals.gtfs
 
 import com.google.transit.realtime.FeedMessage
 import com.jdamcd.arrivals.HttpApiClient
+import com.jdamcd.arrivals.NoDataException
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.HttpRequestBuilder
@@ -16,6 +17,7 @@ import okio.SYSTEM
 import okio.buffer
 import okio.openZip
 import okio.use
+import kotlin.coroutines.cancellation.CancellationException
 
 internal sealed class ApiAuth {
     data class QueryParam(val name: String, val key: String) : ApiAuth()
@@ -46,10 +48,17 @@ internal class GtfsApi(
     private val sourceFileName = "stops.source"
 
     suspend fun fetchFeedMessage(url: String, auth: ApiAuth? = null): FeedMessage {
-        val bodyBytes = executeRequest(url) {
+        val response = executeRequest(url) {
             auth.applyTo(this)
-        }.bodyAsBytes()
-        return FeedMessage.ADAPTER.decode(bodyBytes)
+        }
+        return try {
+            FeedMessage.ADAPTER.decode(response.bodyAsBytes())
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            // A 200 can carry a non-feed body; latest() only declares NoDataException to Swift
+            throw NoDataException("$apiName error")
+        }
     }
 
     suspend fun downloadSchedule(url: String, folder: String = "gtfs", auth: ApiAuth? = null) {

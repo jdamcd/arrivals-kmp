@@ -85,6 +85,20 @@ class GtfsApiTest {
     }
 
     @Test
+    fun `fetchFeedMessage throws error message on non-protobuf body`() = runBlocking<Unit> {
+        // A 200 response that isn't a feed
+        val api = GtfsApi(
+            mockClient { bytesResponse("<html>Not a feed</html>".encodeToByteArray()) },
+            fileSystem
+        )
+
+        val e = assertFailsWith<NoDataException> {
+            api.fetchFeedMessage(feedUrl)
+        }
+        e.message shouldBe "GTFS feed error"
+    }
+
+    @Test
     fun `downloadSchedule throws error message on 4xx before unpacking`() = runBlocking<Unit> {
         val api = GtfsApi(
             mockClient { bytesResponse(ByteArray(0), HttpStatusCode.Forbidden) },

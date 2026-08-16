@@ -9,7 +9,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 internal abstract class HttpApiClient(
     private val client: HttpClient,
-    private val apiName: String
+    protected val apiName: String
 ) {
     protected suspend fun executeRequest(
         url: String,
