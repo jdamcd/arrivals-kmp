@@ -27,11 +27,16 @@ import com.jdamcd.arrivals.StopResult
 import com.jdamcd.arrivals.StopSearch
 import com.jdamcd.arrivals.TflSearch
 import com.jdamcd.arrivals.initKoin
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.Qualifier
 import org.koin.core.qualifier.named
 
 fun main(args: Array<String>) {
@@ -43,11 +48,13 @@ fun main(args: Array<String>) {
 
 internal fun buildCli(): SuspendingCliktCommand = Cli().subcommands(
     Tfl(),
+    TflBus(),
     Gtfs(),
     Darwin(),
     Bvg(),
     Search().subcommands(
         SearchTfl(),
+        SearchTfl("tfl-bus", named("tflBus")),
         SearchStops("darwin", "darwin"),
         SearchStops("bvg", "bvg") { "${it.name} (${it.id})" }
     ),
@@ -87,6 +94,33 @@ private class Tfl :
         station?.let { settings.stopId = it }
         platform?.let { settings.platform = it }
         direction?.let { settings.direction = it }
+
+        fetchAndDisplay { arrivals.latest(count) }
+    }
+}
+
+private class TflBus :
+    SuspendingCliktCommand("tfl-bus"),
+    KoinComponent {
+    private val arrivals: Arrivals by inject()
+    private val settings: Settings by inject()
+
+    private val station by option("--station")
+        .help("Bus stop ID (e.g. 490001090D)")
+
+    private val line by option("--line")
+        .help("Route filter (e.g. 176, N343)")
+
+    private val count by option("--count")
+        .int()
+        .restrictTo(min = 1)
+        .default(3)
+        .help("Number of arrivals to show (default: 3)")
+
+    override suspend fun run() {
+        settings.mode = SettingsConfig.MODE_TFL_BUS
+        station?.let { settings.stopId = it }
+        line?.let { settings.line = it }
 
         fetchAndDisplay { arrivals.latest(count) }
     }
@@ -193,10 +227,12 @@ private class Search : SuspendingCliktCommand("search") {
     override suspend fun run() = Unit
 }
 
-private class SearchTfl :
-    SuspendingCliktCommand("tfl"),
+private class SearchTfl(
+    name: String = "tfl",
+    qualifier: Qualifier? = null
+) : SuspendingCliktCommand(name),
     KoinComponent {
-    private val tflSearch: TflSearch by inject()
+    private val tflSearch: TflSearch by inject(qualifier)
 
     private val query by argument("query")
 
@@ -207,15 +243,23 @@ private class SearchTfl :
                 echo("No results found")
                 return
             }
-            for (result in results) {
-                if (result.isHub) {
-                    val details = tflSearch.stopDetails(result.id)
-                    echo(yellow("${details.name}:"))
-                    for (child in details.children) {
-                        echo(yellow("  ${child.name} (${child.id})"))
+            // Most bus results are groups, so expanding them one at a time takes 40 round trips.
+            // A supervisor keeps one failed lookup from cancelling rows that print before it
+            supervisorScope {
+                val lookups = Semaphore(MAX_CONCURRENT_LOOKUPS)
+                val expanded = results.map { result ->
+                    result to if (result.isHub) async { lookups.withPermit { tflSearch.stopDetails(result.id) } } else null
+                }
+                for ((result, lookup) in expanded) {
+                    if (lookup != null) {
+                        val details = lookup.await()
+                        echo(yellow("${details.name}:"))
+                        for (child in details.children) {
+                            echo(yellow("  ${child.name} (${child.id})"))
+                        }
+                    } else {
+                        echo(yellow("${result.name} (${result.id})"))
                     }
-                } else {
-                    echo(yellow("${result.name} (${result.id})"))
                 }
             }
         } catch (e: Exception) {
@@ -355,6 +399,9 @@ data class ArrivalResponse(
     val displayTime: String,
     val isDue: Boolean
 )
+
+// Keeps a broad search well inside TfL's per-key rate limit
+private const val MAX_CONCURRENT_LOOKUPS = 8
 
 @Serializable
 data class ErrorResponse(

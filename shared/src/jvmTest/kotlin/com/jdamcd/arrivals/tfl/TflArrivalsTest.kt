@@ -27,10 +27,10 @@ class TflArrivalsTest {
     private val arrivals = TflArrivals(api, settings, fixedClock)
 
     private val response = listOf(
-        ApiArrival(123, "Test Stop", "Platform 2", "outbound", "New Cross", 456, "windrush"),
-        ApiArrival(124, "Test Stop", "Platform 2", "outbound", "Crystal Palace Rail Station", 10, "windrush"),
-        ApiArrival(125, "Test Stop", "Platform 1", "inbound", "Dalston Junction", 10, "mildmay"),
-        ApiArrival(126, "Test Stop", "Platform 1", "inbound", "Highbury & Islington Underground Station", 456, "mildmay")
+        ApiArrival("123", "Test Stop", "Platform 2", "outbound", "New Cross", 456, "windrush"),
+        ApiArrival("124", "Test Stop", "Platform 2", "outbound", "Crystal Palace Rail Station", 10, "windrush"),
+        ApiArrival("125", "Test Stop", "Platform 1", "inbound", "Dalston Junction", 10, "mildmay"),
+        ApiArrival("126", "Test Stop", "Platform 1", "inbound", "Highbury & Islington Underground Station", 456, "mildmay")
     )
 
     @BeforeTest
@@ -101,7 +101,7 @@ class TflArrivalsTest {
     fun `count parameter limits scheduled fallback arrivals`() = runBlocking<Unit> {
         settings.platform = ""
         val terminalResponse = listOf(
-            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
+            ApiArrival("1", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
         )
         coEvery { api.fetchArrivals("123") } returns terminalResponse
         coEvery { api.fetchTimetable("victoria", "123") } returns timetableResponse()
@@ -121,9 +121,9 @@ class TflArrivalsTest {
     @Test
     fun `platform filter matches exact number`() = runBlocking<Unit> {
         val response = listOf(
-            ApiArrival(1, "Test Stop", "Platform 2", "all", "Dest A", 100),
-            ApiArrival(2, "Test Stop", "Platform 12", "all", "Dest B", 200),
-            ApiArrival(3, "Test Stop", "Platform 21", "all", "Dest C", 300)
+            ApiArrival("1", "Test Stop", "Platform 2", "all", "Dest A", 100),
+            ApiArrival("2", "Test Stop", "Platform 12", "all", "Dest B", 200),
+            ApiArrival("3", "Test Stop", "Platform 21", "all", "Dest C", 300)
         )
         coEvery { api.fetchArrivals("123") } returns response
 
@@ -137,9 +137,9 @@ class TflArrivalsTest {
     @Test
     fun `platform filter does not match when filter is prefix of platform number`() = runBlocking<Unit> {
         val response = listOf(
-            ApiArrival(1, "Test Stop", "Platform 1", "all", "Dest A", 100),
-            ApiArrival(2, "Test Stop", "Platform 10", "all", "Dest B", 200),
-            ApiArrival(3, "Test Stop", "Platform 11", "all", "Dest C", 300)
+            ApiArrival("1", "Test Stop", "Platform 1", "all", "Dest A", 100),
+            ApiArrival("2", "Test Stop", "Platform 10", "all", "Dest B", 200),
+            ApiArrival("3", "Test Stop", "Platform 11", "all", "Dest C", 300)
         )
         coEvery { api.fetchArrivals("123") } returns response
 
@@ -154,9 +154,9 @@ class TflArrivalsTest {
     fun `terminal station throws when no timetable available`() = runBlocking<Unit> {
         settings.platform = ""
         val terminalResponse = listOf(
-            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60),
-            ApiArrival(2, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 120),
-            ApiArrival(3, "Brixton Underground Station", "Platform 1", "outbound", "Walthamstow Central Underground Station", 180)
+            ApiArrival("1", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60),
+            ApiArrival("2", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 120),
+            ApiArrival("3", "Brixton Underground Station", "Platform 1", "outbound", "Walthamstow Central Underground Station", 180)
         )
         coEvery { api.fetchArrivals("123") } returns terminalResponse
 
@@ -170,7 +170,7 @@ class TflArrivalsTest {
         settings.platform = ""
         val terminalResponse = listOf(
             ApiArrival(
-                1,
+                "1",
                 "Brixton Underground Station",
                 "Platform 1",
                 null,
@@ -179,7 +179,7 @@ class TflArrivalsTest {
                 lineId = "victoria"
             ),
             ApiArrival(
-                2,
+                "2",
                 "Brixton Underground Station",
                 "Platform 1",
                 null,
@@ -207,7 +207,7 @@ class TflArrivalsTest {
         settings.platform = ""
         val terminalResponse = listOf(
             ApiArrival(
-                1,
+                "1",
                 "Brixton Underground Station",
                 "Platform 1",
                 null,
@@ -231,10 +231,10 @@ class TflArrivalsTest {
     @Test
     fun `platform filter matches number with letter suffix`() = runBlocking<Unit> {
         val response = listOf(
-            ApiArrival(1, "Test Stop", "Platform 2", "all", "Dest A", 100),
-            ApiArrival(2, "Test Stop", "Platform 2A", "all", "Dest B", 200),
-            ApiArrival(3, "Test Stop", "Platform 2B", "all", "Dest C", 300),
-            ApiArrival(4, "Test Stop", "Platform 12", "all", "Dest D", 400)
+            ApiArrival("1", "Test Stop", "Platform 2", "all", "Dest A", 100),
+            ApiArrival("2", "Test Stop", "Platform 2A", "all", "Dest B", 200),
+            ApiArrival("3", "Test Stop", "Platform 2B", "all", "Dest C", 300),
+            ApiArrival("4", "Test Stop", "Platform 12", "all", "Dest D", 400)
         )
         coEvery { api.fetchArrivals("123") } returns response
 
@@ -252,10 +252,10 @@ class TflArrivalsTest {
         settings.platform = ""
         // Simulates H&I: Platforms 1-2 terminal (Windrush), Platforms 7-8 through line (Mildmay)
         val response = listOf(
-            ApiArrival(1, "Highbury & Islington Rail Station", "Platform 1", null, "Highbury & Islington Rail Station", 60),
-            ApiArrival(2, "Highbury & Islington Rail Station", "Platform 1", null, "Dalston Junction Rail Station", 3),
-            ApiArrival(3, "Highbury & Islington Rail Station", "Platform 7", "outbound", "Stratford Rail Station", 200),
-            ApiArrival(4, "Highbury & Islington Rail Station", "Platform 8", "inbound", "Richmond Rail Station", 400)
+            ApiArrival("1", "Highbury & Islington Rail Station", "Platform 1", null, "Highbury & Islington Rail Station", 60),
+            ApiArrival("2", "Highbury & Islington Rail Station", "Platform 1", null, "Dalston Junction Rail Station", 3),
+            ApiArrival("3", "Highbury & Islington Rail Station", "Platform 7", "outbound", "Stratford Rail Station", 200),
+            ApiArrival("4", "Highbury & Islington Rail Station", "Platform 8", "inbound", "Richmond Rail Station", 400)
         )
         coEvery { api.fetchArrivals("123") } returns response
 
@@ -273,9 +273,9 @@ class TflArrivalsTest {
         settings.platform = ""
         // Simulates Overground end of line
         val response = listOf(
-            ApiArrival(1, "New Cross ELL Rail Station", "Platform 1", null, "New Cross ELL Rail Station", 300),
-            ApiArrival(2, "New Cross ELL Rail Station", "Platform 1", null, "New Cross ELL Rail Station", 600),
-            ApiArrival(3, "New Cross ELL Rail Station", "Platform 1", null, "Dalston Junction Rail Station", 3, lineId = "windrush")
+            ApiArrival("1", "New Cross ELL Rail Station", "Platform 1", null, "New Cross ELL Rail Station", 300),
+            ApiArrival("2", "New Cross ELL Rail Station", "Platform 1", null, "New Cross ELL Rail Station", 600),
+            ApiArrival("3", "New Cross ELL Rail Station", "Platform 1", null, "Dalston Junction Rail Station", 3, lineId = "windrush")
         )
         coEvery { api.fetchArrivals("123") } returns response
 
@@ -289,9 +289,9 @@ class TflArrivalsTest {
     fun `self-ref and non-self-ref on same terminal platform uses timetable`() = runBlocking<Unit> {
         settings.platform = ""
         val response = listOf(
-            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria"),
-            ApiArrival(2, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 120, lineId = "victoria"),
-            ApiArrival(3, "Brixton Underground Station", "Platform 1", "outbound", "Walthamstow Central Underground Station", 180, lineId = "victoria")
+            ApiArrival("1", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria"),
+            ApiArrival("2", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 120, lineId = "victoria"),
+            ApiArrival("3", "Brixton Underground Station", "Platform 1", "outbound", "Walthamstow Central Underground Station", 180, lineId = "victoria")
         )
         coEvery { api.fetchArrivals("123") } returns response
         coEvery { api.fetchTimetable("victoria", "123") } returns timetableResponse()
@@ -308,8 +308,8 @@ class TflArrivalsTest {
     fun `empty destination treated as self-referencing at terminal`() = runBlocking<Unit> {
         settings.platform = ""
         val response = listOf(
-            ApiArrival(1, "Amersham Underground Station", "Platform 1", null, "", 60, lineId = "metropolitan"),
-            ApiArrival(2, "Amersham Underground Station", "Platform 1", null, "", 120, lineId = "metropolitan")
+            ApiArrival("1", "Amersham Underground Station", "Platform 1", null, "", 60, lineId = "metropolitan"),
+            ApiArrival("2", "Amersham Underground Station", "Platform 1", null, "", 120, lineId = "metropolitan")
         )
         coEvery { api.fetchArrivals("123") } returns response
         coEvery { api.fetchTimetable("metropolitan", "123") } returns timetableResponse()
@@ -325,10 +325,10 @@ class TflArrivalsTest {
         settings.platform = ""
         // Empty dest on Platform 1 (terminal), valid arrivals on Platform 2
         val response = listOf(
-            ApiArrival(1, "Test Stop", "Platform 1", "outbound", "", 60),
-            ApiArrival(2, "Test Stop", "Platform 2", "outbound", "Chesham Underground Station", 120),
-            ApiArrival(3, "Test Stop", "Platform 2", "outbound", "Amersham Underground Station", 180),
-            ApiArrival(4, "Test Stop", "Platform 2", "outbound", "Uxbridge Underground Station", 240)
+            ApiArrival("1", "Test Stop", "Platform 1", "outbound", "", 60),
+            ApiArrival("2", "Test Stop", "Platform 2", "outbound", "Chesham Underground Station", 120),
+            ApiArrival("3", "Test Stop", "Platform 2", "outbound", "Amersham Underground Station", 180),
+            ApiArrival("4", "Test Stop", "Platform 2", "outbound", "Uxbridge Underground Station", 240)
         )
         coEvery { api.fetchArrivals("123") } returns response
 
@@ -342,8 +342,8 @@ class TflArrivalsTest {
     fun `terminal station with empty lineIds throws NoDataException`() = runBlocking<Unit> {
         settings.platform = ""
         val response = listOf(
-            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60),
-            ApiArrival(2, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 120)
+            ApiArrival("1", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60),
+            ApiArrival("2", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 120)
         )
         coEvery { api.fetchArrivals("123") } returns response
 
@@ -356,8 +356,8 @@ class TflArrivalsTest {
     fun `multiple lineIds at terminal merges departures`() = runBlocking<Unit> {
         settings.platform = ""
         val terminalResponse = listOf(
-            ApiArrival(1, "Stockwell Underground Station", "Platform 1", null, "Stockwell Underground Station", 60, lineId = "victoria"),
-            ApiArrival(2, "Stockwell Underground Station", "Platform 1", null, "Stockwell Underground Station", 120, lineId = "northern")
+            ApiArrival("1", "Stockwell Underground Station", "Platform 1", null, "Stockwell Underground Station", 60, lineId = "victoria"),
+            ApiArrival("2", "Stockwell Underground Station", "Platform 1", null, "Stockwell Underground Station", 120, lineId = "northern")
         )
         coEvery { api.fetchArrivals("123") } returns terminalResponse
         coEvery { api.fetchTimetable("victoria", "123") } returns timetableResponse()
@@ -379,8 +379,8 @@ class TflArrivalsTest {
     fun `timetable error for one line still returns other line departures`() = runBlocking<Unit> {
         settings.platform = ""
         val terminalResponse = listOf(
-            ApiArrival(1, "Stockwell Underground Station", "Platform 1", null, "Stockwell Underground Station", 60, lineId = "victoria"),
-            ApiArrival(2, "Stockwell Underground Station", "Platform 1", null, "Stockwell Underground Station", 120, lineId = "northern")
+            ApiArrival("1", "Stockwell Underground Station", "Platform 1", null, "Stockwell Underground Station", 60, lineId = "victoria"),
+            ApiArrival("2", "Stockwell Underground Station", "Platform 1", null, "Stockwell Underground Station", 120, lineId = "northern")
         )
         coEvery { api.fetchArrivals("123") } returns terminalResponse
         coEvery { api.fetchTimetable("victoria", "123") } throws RuntimeException("API error")
@@ -396,7 +396,7 @@ class TflArrivalsTest {
     fun `scheduled departures more than 2 hours in the future are filtered out`() = runBlocking<Unit> {
         settings.platform = ""
         val terminalResponse = listOf(
-            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
+            ApiArrival("1", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
         )
         val farFutureTimetable = ApiTimetableResponse(
             stops = listOf(
@@ -436,7 +436,7 @@ class TflArrivalsTest {
     fun `invalid hour in timetable journey is skipped`() = runBlocking<Unit> {
         settings.platform = ""
         val terminalResponse = listOf(
-            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
+            ApiArrival("1", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
         )
         val badJourneyTimetable = ApiTimetableResponse(
             stops = listOf(
@@ -483,7 +483,7 @@ class TflArrivalsTest {
         }
         val lateArrivals = TflArrivals(api, settings, lateClock)
         val terminalResponse = listOf(
-            ApiArrival(1, "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
+            ApiArrival("1", "Brixton Underground Station", "Platform 1", null, "Brixton Underground Station", 60, lineId = "victoria")
         )
         // TfL encodes a 00:05 departure as hour "24", so no day rollover is needed to keep it
         val extendedHoursTimetable = ApiTimetableResponse(

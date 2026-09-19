@@ -122,6 +122,77 @@ final class ArrivalsUITests: XCTestCase {
         takeScreenshot(name: "5b-settings-config-intact")
     }
 
+    func test6_ConfigureTflBusStop() {
+        openSettings(displayStyle: "Dot Matrix", transitSystem: "London Buses (TfL)")
+        clearSelectedStop()
+
+        let searchField = app.textFields["searchField"]
+        XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+        searchField.click()
+        searchField.typeText("east dulwich")
+
+        let resultsList = app.outlines["searchResultsList"].firstMatch
+        XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "Search results should appear")
+
+        // Directional leaf stops bake "towards" into the name, so this can't
+        // match a stop group that would need a second disambiguation step
+        let stop = resultsList.staticTexts.matching(
+            NSPredicate(format: "value CONTAINS 'East Dulwich Station' AND value CONTAINS 'towards'")
+        ).firstMatch
+        XCTAssertTrue(stop.waitForExistence(timeout: 5), "A directional East Dulwich Station stop should appear")
+        stop.click()
+
+        let routeField = app.textFields["routeField"]
+        XCTAssertTrue(routeField.waitForExistence(timeout: 5), "Route filter should appear once a stop is selected")
+
+        takeScreenshot(name: "6a-tfl-bus-stop-selected")
+
+        saveAndVerifyPopoverUpdate()
+        takeScreenshot(name: "6b-tfl-bus-popover-updated")
+    }
+
+    // Doesn't save: test6 covers that, and a bus station bay can have no arrivals overnight
+    func test7_SelectTflBusStopFromGroup() {
+        openSettings(displayStyle: "Dot Matrix", transitSystem: "London Buses (TfL)")
+        clearSelectedStop()
+
+        let searchField = app.textFields["searchField"]
+        XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+        searchField.click()
+        searchField.typeText("victoria road")
+
+        let resultsList = app.outlines["searchResultsList"].firstMatch
+        XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "Search results should appear")
+
+        // London has ten stop groups called just "Victoria Road"
+        let labelledGroup = resultsList.staticTexts.matching(
+            NSPredicate(format: "value BEGINSWITH 'Victoria Road towards '")
+        ).firstMatch
+        XCTAssertTrue(labelledGroup.waitForExistence(timeout: 5), "Same-named groups should say where their stops head")
+        takeScreenshot(name: "7a-tfl-bus-groups-labelled")
+
+        searchField.click()
+        searchField.typeKey("a", modifierFlags: .command)
+        searchField.typeText("canada water")
+
+        // An interchange whose bus stops sit two levels down, inside its bus station
+        let interchange = resultsList.staticTexts.matching(NSPredicate(format: "value == 'Canada Water'")).firstMatch
+        XCTAssertTrue(interchange.waitForExistence(timeout: 30), "Canada Water interchange should appear")
+        interchange.click()
+
+        let stop = resultsList.staticTexts.matching(
+            NSPredicate(format: "value BEGINSWITH 'Canada Water Bus Station ('")
+        ).firstMatch
+        XCTAssertTrue(stop.waitForExistence(timeout: 30), "The interchange should expand to lettered bus stops")
+        takeScreenshot(name: "7b-tfl-bus-group-expanded")
+        stop.click()
+
+        let routeField = app.textFields["routeField"]
+        XCTAssertTrue(routeField.waitForExistence(timeout: 5), "Route filter should appear once a stop is selected")
+        XCTAssertTrue(app.buttons["saveButton"].isEnabled, "A stop picked from a group should be saveable")
+        takeScreenshot(name: "7c-tfl-bus-stop-from-group-selected")
+    }
+
     private func selectTflShoreditch() {
         let searchField = app.textFields["searchField"]
         XCTAssertTrue(searchField.waitForExistence(timeout: 5))
