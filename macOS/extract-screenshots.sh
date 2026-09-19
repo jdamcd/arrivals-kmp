@@ -26,10 +26,11 @@ import json, sys
 data = json.load(sys.stdin)
 def find_tests(nodes):
     for node in nodes:
-        if 'children' in node:
-            find_tests(node['children'])
-        elif 'nodeIdentifier' in node:
+        # A test case can have children too, e.g. a 'Runtime Warning' node on a passing test
+        if node.get('nodeType') == 'Test Case':
             print(node['nodeIdentifier'])
+        else:
+            find_tests(node.get('children', []))
 find_tests(data.get('testNodes', []))
 ")
 
