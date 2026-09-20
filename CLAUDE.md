@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
 Arrivals is a Kotlin Multiplatform project for live transit times with 3 targets:
@@ -58,10 +56,13 @@ Keys are generated as `BuildConfig` constants via BuildKonfig (configured in `sh
 ./gradlew jvmTest          # Run JVM tests only
 ./gradlew spotlessCheck    # Check Kotlin formatting
 ./gradlew spotlessApply    # Apply Kotlin formatting
-./check                   # Convenience script: swiftformat + gradlew clean spotlessApply assemble allTests
+./check                    # Full pre-commit check: formatting, build, all tests
+./check --fast             # Same without the slow macOS UI tests
 ```
 
 **Always run `./check` before committing** — it runs formatting, build, and all tests in one go. This is what CI checks, so if it passes locally, CI will pass.
+
+`--fast` skips the macOS UI tests, which take over the keyboard and screen for minutes. Only run a full `./check` if macOS UI code has changed, and confirm with the user first.
 
 `./check` output is long and gets truncated mid-stream. Tee it to a log file so the full output is preserved on failure:
 

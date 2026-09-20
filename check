@@ -2,9 +2,18 @@
 set -e
 set -o pipefail
 
+# --fast skips UI tests, closely matching CI checks
+XCODEBUILD_ARGS=()
+case "${1:-}" in
+    --fast) XCODEBUILD_ARGS=(-skip-testing:ArrivalsUITests) ;;
+    "") ;;
+    *) echo "Usage: $0 [--fast]" >&2; exit 1 ;;
+esac
+
 swiftformat .
 ./gradlew clean spotlessApply assemble allTests
 xcodebuild test \
     -project macOS/Arrivals.xcodeproj \
     -scheme Arrivals \
-    -destination 'platform=macOS'
+    -destination 'platform=macOS' \
+    "${XCODEBUILD_ARGS[@]}"
