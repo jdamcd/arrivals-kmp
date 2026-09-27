@@ -1,20 +1,17 @@
 @preconcurrency import ArrivalsLib
 import SwiftUI
 
-struct TflSettingsView: View {
+struct TflBusSettingsView: View {
     @EnvironmentObject var coordinator: SettingsCoordinator
 
-    @StateObject private var viewModel = TflSettingsViewModel()
+    @StateObject private var viewModel = TflBusSettingsViewModel()
 
     private let settings = MacDI.shared.settings
 
     @State private var searchQuery: String = ""
     @State private var selectedResult: StopResult?
 
-    @State private var platformFilter: String = ""
-
-    private let directions = ["all", "inbound", "outbound"]
-    @State private var directionFilter: String = "all"
+    @State private var routeFilter: String = ""
 
     private var isValid: Bool {
         guard let result = selectedResult else { return false }
@@ -24,13 +21,13 @@ struct TflSettingsView: View {
     var body: some View {
         Section {
             if let selected = selectedResult, !selected.isHub {
-                SelectedStopRow(name: selected.name) {
+                SelectedStopRow(label: "Bus stop", name: selected.name) {
                     selectedResult = nil
                 }
             } else {
-                let stationHint = "London Overground, Tube, DLR, and Tram stations. Scheduled times at terminal stations."
+                let stopHint = "London bus stops. Select a stop group to see its individual stops with directions."
                 HStack {
-                    DebouncingTextField(label: "Station", value: $searchQuery) { value in
+                    DebouncingTextField(label: "Bus stop", value: $searchQuery) { value in
                         if value.isEmpty {
                             viewModel.reset()
                         } else {
@@ -38,22 +35,22 @@ struct TflSettingsView: View {
                         }
                     }
                     .autocorrectionDisabled()
-                    .accessibilityHint(stationHint)
+                    .accessibilityHint(stopHint)
                     Image(systemName: "questionmark.app")
                         .foregroundColor(Color.gray)
-                        .help(stationHint)
+                        .help(stopHint)
                         .accessibilityHidden(true)
                 }
                 ResultsArea {
                     switch viewModel.state {
                     case let .data(results):
                         List(results, id: \.self, selection: $selectedResult) { result in
-                            Text(result.name)
+                            BusStopRow(name: result.name)
                         }
                         .listStyle(PlainListStyle())
                         .accessibilityIdentifier("searchResultsList")
                     case .idle:
-                        Text("Search for a station")
+                        Text("Search for a bus stop")
                     case .empty:
                         Text("No results found")
                     case .error:
@@ -65,17 +62,15 @@ struct TflSettingsView: View {
             }
         }
         .onAppear {
-            if selectedResult == nil, settings.mode == SettingsConfig().MODE_TFL, let stop = settings.configuredStop {
+            if selectedResult == nil, settings.mode == SettingsConfig().MODE_TFL_BUS, let stop = settings.configuredStop {
                 selectedResult = stop
-                platformFilter = settings.platform
-                directionFilter = settings.direction.isNotEmpty ? settings.direction : "all"
+                routeFilter = settings.line
             }
             coordinator.onSave = {
                 if let selectedResult {
                     viewModel.save(
                         stopPoint: selectedResult,
-                        platformFilter: platformFilter.trim(),
-                        directionFilter: directionFilter
+                        routeFilter: routeFilter.trim()
                     )
                 }
             }
@@ -91,49 +86,59 @@ struct TflSettingsView: View {
 
         if isValid {
             Section {
-                Picker("Direction", selection: $directionFilter) {
-                    ForEach(directions, id: \.self) { direction in
-                        Text(direction.capitalized).tag(direction)
-                    }
-                }
-                .pickerStyle(.automatic)
-
-                TextField("Platform", text: $platformFilter, prompt: Text("Optional"))
-                    .helpHint(help: "e.g. 2, 5A", spoken: "For example, 2 or 5A")
+                TextField("Route", text: $routeFilter, prompt: Text("Optional"))
+                    .helpHint(help: "e.g. 176, N343", spoken: "For example, 176 or N343")
                     .autocorrectionDisabled()
-                    .accessibilityIdentifier("platformField")
+                    .accessibilityIdentifier("routeField")
             }
         }
     }
 }
 
+private struct BusStopRow: View {
+    let name: String
+
+    var body: some View {
+        // Shared code builds "towards" into the name, so split it back out for the subtitle
+        if let range = name.range(of: " towards ") {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(name[..<range.lowerBound])
+                Text(name[name.index(after: range.lowerBound)...])
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+        } else {
+            Text(name)
+        }
+    }
+}
+
 @MainActor
-private class TflSettingsViewModel: StopSearchViewModel {
-    private let tflSearch: TflSearch
+private class TflBusSettingsViewModel: StopSearchViewModel {
+    private let busSearch: TflSearch
 
     init() {
-        let search = MacDI.shared.tflSearch
-        tflSearch = search
+        let search = MacDI.shared.tflBusSearch
+        busSearch = search
         super.init { query in try await search.searchStops(query: query) }
     }
 
     func disambiguate(stop: StopResult) {
-        load { [tflSearch] in try await tflSearch.stopDetails(id: stop.id).children }
+        load { [busSearch] in try await busSearch.stopDetails(id: stop.id).children }
     }
 
-    func save(stopPoint: StopResult, platformFilter: String, directionFilter: String) {
+    func save(stopPoint: StopResult, routeFilter: String) {
         settings.clearStopConfig()
         settings.stopId = stopPoint.id
         settings.stopName = stopPoint.name
-        settings.platform = platformFilter
-        settings.direction = directionFilter
-        settings.mode = SettingsConfig().MODE_TFL
+        settings.line = routeFilter
+        settings.mode = SettingsConfig().MODE_TFL_BUS
     }
 }
 
 #Preview {
     Form {
-        TflSettingsView()
+        TflBusSettingsView()
     }
     .formStyle(.grouped)
     .environmentObject(SettingsCoordinator())

@@ -12,6 +12,7 @@ import com.jdamcd.arrivals.gtfs.system.Bart
 import com.jdamcd.arrivals.gtfs.system.Mta
 import com.jdamcd.arrivals.tfl.TflApi
 import com.jdamcd.arrivals.tfl.TflArrivals
+import com.jdamcd.arrivals.tfl.TflBusArrivals
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -37,6 +38,7 @@ object MacDI : KoinComponent {
     val arrivals: Arrivals by inject()
     val settings: Settings by inject()
     val tflSearch: TflSearch by inject()
+    val tflBusSearch: TflSearch by inject(named("tflBus"))
     val mtaSearch: GtfsSearch by inject(named("mta"))
     val bartSearch: GtfsSearch by inject(named("bart"))
     val darwinSearch: StopSearch by inject(named("darwin"))
@@ -50,12 +52,14 @@ fun commonModule() = module {
     single { GtfsApi(get()) }
     single { DarwinApi(get()) }
     single { TflArrivals(get(), get(), get()) }
+    single { TflBusArrivals(get(), get()) }
     single { GtfsArrivals(get(), get(), get()) }
     single { DarwinArrivals(get(), get(), get()) }
     single { BvgApi(get()) }
     single { BvgArrivals(get(), get(), get()) }
-    single<Arrivals> { ArrivalsSwitcher(get(), get(), get(), get(), get()) }
+    single<Arrivals> { ArrivalsSwitcher(get(), get(), get(), get(), get(), get()) }
     single<TflSearch> { get<TflArrivals>() }
+    single<TflSearch>(named("tflBus")) { get<TflBusArrivals>() }
     factory<GtfsSearch>(named("mta")) { GtfsStopSearch(get(), Mta.SCHEDULE, "mta") }
     factory<GtfsSearch>(named("bart")) { GtfsStopSearch(get(), Bart.SCHEDULE, "bart", ApiAuth.QueryParam("api_key", Bart.API_KEY)) }
     factory<GtfsSearch> {
@@ -70,12 +74,7 @@ fun commonModule() = module {
                 requestTimeoutMillis = 10_000 // 10 seconds
             }
             install(ContentNegotiation) {
-                json(
-                    Json {
-                        isLenient = true
-                        ignoreUnknownKeys = true
-                    }
-                )
+                json(apiJson)
             }
             install(Logging) {
                 level = LogLevel.NONE
@@ -84,8 +83,14 @@ fun commonModule() = module {
     }
 }
 
+internal val apiJson = Json {
+    isLenient = true
+    ignoreUnknownKeys = true
+}
+
 internal class ArrivalsSwitcher(
     private val tfl: TflArrivals,
+    private val tflBus: TflBusArrivals,
     private val gtfs: GtfsArrivals,
     private val darwin: DarwinArrivals,
     private val bvg: BvgArrivals,
@@ -94,6 +99,7 @@ internal class ArrivalsSwitcher(
 
     override suspend fun latest(count: Int): ArrivalsInfo = when (settings.mode) {
         SettingsConfig.MODE_TFL -> tfl.latest(count)
+        SettingsConfig.MODE_TFL_BUS -> tflBus.latest(count)
         SettingsConfig.MODE_DARWIN -> darwin.latest(count)
         SettingsConfig.MODE_BVG -> bvg.latest(count)
         else -> gtfs.latest(count)
