@@ -148,6 +148,27 @@ class CliTest {
     }
 
     @Test
+    fun `search tfl-bus heads stop groups with their search names`() = runBlocking<Unit> {
+        coEvery { tflBusSearch.searchStops(any()) } returns listOf(
+            StopResult("490G1", "Victoria Road towards Ilford", isHub = true),
+            StopResult("490G2", "Victoria Road towards Acton", isHub = true)
+        )
+        coEvery { tflBusSearch.stopDetails("490G1") } returns
+            StopDetails("490G1", "Victoria Road", listOf(StopResult("1", "Victoria Road (A) towards Ilford", isHub = false)))
+        coEvery { tflBusSearch.stopDetails("490G2") } returns
+            StopDetails("490G2", "Victoria Road", listOf(StopResult("2", "Victoria Road (B) towards Acton", isHub = false)))
+
+        val result = buildCli().test("search tfl-bus victoria")
+
+        result.output.lines().filter { it.isNotBlank() } shouldBe listOf(
+            "Victoria Road towards Ilford:",
+            "  Victoria Road (A) towards Ilford (1)",
+            "Victoria Road towards Acton:",
+            "  Victoria Road (B) towards Acton (2)"
+        )
+    }
+
+    @Test
     fun `search tfl-bus keeps result order and earlier rows when a group lookup fails`() = runBlocking<Unit> {
         coEvery { tflBusSearch.searchStops(any()) } returns listOf(
             StopResult("490G1", "Slow Group", isHub = true),

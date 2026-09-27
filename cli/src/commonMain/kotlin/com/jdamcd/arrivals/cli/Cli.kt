@@ -253,7 +253,8 @@ private class SearchTfl(
                 for ((result, lookup) in expanded) {
                     if (lookup != null) {
                         val details = lookup.await()
-                        echo(yellow("${details.name}:"))
+                        // Search names carry the "towards" labels that tell same-named bus groups apart
+                        echo(yellow("${result.name}:"))
                         for (child in details.children) {
                             echo(yellow("  ${child.name} (${child.id})"))
                         }
