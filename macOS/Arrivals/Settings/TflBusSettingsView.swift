@@ -45,7 +45,7 @@ struct TflBusSettingsView: View {
                     switch viewModel.state {
                     case let .data(results):
                         List(results, id: \.self, selection: $selectedResult) { result in
-                            Text(result.name)
+                            BusStopRow(name: result.name)
                         }
                         .listStyle(PlainListStyle())
                         .accessibilityIdentifier("searchResultsList")
@@ -91,6 +91,24 @@ struct TflBusSettingsView: View {
                     .autocorrectionDisabled()
                     .accessibilityIdentifier("routeField")
             }
+        }
+    }
+}
+
+private struct BusStopRow: View {
+    let name: String
+
+    var body: some View {
+        // Shared code builds "towards" into the name, so split it back out for the subtitle
+        if let range = name.range(of: " towards ") {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(name[..<range.lowerBound])
+                Text(name[name.index(after: range.lowerBound)...])
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+        } else {
+            Text(name)
         }
     }
 }

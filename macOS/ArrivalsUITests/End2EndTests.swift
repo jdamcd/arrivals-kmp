@@ -134,12 +134,12 @@ final class ArrivalsUITests: XCTestCase {
         let resultsList = app.outlines["searchResultsList"].firstMatch
         XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "Search results should appear")
 
-        // Directional leaf stops bake "towards" into the name, so this can't
-        // match a stop group that would need a second disambiguation step
+        // Only single stops get a letter, so this can't match a stop group
+        // that would need a second disambiguation step
         let stop = resultsList.staticTexts.matching(
-            NSPredicate(format: "value CONTAINS 'East Dulwich Station' AND value CONTAINS 'towards'")
+            NSPredicate(format: "value BEGINSWITH 'East Dulwich Station ('")
         ).firstMatch
-        XCTAssertTrue(stop.waitForExistence(timeout: 5), "A directional East Dulwich Station stop should appear")
+        XCTAssertTrue(stop.waitForExistence(timeout: 5), "A lettered East Dulwich Station stop should appear")
         stop.click()
 
         let routeField = app.textFields["routeField"]
@@ -164,9 +164,10 @@ final class ArrivalsUITests: XCTestCase {
         let resultsList = app.outlines["searchResultsList"].firstMatch
         XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "Search results should appear")
 
-        // London has ten stop groups called just "Victoria Road"
+        // London has ten stop groups called just "Victoria Road". This search
+        // returns no single stops, so any "towards" subtitle belongs to a group
         let labelledGroup = resultsList.staticTexts.matching(
-            NSPredicate(format: "value BEGINSWITH 'Victoria Road towards '")
+            NSPredicate(format: "value BEGINSWITH 'towards '")
         ).firstMatch
         XCTAssertTrue(labelledGroup.waitForExistence(timeout: 5), "Same-named groups should say where their stops head")
         takeScreenshot(name: "7a-tfl-bus-groups-labelled")
