@@ -379,6 +379,29 @@ class TflBusArrivalsTest {
     }
 
     @Test
+    fun `stop details lists only the requested group when TfL returns its interchange`() = runBlocking<Unit> {
+        coEvery { api.stopDetails("490G00019922") } returns ApiStopPoint(
+            commonName = "Kensington (Olympia)",
+            naptanId = "HUBKPA",
+            stopType = "TransportInterchange",
+            children = listOf(
+                stopGroup("490G00007709", "Kensington Olympia", busStop("490007709S", "Kensington Olympia", letter = "P")),
+                stopGroup(
+                    "490G00019922",
+                    "Kensington Olympia / Hammersmith Road",
+                    busStop("490007709H", "Kensington Olympia / Hammersmith Road", letter = "V")
+                )
+            )
+        )
+
+        val details = arrivals.stopDetails("490G00019922")
+
+        details.id shouldBe "490G00019922"
+        details.name shouldBe "Kensington Olympia / Hammersmith Road"
+        details.children.map { it.id } shouldBe listOf("490007709H")
+    }
+
+    @Test
     fun `stop details excludes stops without bus services`() = runBlocking<Unit> {
         coEvery { api.stopDetails("910GDARTFD") } returns ApiStopPoint(
             commonName = "Dartford Rail Station",

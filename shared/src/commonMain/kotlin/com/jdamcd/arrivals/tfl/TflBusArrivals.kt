@@ -61,7 +61,8 @@ internal class TflBusArrivals(
 
     @Throws(Exception::class, CancellationException::class)
     override suspend fun stopDetails(id: String): StopDetails {
-        val stopPoint = api.stopDetails(id)
+        // A group inside an interchange comes back as the whole interchange
+        val stopPoint = api.stopDetails(id).let { root -> flatten(root).firstOrNull { it.naptanId == id } ?: root }
         return StopDetails(stopPoint.naptanId, stopPoint.commonName, busStopPoints(stopPoint).map { stopResult(it) })
     }
 
