@@ -10,7 +10,7 @@ Arrivals is a Kotlin Multiplatform project for live transit times with 3 targets
 All targets share common business logic in the `shared/` module.
 
 Supported data sources:
-- TfL API for London transit
+- TfL API for London transit (rail modes and buses)
 - MTA GTFS feeds for NYC Subway
 - Custom GTFS feeds for other transit systems
 - Darwin API (Huxley2) for UK National Rail live departure boards
@@ -74,12 +74,14 @@ Smoke test changes to the shared module via the CLI to catch runtime issues. Use
 ```bash
 # Find station IDs
 ./gradlew :cli:jvmRun --args="search tfl shoreditch"
+./gradlew :cli:jvmRun --args="search tfl-bus dulwich"
 ./gradlew :cli:jvmRun --args="search darwin clapham"
 ./gradlew :cli:jvmRun --args="search bvg alexanderplatz"
 ./gradlew :cli:jvmRun --args="list-stops --realtime <feed-url> --schedule <schedule-url>"
 
 # Fetch arrivals
 ./gradlew :cli:jvmRun --args="tfl --station 910GSHRDHST --platform 2"
+./gradlew :cli:jvmRun --args="tfl-bus --station 490001090D --line 185"
 ./gradlew :cli:jvmRun --args="darwin --station CLJ --platform 5"
 ./gradlew :cli:jvmRun --args="bvg --station 900013102 --line U8"
 ./gradlew :cli:jvmRun --args="gtfs --station A42N --realtime https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace --schedule http://web.mta.info/developers/data/nyct/subway/google_transit.zip"
@@ -129,5 +131,5 @@ The desktop app uses YAML configuration (`.arrivals.yml` in user home directory)
 - GTFS-RT uses Protocol Buffers via Wire (proto files in `shared/src/commonMain/proto/`, generated code in build directory)
 - Ktor HTTP client uses different engines per platform: Apache on JVM, NSURLSession on macOS
 - Default request timeout is 10s (60s for GTFS schedule downloads)
-- Station ID formats vary by system: TfL uses NAPTAN codes (e.g. `910GSHRDHST`), Darwin uses 3-character CRS codes (e.g. `CLJ`), BVG uses numeric stop IDs (e.g. `900013102`), GTFS uses feed-specific stop IDs (e.g. `A42N` for MTA)
+- Station ID formats vary by system: TfL uses NAPTAN codes (e.g. `910GSHRDHST`, bus stops `490001090D`), Darwin uses 3-character CRS codes (e.g. `CLJ`), BVG uses numeric stop IDs (e.g. `900013102`), GTFS uses feed-specific stop IDs (e.g. `A42N` for MTA)
 - BVG API filters to S-Bahn, U-Bahn, and Tram only (excludes bus/ferry/regional)

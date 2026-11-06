@@ -70,6 +70,7 @@ object SettingsConfig {
 
     const val MODE = "mode"
     const val MODE_TFL = "tfl"
+    const val MODE_TFL_BUS = "tfl-bus"
     const val MODE_GTFS = "gtfs"
     const val MODE_DARWIN = "darwin"
     const val MODE_BVG = "bvg"

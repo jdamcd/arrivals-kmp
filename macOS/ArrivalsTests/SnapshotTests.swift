@@ -23,6 +23,14 @@ final class ArrivalsSnapshotTests: XCTestCase {
         assertSnapshot(of: host(previewLcd(arrivals: tflArrivals, station: "Shoreditch High Street: Platform 2")), as: strategy)
     }
 
+    func testTflBusLed() {
+        assertSnapshot(of: host(previewLed(arrivals: tflBusArrivals, station: "East Dulwich Station (D)")), as: strategy)
+    }
+
+    func testTflBusLcd() {
+        assertSnapshot(of: host(previewLcd(arrivals: tflBusArrivals, station: "East Dulwich Station (D)")), as: strategy)
+    }
+
     func testMtaLed() {
         assertSnapshot(of: host(previewLed(arrivals: mtaArrivals, station: "42 St-Bryant Park")), as: strategy)
     }

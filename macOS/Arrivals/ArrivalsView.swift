@@ -239,6 +239,13 @@ let tflArrivals = [
 ]
 let tflBadge = LineBadge(label: "WIN", color: "D22730", textColor: nil, express: false)
 
+let tflBusArrivals = [
+    Arrival(id: 1, destination: "Trafalgar Square", secondsToStop: 240, realtime: true, line: "N343", lineBadge: tflBusBadge("N343")),
+    Arrival(id: 2, destination: "Tottenham Court Road", secondsToStop: 420, realtime: true, line: "176", lineBadge: tflBusBadge("176")),
+    Arrival(id: 3, destination: "Victoria", secondsToStop: 960, realtime: true, line: "185", lineBadge: tflBusBadge("185")),
+]
+private func tflBusBadge(_ route: String) -> LineBadge { LineBadge(label: route, color: "DC241F", textColor: nil, express: false) }
+
 let mtaArrivals = [
     Arrival(id: 1, destination: "Brighton Beach", secondsToStop: 70, realtime: true, line: "B", lineBadge: LineBadge(label: "B", color: "FF6319", textColor: nil, express: false)),
     Arrival(id: 2, destination: "Coney Island-Stillwell Av", secondsToStop: 506, realtime: true, line: "F", lineBadge: LineBadge(label: "F", color: "FF6319", textColor: nil, express: true)),
@@ -284,6 +291,14 @@ let previewError = "Error: long multi-line error message to test wrapping"
 
 #Preview("TfL (LCD)") {
     previewLcd(arrivals: tflArrivals, station: "Shoreditch High Street: Platform 2")
+}
+
+#Preview("TfL Bus (LED)") {
+    previewLed(arrivals: tflBusArrivals, station: "East Dulwich Station (D)")
+}
+
+#Preview("TfL Bus (LCD)") {
+    previewLcd(arrivals: tflBusArrivals, station: "East Dulwich Station (D)")
 }
 
 #Preview("MTA (LED)") {

@@ -12,7 +12,7 @@ There's a separate Python renderer in the [arrivals-led](https://github.com/jdam
 
 |  | System | Source |
 |--|--------|--------|
-| **London** | Underground, Overground, DLR | TfL API |
+| **London** | Underground, Overground, DLR, Buses | TfL API |
 | **UK** | National Rail | Darwin API |
 | **NYC** | Subway | MTA GTFS |
 | **SF Bay Area** | BART | 511.org GTFS |
@@ -86,14 +86,14 @@ Cross-platform desktop UI, built with Compose Multiplatform. Includes a fullscre
 Create a `.arrivals.yml` in the user home directory to configure:
 
 ```yaml
-# Mode: "tfl", "darwin", "bvg", or "gtfs"
+# Mode: "tfl", "tfl-bus", "darwin", "bvg", or "gtfs"
 mode: tfl
 
 # Shared config fields
 stop: 910GSHRDHST           # Station/stop ID (all modes)
-platform: 2                 # Optional platform (all but GTFS)
-line:                       # Optional line (BVG only: U8, M10, etc.)
-direction:                  # Optional direction (TfL only: "inbound" or "outbound")
+platform: 2                 # Optional platform (TfL rail, Darwin, BVG)
+line:                       # Optional line (BVG: U8, M10, etc.) or bus route (tfl-bus: 176, N343, etc.)
+direction:                  # Optional direction (TfL rail only: "inbound" or "outbound")
 
 # GTFS-specific config
 gtfs_realtime: https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g

@@ -110,7 +110,6 @@ struct TflSettingsView: View {
 @MainActor
 private class TflSettingsViewModel: StopSearchViewModel {
     private let tflSearch: TflSearch
-    private var disambiguateTask: Task<Void, Never>?
 
     init() {
         let search = MacDI.shared.tflSearch
@@ -118,25 +117,8 @@ private class TflSettingsViewModel: StopSearchViewModel {
         super.init { query in try await search.searchStops(query: query) }
     }
 
-    deinit {
-        disambiguateTask?.cancel()
-    }
-
     func disambiguate(stop: StopResult) {
-        disambiguateTask?.cancel()
-        state = .loading
-        disambiguateTask = Task {
-            do {
-                let result = try await tflSearch.stopDetails(id: stop.id)
-                if !Task.isCancelled {
-                    state = result.children.isEmpty ? .empty : .data(result.children)
-                }
-            } catch {
-                if !Task.isCancelled {
-                    state = .error
-                }
-            }
-        }
+        load { [tflSearch] in try await tflSearch.stopDetails(id: stop.id).children }
     }
 
     func save(stopPoint: StopResult, platformFilter: String, directionFilter: String) {

@@ -108,6 +108,35 @@ final class StopSearchViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.state, .idle)
     }
 
+    func testResetDiscardsLoadStillInFlight() async {
+        let viewModel = StopSearchViewModel { _ in [] }
+
+        // try? so the result still arrives after cancellation, as it does from
+        // a Kotlin suspend call, which doesn't observe Swift task cancellation
+        viewModel.load {
+            try? await Task.sleep(nanoseconds: 50_000_000)
+            return [StopResult(id: "1", name: "Stale stop", isHub: false)]
+        }
+        viewModel.reset()
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        XCTAssertEqual(viewModel.state, .idle)
+    }
+
+    func testSearchReplacesLoadStillInFlight() async {
+        let results = [StopResult(id: "2", name: "Shoreditch", isHub: false)]
+        let viewModel = StopSearchViewModel { _ in results }
+
+        viewModel.load {
+            try? await Task.sleep(nanoseconds: 50_000_000)
+            return [StopResult(id: "1", name: "Stale stop", isHub: false)]
+        }
+        viewModel.performSearch("shore")
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        XCTAssertEqual(viewModel.state, .data(results))
+    }
+
     private func awaitState(
         _ viewModel: StopSearchViewModel,
         where predicate: @escaping (SettingsState) -> Bool

@@ -4,6 +4,7 @@ import com.jdamcd.arrivals.bvg.BvgArrivals
 import com.jdamcd.arrivals.darwin.DarwinArrivals
 import com.jdamcd.arrivals.gtfs.GtfsArrivals
 import com.jdamcd.arrivals.tfl.TflArrivals
+import com.jdamcd.arrivals.tfl.TflBusArrivals
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -13,13 +14,15 @@ import kotlin.test.Test
 class ArrivalsSwitcherTest {
 
     private val tfl = mockk<TflArrivals>()
+    private val tflBus = mockk<TflBusArrivals>()
     private val gtfs = mockk<GtfsArrivals>()
     private val darwin = mockk<DarwinArrivals>()
     private val bvg = mockk<BvgArrivals>()
     private val settings = InMemorySettings()
-    private val switcher = ArrivalsSwitcher(tfl, gtfs, darwin, bvg, settings)
+    private val switcher = ArrivalsSwitcher(tfl, tflBus, gtfs, darwin, bvg, settings)
 
     private val tflResult = ArrivalsInfo("TfL Station", emptyList())
+    private val tflBusResult = ArrivalsInfo("TfL Bus Stop", emptyList())
     private val gtfsResult = ArrivalsInfo("GTFS Station", emptyList())
     private val darwinResult = ArrivalsInfo("Darwin Station", emptyList())
     private val bvgResult = ArrivalsInfo("BVG Station", emptyList())
@@ -30,6 +33,14 @@ class ArrivalsSwitcherTest {
         coEvery { tfl.latest() } returns tflResult
 
         switcher.latest().station shouldBe "TfL Station"
+    }
+
+    @Test
+    fun `routes to TfL Bus`() = runBlocking<Unit> {
+        settings.mode = SettingsConfig.MODE_TFL_BUS
+        coEvery { tflBus.latest() } returns tflBusResult
+
+        switcher.latest().station shouldBe "TfL Bus Stop"
     }
 
     @Test

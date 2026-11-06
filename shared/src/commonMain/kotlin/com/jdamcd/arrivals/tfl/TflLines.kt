@@ -33,4 +33,8 @@ internal object TflLines {
         val info = lines[lineId] ?: return null
         return LineBadge(label = info.label, color = info.color, textColor = info.textColor)
     }
+
+    fun busBadge(route: String) = LineBadge(label = route, color = BUS_RED, textColor = null)
 }
+
+private const val BUS_RED = "DC241F"
