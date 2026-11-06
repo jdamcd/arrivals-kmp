@@ -160,10 +160,16 @@ struct LcdErrorContent: View {
     var message: String
 
     var body: some View {
-        Text(message)
-            .font(.lcd(size: 15))
-            .foregroundColor(.white)
-            .accessibilityIdentifier("errorMessage")
+        HStack(spacing: 10) {
+            Image(systemName: "icloud.slash")
+                .font(.system(size: 18, weight: .medium))
+                .accessibilityHidden(true)
+            Text(message)
+                .font(.lcd(size: 15))
+                .accessibilityIdentifier("errorMessage")
+        }
+        .foregroundColor(.white)
+        .padding(.horizontal, 16)
     }
 }
 
