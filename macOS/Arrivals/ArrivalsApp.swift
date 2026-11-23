@@ -78,7 +78,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let menuButton = statusItem?.button {
-            menuButton.image = NSImage(systemSymbolName: "tram.fill", accessibilityDescription: "Arrivals")
+            menuButton.image = Self.menuBarIcon()
             menuButton.action = #selector(menuButtonToggle)
             menuButton.setAccessibilityIdentifier("statusBarButton")
         }
@@ -96,6 +96,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
         }
+    }
+
+    // Redraw for clean rendering on 1x displays
+    private static func menuBarIcon() -> NSImage {
+        let symbol = NSImage(systemSymbolName: "tram.fill", accessibilityDescription: nil)!
+        let icon = NSImage(size: symbol.size, flipped: false) { rect in
+            symbol.draw(in: rect)
+            return true
+        }
+        icon.isTemplate = true
+        icon.accessibilityDescription = "Arrivals"
+        return icon
     }
 
     @objc func menuButtonToggle(sender: AnyObject) {
