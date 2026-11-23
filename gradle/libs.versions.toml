@@ -1,10 +1,10 @@
 [versions]
-kotlin = "2.3.21"
+kotlin = "2.4.21"
 buildKonfig = "0.20.0"
 spotless = "8.4.0"
 ktlint = "1.8.0"
 ktor = "3.4.3"
-coroutines = "1.10.2"
+coroutines = "1.11.0"
 wire = "6.2.0"
 okio = "3.17.0"
 koin = "4.2.1"
@@ -17,7 +17,7 @@ composeMaterial3 = "1.9.0"
 composeIcons = "1.7.3"
 viewModel = "2.10.0"
 snakeYaml = "2.6"
-json = "1.11.0"
+json = "1.13.0"
 datetime = "0.8.0"
 
 [libraries]
