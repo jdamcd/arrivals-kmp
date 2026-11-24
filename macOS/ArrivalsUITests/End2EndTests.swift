@@ -60,7 +60,7 @@ final class ArrivalsUITests: XCTestCase {
         XCTAssertTrue(resultsList.waitForExistence(timeout: 5), "Filtered results should appear")
 
         let hoyt = resultsList.staticTexts.matching(
-            NSPredicate(format: "value CONTAINS 'Hoyt-Schermerhorn'")
+            NSPredicate(format: "value CONTAINS 'Hoyt-Schermerhorn'"),
         ).firstMatch
         XCTAssertTrue(hoyt.waitForExistence(timeout: 5), "Hoyt-Schermerhorn should appear in filtered results")
         hoyt.click()
@@ -116,7 +116,7 @@ final class ArrivalsUITests: XCTestCase {
         XCTAssertTrue(selectedStop.waitForExistence(timeout: 5), "Stop should still be selected")
         XCTAssertTrue(
             (selectedStop.value as? String ?? "").contains("Shoreditch High Street"),
-            "Stop should still be Shoreditch High Street"
+            "Stop should still be Shoreditch High Street",
         )
 
         takeScreenshot(name: "5b-settings-config-intact")
@@ -132,7 +132,7 @@ final class ArrivalsUITests: XCTestCase {
         XCTAssertTrue(resultsList.waitForExistence(timeout: 30), "Search results should appear")
 
         let shoreditch = resultsList.staticTexts.matching(
-            NSPredicate(format: "value CONTAINS 'Shoreditch High Street'")
+            NSPredicate(format: "value CONTAINS 'Shoreditch High Street'"),
         ).firstMatch
         XCTAssertTrue(shoreditch.waitForExistence(timeout: 5), "Shoreditch High Street should appear in results")
         shoreditch.click()
@@ -199,20 +199,24 @@ final class ArrivalsUITests: XCTestCase {
 }
 
 extension XCUIElement {
-    // Scroll until element is hittable, stopping if the scroll boundary is reached.
+    /// Scroll until element is hittable, stopping if the scroll boundary is reached.
     @discardableResult
     func scrollToElement(_ element: XCUIElement, deltaY: CGFloat = -150, maxScrolls: Int = 40) -> Bool {
         var lastFrame = element.frame
         var stuckCount = 0
 
         for _ in 0 ..< maxScrolls {
-            if element.isHittable { return true }
+            if element.isHittable {
+                return true
+            }
             scroll(byDeltaX: 0, deltaY: deltaY)
 
             let newFrame = element.frame
             if newFrame == lastFrame {
                 stuckCount += 1
-                if stuckCount >= 3 { return false }
+                if stuckCount >= 3 {
+                    return false
+                }
             } else {
                 stuckCount = 0
             }

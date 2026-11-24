@@ -150,7 +150,7 @@ private class MtaSettingsViewModel: ObservableObject {
             realtimeUrl: lineUrl,
             scheduleUrl: scheduleUrl,
             apiKey: "",
-            apiKeyParam: ""
+            apiKeyParam: "",
         )
     }
 }

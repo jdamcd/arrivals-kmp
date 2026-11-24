@@ -30,7 +30,9 @@ final class DebouncingTests: XCTestCase {
         var receivedValues: [String] = []
         model = DebouncingTextFieldModel(debounceInterval: 0.3) { value in
             receivedValues.append(value)
-            if value == "four" { expectation.fulfill() }
+            if value == "four" {
+                expectation.fulfill()
+            }
         }
 
         model.text = "one"
@@ -49,7 +51,9 @@ final class DebouncingTests: XCTestCase {
         var receivedValues: [String] = []
         model = DebouncingTextFieldModel(debounceInterval: 0.2) { value in
             receivedValues.append(value)
-            if receivedValues.count == 2 { expectation.fulfill() }
+            if receivedValues.count == 2 {
+                expectation.fulfill()
+            }
         }
 
         model.text = "one"

@@ -73,7 +73,7 @@ struct BvgSettingsView: View {
                     viewModel.save(
                         station: selectedResult,
                         lineFilter: lineFilter.trim(),
-                        platformFilter: platformFilter.trim()
+                        platformFilter: platformFilter.trim(),
                     )
                 }
             }

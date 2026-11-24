@@ -76,7 +76,9 @@ private class ScaledWindow: NSWindow {
         super.init(contentRect: contentRect, styleMask: [], backing: .buffered, defer: false)
     }
 
-    override var backingScaleFactor: CGFloat { scaleFactor }
+    override var backingScaleFactor: CGFloat {
+        scaleFactor
+    }
 }
 
 @MainActor
@@ -114,7 +116,7 @@ final class SettingsSnapshotTests: XCTestCase {
     private func settingsView(appearance: NSAppearance.Name) -> NSView {
         // Window-content background gives .bordered (Cancel) button enough contrast to be visible
         let controller = NSHostingController(
-            rootView: SettingsView().background(Color(NSColor.windowBackgroundColor))
+            rootView: SettingsView().background(Color(NSColor.windowBackgroundColor)),
         )
         let window = ScaledWindow(scaleFactor: 1.0, contentRect: NSRect(origin: .zero, size: NSSize(width: 2000, height: 2000)))
         window.contentViewController = controller

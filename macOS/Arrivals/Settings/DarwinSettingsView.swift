@@ -62,7 +62,7 @@ struct DarwinSettingsView: View {
                 if let selectedResult {
                     viewModel.save(
                         station: selectedResult,
-                        platformFilter: platformFilter.trim()
+                        platformFilter: platformFilter.trim(),
                     )
                 }
             }

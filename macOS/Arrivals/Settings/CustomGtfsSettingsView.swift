@@ -40,7 +40,7 @@ struct CustomGtfsSettingsView: View {
                     realtimeUrl: realtimeUrl.trim(),
                     scheduleUrl: scheduleUrl.trim(),
                     apiKey: apiKey.trim(),
-                    apiKeyParam: apiKeyParam.trim()
+                    apiKeyParam: apiKeyParam.trim(),
                 )
             }
             coordinator.hasValidConfig = isValid

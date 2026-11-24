@@ -25,7 +25,9 @@ struct LcdContent: View {
     private let cycleInterval: TimeInterval = 15
     private let fadeDuration: TimeInterval = 0.8
 
-    private var hasThird: Bool { arrivals.count >= 3 }
+    private var hasThird: Bool {
+        arrivals.count >= 3
+    }
 
     private let verticalSpacing: CGFloat = 2
 
@@ -42,7 +44,7 @@ struct LcdContent: View {
                         second: arrivals[1],
                         third: arrivals[2],
                         showingThird: showingThird,
-                        visible: secondRowVisible
+                        visible: secondRowVisible,
                     )
                     .frame(height: rowHeight)
                 } else if arrivals.count >= 2 {
@@ -59,7 +61,7 @@ struct LcdContent: View {
         .onDisappear { cancelCycle() }
         .onChange(of: arrivals.map(\.id)) { _, _ in resetAnimation() }
         .onReceive(
-            Timer.publish(every: cycleInterval, on: .main, in: .common).autoconnect()
+            Timer.publish(every: cycleInterval, on: .main, in: .common).autoconnect(),
         ) { _ in
             guard hasThird else { return }
             startCycle()
