@@ -73,7 +73,7 @@ private class ScaledWindow: NSWindow {
 
     init(scaleFactor: CGFloat, contentRect: NSRect) {
         self.scaleFactor = scaleFactor
-        super.init(contentRect: contentRect, styleMask: [], backing: .nonretained, defer: false)
+        super.init(contentRect: contentRect, styleMask: [], backing: .buffered, defer: false)
     }
 
     override var backingScaleFactor: CGFloat { scaleFactor }
