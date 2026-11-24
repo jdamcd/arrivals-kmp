@@ -15,16 +15,24 @@ enum TransitSystem: String, CaseIterable {
         }
     }
 
-    // Configured system is derived from mode (TfL/Darwin/BVG/GTFS)
-    // GTFS feed URL disambiguates MTA/BART/custom
+    /// Configured system is derived from mode (TfL/Darwin/BVG/GTFS)
+    /// GTFS feed URL disambiguates MTA/BART/custom
     static func configured(from settings: ArrivalsLib.Settings) -> TransitSystem {
         let config = SettingsConfig()
         let mode = settings.mode
-        if mode == config.MODE_DARWIN { return .darwin }
-        if mode == config.MODE_BVG { return .bvg }
+        if mode == config.MODE_DARWIN {
+            return .darwin
+        }
+        if mode == config.MODE_BVG {
+            return .bvg
+        }
         if mode == config.MODE_GTFS {
-            if Mta().realtime.values.contains(settings.gtfsRealtime) { return .mta }
-            if settings.gtfsRealtime == Bart().REALTIME { return .bart }
+            if Mta().realtime.values.contains(settings.gtfsRealtime) {
+                return .mta
+            }
+            if settings.gtfsRealtime == Bart().REALTIME {
+                return .bart
+            }
             return .customGtfs
         }
         return .tfl
@@ -83,9 +91,9 @@ struct SettingsView: View {
                                 realtimeUrl: bart.REALTIME,
                                 scheduleUrl: bart.SCHEDULE,
                                 apiKey: bart.API_KEY,
-                                apiKeyParam: ""
+                                apiKeyParam: "",
                             )
-                        }
+                        },
                     )
                 case .bvg:
                     BvgSettingsView()

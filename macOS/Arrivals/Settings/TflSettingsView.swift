@@ -75,7 +75,7 @@ struct TflSettingsView: View {
                     viewModel.save(
                         stopPoint: selectedResult,
                         platformFilter: platformFilter.trim(),
-                        directionFilter: directionFilter
+                        directionFilter: directionFilter,
                     )
                 }
             }

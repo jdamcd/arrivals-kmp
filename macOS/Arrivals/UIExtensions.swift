@@ -54,15 +54,15 @@ struct DebouncingTextField: View {
         label: String,
         value: Binding<String>,
         debounceInterval: TimeInterval = 0.75,
-        valueChanged: @escaping (String) -> Void
+        valueChanged: @escaping (String) -> Void,
     ) {
         self.label = label
         _value = value
         _viewModel = StateObject(
             wrappedValue: DebouncingTextFieldModel(
                 debounceInterval: debounceInterval,
-                valueChanged: valueChanged
-            )
+                valueChanged: valueChanged,
+            ),
         )
     }
 

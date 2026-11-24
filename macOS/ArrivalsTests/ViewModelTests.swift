@@ -24,7 +24,13 @@ final class ArrivalsViewModelTests: XCTestCase {
         let viewModel = ArrivalsViewModel(fetcher: FakeArrivals(.success(info)))
 
         viewModel.load()
-        let state = await awaitState(viewModel) { if case .data = $0 { true } else { false } }
+        let state = await awaitState(viewModel) {
+            if case .data = $0 {
+                true
+            } else {
+                false
+            }
+        }
 
         XCTAssertEqual(state, .data(info))
         XCTAssertFalse(viewModel.loading)
@@ -35,7 +41,13 @@ final class ArrivalsViewModelTests: XCTestCase {
         let viewModel = ArrivalsViewModel(fetcher: FakeArrivals(.failure(error)))
 
         viewModel.load()
-        let state = await awaitState(viewModel) { if case .error = $0 { true } else { false } }
+        let state = await awaitState(viewModel) {
+            if case .error = $0 {
+                true
+            } else {
+                false
+            }
+        }
 
         XCTAssertEqual(state, .error("No data"))
         XCTAssertFalse(viewModel.loading)
@@ -47,14 +59,20 @@ final class ArrivalsViewModelTests: XCTestCase {
 
         viewModel.load()
         viewModel.load()
-        _ = await awaitState(viewModel) { if case .data = $0 { true } else { false } }
+        _ = await awaitState(viewModel) {
+            if case .data = $0 {
+                true
+            } else {
+                false
+            }
+        }
 
         XCTAssertEqual(fake.callCount, 1)
     }
 
     private func awaitState(
         _ viewModel: ArrivalsViewModel,
-        where predicate: @escaping (ArrivalsState) -> Bool
+        where predicate: @escaping (ArrivalsState) -> Bool,
     ) async -> ArrivalsState {
         await withCheckedContinuation { continuation in
             var cancellable: AnyCancellable?
@@ -110,7 +128,7 @@ final class StopSearchViewModelTests: XCTestCase {
 
     private func awaitState(
         _ viewModel: StopSearchViewModel,
-        where predicate: @escaping (SettingsState) -> Bool
+        where predicate: @escaping (SettingsState) -> Bool,
     ) async -> SettingsState {
         await withCheckedContinuation { continuation in
             var cancellable: AnyCancellable?

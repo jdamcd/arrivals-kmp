@@ -59,7 +59,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let menuView = ArrivalsView(
             popoverState: popoverState,
             onOpenSettings: { NSApplication.foregroundMode() },
-            onQuit: { NSApplication.quit() }
+            onQuit: { NSApplication.quit() },
         )
 
         popover.behavior = .transient
@@ -89,7 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self.showPopover()
             }
             NotificationCenter.default.addObserver(
-                forName: .settingsSaved, object: nil, queue: .main
+                forName: .settingsSaved, object: nil, queue: .main,
             ) { [weak self] _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self?.showPopover()
@@ -98,7 +98,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    // Redraw for clean rendering on 1x displays
+    /// Redraw for clean rendering on 1x displays
     private static func menuBarIcon() -> NSImage {
         let symbol = NSImage(systemSymbolName: "tram.fill", accessibilityDescription: nil)!
         let icon = NSImage(size: symbol.size, flipped: false) { rect in

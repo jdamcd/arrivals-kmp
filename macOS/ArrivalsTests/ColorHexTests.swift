@@ -24,7 +24,7 @@ final class ColorHexTests: XCTestCase {
         green: CGFloat,
         blue: CGFloat,
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) {
         guard let ns = NSColor(color).usingColorSpace(.sRGB) else {
             return XCTFail("Could not resolve color components", file: file, line: line)

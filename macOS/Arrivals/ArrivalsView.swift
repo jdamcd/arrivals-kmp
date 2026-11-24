@@ -116,13 +116,13 @@ private struct ContentDisplay<Content: View, Footer: View>: View {
                 .overlay(
                     theme.borderColor.map { color in
                         shape.strokeBorder(color, lineWidth: 2)
-                    }
+                    },
                 )
                 .overlay(
                     ShadowBorder(cornerRadius: metrics.cornerRadius)
                         .stroke(ShadowBorder.gradient, lineWidth: 1)
                         .padding(-1) // Outside the content area
-                        .allowsHitTesting(false)
+                        .allowsHitTesting(false),
                 )
             footer
         }
@@ -190,7 +190,7 @@ private struct ShadowBorder: SwiftUI.Shape {
             .init(color: .white.opacity(0), location: 1),
         ],
         startPoint: .topTrailing,
-        endPoint: .bottomLeading
+        endPoint: .bottomLeading,
     )
 
     func path(in rect: CGRect) -> Path {
@@ -200,7 +200,7 @@ private struct ShadowBorder: SwiftUI.Shape {
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - cr))
         path.addArc(
             center: CGPoint(x: rect.maxX - cr, y: rect.maxY - cr),
-            radius: cr, startAngle: .zero, endAngle: .degrees(90), clockwise: false
+            radius: cr, startAngle: .zero, endAngle: .degrees(90), clockwise: false,
         )
         path.addLine(to: CGPoint(x: rect.minX + cr, y: rect.maxY))
         return path
@@ -254,7 +254,11 @@ let previewError = "Error: long multi-line error message to test wrapping"
 
 @MainActor func previewLed(arrivals: [Arrival] = [], error: String? = nil, station: String? = nil, metrics: DisplayMetrics = .glass) -> some View {
     ContentDisplay(theme: .led, metrics: metrics, content: {
-        if let error { LedErrorContent(message: error) } else { LedContent(arrivals: arrivals) }
+        if let error {
+            LedErrorContent(message: error)
+        } else {
+            LedContent(arrivals: arrivals)
+        }
     }, footer: {
         ControlFooter(tint: DisplayTheme.led.tint, text: station,
                       refresh: RefreshBehaviour(isLoading: false) {},
@@ -267,7 +271,11 @@ let previewError = "Error: long multi-line error message to test wrapping"
 
 @MainActor func previewLcd(arrivals: [Arrival] = [], error: String? = nil, station: String? = nil, metrics: DisplayMetrics = .glass) -> some View {
     ContentDisplay(theme: .lcd, metrics: metrics, content: {
-        if let error { LcdErrorContent(message: error) } else { LcdContent(arrivals: arrivals) }
+        if let error {
+            LcdErrorContent(message: error)
+        } else {
+            LcdContent(arrivals: arrivals)
+        }
     }, footer: {
         ControlFooter(tint: DisplayTheme.lcd.tint, text: station,
                       refresh: RefreshBehaviour(isLoading: false) {},

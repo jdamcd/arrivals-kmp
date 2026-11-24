@@ -17,7 +17,7 @@ struct GtfsFeedSettingsView: View {
         _viewModel = StateObject(wrappedValue: GtfsFeedSettingsViewModel(
             fetcher: fetcher,
             feedUrl: feedUrl,
-            save: save
+            save: save,
         ))
         _selectedStop = State(initialValue: preselected)
     }

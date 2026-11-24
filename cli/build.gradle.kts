@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
@@ -5,6 +7,7 @@ plugins {
 
 kotlin {
     jvm {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         mainRun {
             mainClass.set("com.jdamcd.arrivals.cli.CliKt")
         }
